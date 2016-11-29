@@ -2,18 +2,17 @@
  * Created by andy on 28/11/16.
  */
 
-import {Fetch} from '../store/fetch';
+import {StoryConnector} from '../store/StoryConnector';
 import {autoinject} from 'aurelia-framework';
 
 @autoinject()
 export class StoryList{
-    stories;
     selectedId = 0;
 
-    constructor(private fetch: Fetch) { }
+    constructor(private storyConnector: StoryConnector) { }
 
-    created() {
-        this.fetch.getStoryList().then(result => result.json()).then(stories => this.stories = stories);
+    get stories(){
+        return this.storyConnector.all;
     }
 
     select(story){

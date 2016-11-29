@@ -2,7 +2,7 @@
  * Created by andy on 25/11/16.
  */
 
-import {HttpClient, HttpResponseMessage} from 'aurelia-fetch-client';
+import {HttpClient} from 'aurelia-fetch-client';
 
 let client = new HttpClient()
     .configure(config => {
@@ -18,11 +18,11 @@ let client = new HttpClient()
 
 export class Fetch {
 
-    getStoryList(): Promise<HttpResponseMessage> {
+    getStoryList(): Promise<Response> {
         return client.fetch('/story');
     }
 
-    getStory(id: String): Promise<HttpResponseMessage> {
+    getStory(id: String): Promise<Response> {
         return client.fetch('/story/'+id);
     }
 }

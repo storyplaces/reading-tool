@@ -32,7 +32,7 @@ export class StoryConnector extends AbstractConnector<Story> {
 
     remove(id: string): Promise<boolean> {
         return new Promise((success, failure) => {
-            true
+            return true;
         });
     }
 
