@@ -32,23 +32,27 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {Page} from "../Page";
+import {JSONFactory} from "../../interfaces/JSONFactory";
+import {inject, factory} from 'aurelia-framework';
 
-import {ComparisonCondition} from "./ComparisonCondition";
-import {BaseCondition} from "./BaseCondition";
-import {CondtionCreationException} from "../../exceptions/CondtionCreationException";
+export class PageFactory implements JSONFactory{
+    constructor(@factory(Page) private pFactory: () => Page) {
 
+        console.log(this.pFactory);
+    }
 
-export class ConditionFactory {
-
-    make(item: any): BaseCondition {
-        if (item instanceof BaseCondition) {
-            return item as BaseCondition;
+    make(item) {
+        if (item instanceof Page) {
+            return item;
         }
 
-        switch (item.type) {
-            case "comparison" : return new ComparisonCondition(item);
-        }
 
-        throw new CondtionCreationException("Unknown condition type" + item.type);
+        console.log("*********", this.pFactory);
+        let instance = this.pFactory();
+
+        instance.fromJSON(item);
+
+        return instance ;
     }
 }

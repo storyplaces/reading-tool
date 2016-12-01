@@ -36,15 +36,15 @@
 import {BaseCollection} from "./BaseCollection";
 
 import {BaseCondition} from "../models/conditions/BaseCondition";
-import {ConditionFactory} from "../models/conditions/ConditionFactory";
+import {ConditionFactory} from "../models/factories/ConditionFactory";
+import {inject, transient} from "aurelia-framework";
 
+@inject(ConditionFactory)
+@transient()
 export class ConditionCollection extends BaseCollection<BaseCondition> {
 
     constructor(private conditionFactory: ConditionFactory) {
-        super();
+        super(conditionFactory);
     }
 
-    protected fromJSON(item: any): BaseCondition {
-        return this.conditionFactory.make(item);
-    }
 }

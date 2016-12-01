@@ -34,13 +34,20 @@
  */
 
 import {Identifiable} from "../interfaces/Identifiable";
+import {JSONable} from "../interfaces/JSONable";
 
-export class Page implements Identifiable {
-    id: string;
-    name: string;
-    conditions: Array<Object>;
+import {inject, transient} from "aurelia-framework";
 
-    constructor({id = '', name = '', conditions = []} = {}) {
+@transient()
+export class Page implements Identifiable, JSONable{
+    id: string = '';
+    name: string = '';
+    conditions: Array<Object> = [];
+
+    constructor() {
+    }
+
+    public fromJSON({id = '', name = '', conditions = []} = {}) {
         this.id = id;
         this.name = name;
         this.conditions = conditions;
@@ -52,5 +59,7 @@ export class Page implements Identifiable {
             name: this.name,
             conditions: this.conditions,
         }
+
+
     }
 }

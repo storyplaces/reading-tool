@@ -36,8 +36,13 @@
 import {Identifiable} from "../interfaces/Identifiable";
 import {PageCollection} from "../collections/PageCollection";
 import {PagesMapViewSettings} from "./PagesMapViewSettings";
+import {JSONable} from "../interfaces/JSONable";
 
-export class Story implements Identifiable {
+import {NewInstance} from "aurelia-dependency-injection";
+import {inject} from 'aurelia-framework';
+
+@inject(NewInstance.of(PageCollection))
+export class Story implements Identifiable, JSONable {
     id: string;
     name: string;
     pages: PageCollection;
@@ -49,7 +54,12 @@ export class Story implements Identifiable {
     author : string;
     pagesMapViewSettings : PagesMapViewSettings;
 
-    constructor({id = '', name = '', pages = new PageCollection(), cachedMediaIds = [], conditions = [], pagesMapViewSettings = {}, functions = [], tags = [], author = '', description = ''} = {}) {
+
+    constructor(pages: PageCollection) {
+        this.pages = pages;
+    }
+
+    public fromJSON({id = '', name = '', pages = [], cachedMediaIds = [], conditions = [], pagesMapViewSettings = {}, functions = [], tags = [], author = '', description = ''} = {}) {
         this.id = id;
         this.cachedMediaIds = cachedMediaIds ;
         this.conditions = conditions;
@@ -59,7 +69,7 @@ export class Story implements Identifiable {
         this.author = author;
         this.description = description;
         this.name = name;
-        this.pages = pages instanceof PageCollection ? pages : new PageCollection(pages);
+        this.pages.saveMany(pages);
     }
 
     public toJSON() {

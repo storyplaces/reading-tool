@@ -34,17 +34,28 @@
  */
 
 import {Identifiable} from "../interfaces/Identifiable";
+import {JSONable} from "../interfaces/JSONable";
 
-export class Reading implements Identifiable{
+export class Reading implements Identifiable, JSONable{
+
     id: string;
     state: Array<any>;
     userId: any;
     readingId: any;
 
-    constructor({id = "", readingId = "", userId = "", state = []} = {}) {
+    fromJSON({id = "", readingId = "", userId = "", state = []} = {}) {
         this.id = id;
         this.readingId = readingId;
         this.userId = userId;
         this.state = state;
+    }
+
+    toJSON() {
+        return {
+            id: this.id,
+            readingId: this.readingId,
+            userId: this.userId,
+            state: this.state,
+        }
     }
 }

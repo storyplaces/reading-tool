@@ -32,15 +32,24 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {BaseCollection} from "./BaseCollection";
-import {StoryFactory} from "../models/factories/StoryFactory";
-import {Story} from "../models/Story";
-import {inject, transient} from "aurelia-framework";
 
-@inject(StoryFactory)
-@transient()
-export class StoryCollection extends BaseCollection<Story> {
-    constructor(factory: StoryFactory) {
-        super(factory);
+import {ComparisonCondition} from "../conditions/ComparisonCondition";
+import {BaseCondition} from "../conditions/BaseCondition";
+import {CondtionCreationException} from "../../exceptions/CondtionCreationException";
+import {JSONFactory} from "../../interfaces/JSONFactory";
+
+
+export class ConditionFactory implements JSONFactory{
+
+    make(item: any): BaseCondition {
+        if (item instanceof BaseCondition) {
+            return item as BaseCondition;
+        }
+
+        switch (item.type) {
+            case "comparison" : return new ComparisonCondition(item);
+        }
+
+        throw new CondtionCreationException("Unknown condition type" + item.type);
     }
 }

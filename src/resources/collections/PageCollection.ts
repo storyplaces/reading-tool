@@ -35,14 +35,13 @@
 
 import {BaseCollection} from "./BaseCollection";
 import {Page} from "../models/Page";
+import {PageFactory} from "../models/factories/PageFactory";
+import {inject, transient} from "aurelia-framework";
 
+@inject(PageFactory)
+@transient()
 export class PageCollection extends BaseCollection<Page> {
-
-    protected fromJSON(item: any): Page {
-        if (item instanceof Page) {
-            return item as Page;
-        }
-
-        return new Page(item);
+    constructor(factory: PageFactory) {
+        super(factory);
     }
 }

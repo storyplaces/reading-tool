@@ -17,33 +17,22 @@ class TestModel implements Identifiable {
 }
 
 class TestCollection extends BaseCollection<TestModel> {
-    protected fromJSON(item: any): TestModel {
+    protected itemFromJSON(item: any): TestModel {
         return new TestModel(item);
     }
 }
 
 describe("Base collection", () => {
-    it("can be instantiated with no data", () => {
-        let collection = new TestCollection();
-
-        expect(collection.all).toEqual([]);
-    });
-
-    it("can be instantiated with empty data", () => {
-        let collection = new TestCollection([]);
-
-        expect(collection.all).toEqual([]);
-    });
-
-
     it("can be instantiated with an array of data", () => {
-        let collection = new TestCollection([{id: "1", data: "data1"}, {id: "2", data: "data2"}]);
+        let collection = new TestCollection();
+        collection.saveMany([{id: "1", data: "data1"}, {id: "2", data: "data2"}]);
 
         expect(collection.all.length).toEqual(2);
     });
 
     it("will expose all the models on .all", () => {
-        let collection = new TestCollection([{id: "1", data: "data1"}, {id: "2", data: "data2"}]);
+        let collection = new TestCollection();
+        collection.saveMany([{id: "1", data: "data1"}, {id: "2", data: "data2"}]);
 
         expect(collection.all.length).toEqual(2);
         expect(collection.all.findIndex(item => item.id == "1")).not.toEqual(-1);
@@ -55,7 +44,8 @@ describe("Base collection", () => {
     it("will return and object via get", () => {
         let model1 = {id: "1", data: "data1"};
         let model2 = {id: "2", data: "data2"};
-        let collection = new TestCollection([model1, model2]);
+        let collection = new TestCollection();
+        collection.saveMany([model1, model2]);
 
         expect(collection.get("1") instanceof TestModel).toBeTruthy();
         expect(collection.get("2") instanceof TestModel).toBeTruthy();
@@ -94,7 +84,10 @@ describe("Base collection", () => {
 
 
     it("can have items deleted from it", () => {
-        let collection = new TestCollection([{id: "1"}, {id: "2"}]);
+        let collection = new TestCollection();
+        collection.saveMany([{id: "1"}, {id: "2"}]);
+
+        new TestCollection();
 
         collection.remove("1");
 
@@ -104,7 +97,8 @@ describe("Base collection", () => {
     });
 
     it("will return null when get is called with an invalid id", () => {
-        let collection = new TestCollection([{id: "1"}, {id: "2"}]);
+        let collection = new TestCollection();
+        collection.saveMany([{id: "1"}, {id: "2"}]);
 
         expect(collection.get("1234")).toBeUndefined();
     });
@@ -114,7 +108,8 @@ describe("Base collection", () => {
         let model2 = {id: "2", data: "data2"};
         let model2Alternative = {id: "2", data: "dataAlternative"};
 
-        let collection = new TestCollection([model1, model2]);
+        let collection = new TestCollection();
+        collection.saveMany([model1, model2]);
 
         collection.save(model2Alternative);
 
@@ -129,7 +124,8 @@ describe("Base collection", () => {
     it("will return a JSON array when passed to JSON.stringify", () => {
         let model1 = {id: "1", data: "data1"};
         let model2 = {id: "2", data: "data2"};
-        let collection = new TestCollection([model1, model2]);
+        let collection = new TestCollection();
+        collection.saveMany([model1, model2]);
 
         spyOn(collection, 'toJSON').and.callThrough();
         spyOn(collection.all[0], 'toJSON').and.callThrough();
@@ -147,7 +143,8 @@ describe("Base collection", () => {
     it("will return an array of objects when toArray is called", () => {
         let model1 = {id: "1", data: "data1"};
         let model2 = {id: "2", data: "data2"};
-        let collection = new TestCollection([model1, model2]);
+        let collection = new TestCollection();
+        collection.saveMany([model1, model2]);
 
         let result = collection.toArray();
 
@@ -164,7 +161,8 @@ describe("Base collection", () => {
     it("will handle forEach correctly", () => {
         let model1 = {id: "1", data: "data1"};
         let model2 = {id: "2", data: "data2"};
-        let collection = new TestCollection([model1, model2]);
+        let collection = new TestCollection();
+        collection.saveMany([model1, model2]);
 
         let counter = 0;
 

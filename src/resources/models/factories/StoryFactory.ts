@@ -32,15 +32,19 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {BaseCollection} from "./BaseCollection";
-import {StoryFactory} from "../models/factories/StoryFactory";
-import {Story} from "../models/Story";
-import {inject, transient} from "aurelia-framework";
+import {Story} from "../Story";
+import {JSONFactory} from "../../interfaces/JSONFactory";
 
-@inject(StoryFactory)
-@transient()
-export class StoryCollection extends BaseCollection<Story> {
-    constructor(factory: StoryFactory) {
-        super(factory);
+export class StoryFactory implements JSONFactory{
+
+    make(item) {
+        if (item instanceof Story) {
+            return item;
+        }
+
+        let instance = new Story();
+        instance.fromJSON(item);
+
+        return instance ;
     }
 }

@@ -32,15 +32,19 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {Identifiable} from "../interfaces/Identifiable";
+import {JSONFactory} from "../interfaces/JSONFactory";
 
+import {transient} from "aurelia-framework";
+
+@transient()
 export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
 
     private _data: Array<DATA_TYPE> = [];
+    private factory: JSONFactory;
 
-    constructor(data: Array<any> = []) {
-        this.saveMany(data);
+    constructor(factory = null) {
+        this.factory = factory;
     }
 
     get length(): number {
@@ -56,7 +60,7 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
     }
 
     public save(passedItem: any): void {
-        let item = this.fromJSON(passedItem);
+        let item = this.itemFromJSON(passedItem);
 
         let foundIndex = this.findIndex(item);
 
@@ -102,5 +106,11 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
         this._data.forEach(callback, thisArg);
     }
 
-    protected abstract fromJSON(item: any): DATA_TYPE;
+    protected itemFromJSON(item: any): DATA_TYPE {
+        if (this.factory) {
+            return this.factory.make(item) as DATA_TYPE;
+        }
+
+        return item as DATA_TYPE;
+    }
 }
