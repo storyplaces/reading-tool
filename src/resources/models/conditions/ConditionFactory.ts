@@ -33,74 +33,22 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Identifiable} from "../interfaces/Identifiable";
+import {ComparisonCondition} from "./ComparisonCondition";
+import {BaseCondition} from "./BaseCondition";
+import {CondtionCreationException} from "../../exceptions/CondtionCreationException";
 
-export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
 
-    private _data: Array<DATA_TYPE> = [];
+export class ConditionFactory {
 
-    constructor(data: Array<any> = []) {
-        this.saveMany(data);
-    }
-
-    get length(): number {
-        return this._data.length;
-    }
-
-    get all(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public get(id: string): DATA_TYPE {
-        return this._data.find(item => item.id == id)
-    }
-
-    public save(passedItem: any): void {
-        let item = this.fromJSON(passedItem);
-
-        let foundIndex = this.findIndex(item);
-
-        if (foundIndex) {
-            this._data[foundIndex] = item;
-            return
+    make(item: any): BaseCondition {
+        if (item instanceof BaseCondition) {
+            return item as BaseCondition;
         }
 
-        this._data.push(item);
-    }
-
-    private findIndex(item: DATA_TYPE): number|null {
-        return this.findIndexById(item.id);
-    }
-
-    private findIndexById(itemId: string): number|null {
-        let foundIndex = this._data.findIndex(found => found.id == itemId);
-        return foundIndex != -1 ? foundIndex : null;
-    }
-
-    public saveMany(items: Array<any>): void {
-        items.forEach(item => {
-            this.save(item)
-        });
-    }
-
-    public remove(id: string): void {
-        let foundIndex = this.findIndexById(id);
-        if (foundIndex != null) {
-            this._data.splice(foundIndex, 1);
+        switch (item.type) {
+            case "comparison" : return new ComparisonCondition(item);
         }
-    }
 
-    public toArray(): Array<DATA_TYPE> {
-        return this._data;
+        throw new CondtionCreationException("Unknown condition type" + item.type);
     }
-
-    public toJSON(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public forEach(callback, thisArg = null) {
-        this._data.forEach(callback, thisArg);
-    }
-
-    protected abstract fromJSON(item: any): DATA_TYPE;
 }

@@ -31,76 +31,20 @@
  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+*/
 
-import {Identifiable} from "../interfaces/Identifiable";
+import {BaseCollection} from "./BaseCollection";
 
-export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
+import {BaseCondition} from "../models/conditions/BaseCondition";
+import {ConditionFactory} from "../models/conditions/ConditionFactory";
 
-    private _data: Array<DATA_TYPE> = [];
+export class ConditionCollection extends BaseCollection<BaseCondition> {
 
-    constructor(data: Array<any> = []) {
-        this.saveMany(data);
+    constructor(private conditionFactory: ConditionFactory) {
+        super();
     }
 
-    get length(): number {
-        return this._data.length;
+    protected fromJSON(item: any): BaseCondition {
+        return this.conditionFactory.make(item);
     }
-
-    get all(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public get(id: string): DATA_TYPE {
-        return this._data.find(item => item.id == id)
-    }
-
-    public save(passedItem: any): void {
-        let item = this.fromJSON(passedItem);
-
-        let foundIndex = this.findIndex(item);
-
-        if (foundIndex) {
-            this._data[foundIndex] = item;
-            return
-        }
-
-        this._data.push(item);
-    }
-
-    private findIndex(item: DATA_TYPE): number|null {
-        return this.findIndexById(item.id);
-    }
-
-    private findIndexById(itemId: string): number|null {
-        let foundIndex = this._data.findIndex(found => found.id == itemId);
-        return foundIndex != -1 ? foundIndex : null;
-    }
-
-    public saveMany(items: Array<any>): void {
-        items.forEach(item => {
-            this.save(item)
-        });
-    }
-
-    public remove(id: string): void {
-        let foundIndex = this.findIndexById(id);
-        if (foundIndex != null) {
-            this._data.splice(foundIndex, 1);
-        }
-    }
-
-    public toArray(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public toJSON(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public forEach(callback, thisArg = null) {
-        this._data.forEach(callback, thisArg);
-    }
-
-    protected abstract fromJSON(item: any): DATA_TYPE;
 }

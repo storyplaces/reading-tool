@@ -33,74 +33,35 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Identifiable} from "../interfaces/Identifiable";
+import {BaseCondition} from "./BaseCondition";
 
-export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
+export class ComparisonCondition extends BaseCondition {
+    id: string;
+    type: string;
+    a: string;
+    b: string;
+    aType: string;
+    bType: string;
 
-    private _data: Array<DATA_TYPE> = [];
+    constructor({id = "", type = "", a = "", b = "", aType = "", bType = ""} = {}) {
+        super();
 
-    constructor(data: Array<any> = []) {
-        this.saveMany(data);
+        this.id = id;
+        this.type = type;
+        this.a = a;
+        this.b = b;
+        this.aType = aType;
+        this.bType = bType;
     }
 
-    get length(): number {
-        return this._data.length;
+    toJson() {
+        return {
+            id: this.id,
+            type: this.type,
+            a: this.a,
+            b: this.b,
+            aType: this.aType,
+            bType: this.bType
+        };
     }
-
-    get all(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public get(id: string): DATA_TYPE {
-        return this._data.find(item => item.id == id)
-    }
-
-    public save(passedItem: any): void {
-        let item = this.fromJSON(passedItem);
-
-        let foundIndex = this.findIndex(item);
-
-        if (foundIndex) {
-            this._data[foundIndex] = item;
-            return
-        }
-
-        this._data.push(item);
-    }
-
-    private findIndex(item: DATA_TYPE): number|null {
-        return this.findIndexById(item.id);
-    }
-
-    private findIndexById(itemId: string): number|null {
-        let foundIndex = this._data.findIndex(found => found.id == itemId);
-        return foundIndex != -1 ? foundIndex : null;
-    }
-
-    public saveMany(items: Array<any>): void {
-        items.forEach(item => {
-            this.save(item)
-        });
-    }
-
-    public remove(id: string): void {
-        let foundIndex = this.findIndexById(id);
-        if (foundIndex != null) {
-            this._data.splice(foundIndex, 1);
-        }
-    }
-
-    public toArray(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public toJSON(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public forEach(callback, thisArg = null) {
-        this._data.forEach(callback, thisArg);
-    }
-
-    protected abstract fromJSON(item: any): DATA_TYPE;
 }
