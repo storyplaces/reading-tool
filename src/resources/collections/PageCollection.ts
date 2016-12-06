@@ -32,16 +32,24 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {BaseCollection} from "./BaseCollection";
 import {Page} from "../models/Page";
-import {PageFactory} from "../models/factories/PageFactory";
-import {inject, transient} from "aurelia-framework";
+import {inject, Factory} from "aurelia-framework";
 
-@inject(PageFactory)
-@transient()
+@inject(Factory.of(Page))
 export class PageCollection extends BaseCollection<Page> {
-    constructor(factory: PageFactory) {
-        super(factory);
+    constructor(private factory: (any?) => Page, data?: any[]) {
+        super();
+        if (data) {
+            this.saveMany(data);
+        }
+    }
+
+    protected itemFromObject(item: any): Page {
+        if (item instanceof Page) {
+            return item;
+        }
+
+        return this.factory(item);
     }
 }

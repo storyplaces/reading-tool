@@ -1,38 +1,56 @@
 ///<reference path="../../../src/resources/collections/BaseCollection.ts"/>
 import {BaseCollection} from "../../../src/resources/collections/BaseCollection";
 import {Identifiable} from "../../../src/resources/interfaces/Identifiable";
-
-class TestModel implements Identifiable {
-    id: string;
-    data: string;
-
-    constructor({id = "", data = ""} = {}) {
-        this.id = id;
-        this.data = data;
-    }
-
-    public toJSON() {
-        return {id: this.id, data: this.data};
-    }
-}
-
-class TestCollection extends BaseCollection<TestModel> {
-    protected itemFromJSON(item: any): TestModel {
-        return new TestModel(item);
-    }
-}
+import {Container} from "aurelia-framework";
 
 describe("Base collection", () => {
-    it("can be instantiated with an array of data", () => {
-        let collection = new TestCollection();
-        collection.saveMany([{id: "1", data: "data1"}, {id: "2", data: "data2"}]);
+    class TestModel implements Identifiable {
+        id: string;
+        data: string;
 
+        constructor({id = null, data = null} = {}) {
+            this.id = id;
+            this.data = data;
+        }
+
+        public toJSON() {
+            return {id: this.id, data: this.data};
+        }
+    }
+
+    class TestCollection extends BaseCollection<TestModel> {
+        protected itemFromObject(item: any): TestModel {
+            return new TestModel(item);
+        }
+    }
+
+    let container: Container;
+
+    function resolve(object: Function, data? : any) {
+        return container.invoke(object, [data]);
+    }
+
+    beforeEach(() => {
+        container = new Container().makeGlobal();
+    });
+
+    afterEach(() => {
+        container = null;
+    });
+
+    it("can be instantiated with no data", () => {
+        let collection = resolve(TestCollection);
+
+        expect(collection.all.length).toEqual(0);
+    });
+
+    it("can be instantiated with an array of data", () => {
+        let collection = resolve(TestCollection, [{id: "1", data: "data1"}, {id: "2", data: "data2"}]);
         expect(collection.all.length).toEqual(2);
     });
 
     it("will expose all the models on .all", () => {
-        let collection = new TestCollection();
-        collection.saveMany([{id: "1", data: "data1"}, {id: "2", data: "data2"}]);
+        let collection = resolve(TestCollection, [{id: "1", data: "data1"}, {id: "2", data: "data2"}]);
 
         expect(collection.all.length).toEqual(2);
         expect(collection.all.findIndex(item => item.id == "1")).not.toEqual(-1);
@@ -41,22 +59,8 @@ describe("Base collection", () => {
         expect(collection.all.find(item => item.id == "2").data).toEqual("data2");
     });
 
-    it("will return and object via get", () => {
-        let model1 = {id: "1", data: "data1"};
-        let model2 = {id: "2", data: "data2"};
-        let collection = new TestCollection();
-        collection.saveMany([model1, model2]);
-
-        expect(collection.get("1") instanceof TestModel).toBeTruthy();
-        expect(collection.get("2") instanceof TestModel).toBeTruthy();
-        expect(collection.get("1").id).toEqual("1");
-        expect(collection.get("1").data).toEqual("data1");
-        expect(collection.get("2").id).toEqual("2");
-        expect(collection.get("2").data).toEqual("data2");
-    });
-
     it("can have single objects added to it", () => {
-        let collection = new TestCollection();
+        let collection = resolve(TestCollection);
 
         collection.save({id: "1", data: "data1"});
         collection.save({id: "2", data: "data2"});
@@ -70,7 +74,7 @@ describe("Base collection", () => {
     });
 
     it("can have multiple objects added to it", () => {
-        let collection = new TestCollection();
+        let collection = resolve(TestCollection);
 
         collection.saveMany([{id: "1", data: "data1"}, {id: "2", data: "data2"}]);
 
@@ -82,12 +86,25 @@ describe("Base collection", () => {
         expect(collection.get("2").data).toEqual("data2");
     });
 
+    it("will return and object via get", () => {
+        let model1 = {id: "1", data: "data1"};
+        let model2 = {id: "2", data: "data2"};
+        let collection = resolve(TestCollection);
+        collection.saveMany([model1, model2]);
+
+        expect(collection.get("1") instanceof TestModel).toBeTruthy();
+        expect(collection.get("2") instanceof TestModel).toBeTruthy();
+        expect(collection.get("1").id).toEqual("1");
+        expect(collection.get("1").data).toEqual("data1");
+        expect(collection.get("2").id).toEqual("2");
+        expect(collection.get("2").data).toEqual("data2");
+    });
 
     it("can have items deleted from it", () => {
-        let collection = new TestCollection();
+        let collection = resolve(TestCollection);
         collection.saveMany([{id: "1"}, {id: "2"}]);
 
-        new TestCollection();
+        resolve(TestCollection);
 
         collection.remove("1");
 
@@ -97,18 +114,18 @@ describe("Base collection", () => {
     });
 
     it("will return null when get is called with an invalid id", () => {
-        let collection = new TestCollection();
+        let collection = resolve(TestCollection);
         collection.saveMany([{id: "1"}, {id: "2"}]);
 
         expect(collection.get("1234")).toBeUndefined();
     });
 
-    it("will overwrite an entry if the id key mathces", () => {
+    it("will overwrite an entry if the id key matches", () => {
         let model1 = {id: "1", data: "data1"};
         let model2 = {id: "2", data: "data2"};
         let model2Alternative = {id: "2", data: "dataAlternative"};
 
-        let collection = new TestCollection();
+        let collection = resolve(TestCollection);
         collection.saveMany([model1, model2]);
 
         collection.save(model2Alternative);
@@ -124,7 +141,8 @@ describe("Base collection", () => {
     it("will return a JSON array when passed to JSON.stringify", () => {
         let model1 = {id: "1", data: "data1"};
         let model2 = {id: "2", data: "data2"};
-        let collection = new TestCollection();
+        let collection = resolve(TestCollection);
+
         collection.saveMany([model1, model2]);
 
         spyOn(collection, 'toJSON').and.callThrough();
@@ -143,7 +161,7 @@ describe("Base collection", () => {
     it("will return an array of objects when toArray is called", () => {
         let model1 = {id: "1", data: "data1"};
         let model2 = {id: "2", data: "data2"};
-        let collection = new TestCollection();
+        let collection = resolve(TestCollection);
         collection.saveMany([model1, model2]);
 
         let result = collection.toArray();
@@ -161,7 +179,7 @@ describe("Base collection", () => {
     it("will handle forEach correctly", () => {
         let model1 = {id: "1", data: "data1"};
         let model2 = {id: "2", data: "data2"};
-        let collection = new TestCollection();
+        let collection = resolve(TestCollection);
         collection.saveMany([model1, model2]);
 
         let counter = 0;
@@ -173,6 +191,15 @@ describe("Base collection", () => {
         });
 
         expect(counter).toEqual(2);
+    });
+
+    it("will throw an error if a model with no is saved", () => {
+        let model1 = {};
+        let collection = resolve(TestCollection);
+
+        let test = () => {collection.saveMany([model1])};
+
+        expect(test).toThrow();
     });
 });
 

@@ -32,27 +32,25 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Page} from "../Page";
-import {JSONFactory} from "../../interfaces/JSONFactory";
-import {inject, factory} from 'aurelia-framework';
+import {BaseCollection} from "./BaseCollection";
+import {Variable} from "../models/Variable";
+import {inject, Factory} from "aurelia-framework";
 
-export class PageFactory implements JSONFactory{
-    constructor(@factory(Page) private pFactory: () => Page) {
+@inject(Factory.of(Variable))
+export class VariableCollection extends BaseCollection<Variable> {
+    constructor(private factory: (any?) => Variable, data?: any[]) {
+        super();
 
-        console.log(this.pFactory);
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
+        }
     }
 
-    make(item) {
-        if (item instanceof Page) {
+    protected itemFromObject(item: any): Variable {
+        if (item instanceof Variable)  {
             return item;
         }
 
-
-        console.log("*********", this.pFactory);
-        let instance = this.pFactory();
-
-        instance.fromJSON(item);
-
-        return instance ;
+        return this.factory(item);
     }
 }

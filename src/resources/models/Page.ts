@@ -33,21 +33,18 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Identifiable} from "../interfaces/Identifiable";
-import {JSONable} from "../interfaces/JSONable";
+import {BaseModel} from "./BaseModel";
 
-import {inject, transient} from "aurelia-framework";
+export class Page extends BaseModel{
+    name: string;
+    conditions: Array<Object>;
 
-@transient()
-export class Page implements Identifiable, JSONable{
-    id: string = '';
-    name: string = '';
-    conditions: Array<Object> = [];
-
-    constructor() {
+    constructor(data?: any) {
+        super();
+        this.fromObject(data);
     }
 
-    public fromJSON({id = '', name = '', conditions = []} = {}) {
+    public fromObject({id = undefined, name = undefined, conditions = undefined} = {}) {
         this.id = id;
         this.name = name;
         this.conditions = conditions;

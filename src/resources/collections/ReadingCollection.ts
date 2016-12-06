@@ -1,9 +1,9 @@
 /*!*****************************************************************
  *
- * StoryPlaces
+ * ReadingPlaces
  *
  This application was developed as part of the Leverhulme Trust funded
- StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
+ ReadingPlaces Project. For more information, please visit storyplaces.soton.ac.uk
  Copyright (c) 2016
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
@@ -32,19 +32,26 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Story} from "../Story";
-import {JSONFactory} from "../../interfaces/JSONFactory";
+import {BaseCollection} from "./BaseCollection";
+import {Reading} from "../models/Reading";
+import {inject, Factory} from "aurelia-framework";
 
-export class StoryFactory implements JSONFactory{
+@inject(Factory.of(Reading))
+export class ReadingCollection extends BaseCollection<Reading> {
+    constructor(private factory: (any?) => Reading, data?: any[]) {
+        super();
 
-    make(item) {
-        if (item instanceof Story) {
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
+        }
+    }
+
+    protected itemFromObject(item: any): Reading {
+
+        if (item instanceof Reading)  {
             return item;
         }
 
-        let instance = new Story();
-        instance.fromJSON(item);
-
-        return instance ;
+        return this.factory(item);
     }
 }

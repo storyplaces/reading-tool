@@ -33,14 +33,25 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {BaseCollection} from "./BaseCollection";
-import {StoryFactory} from "../models/factories/StoryFactory";
 import {Story} from "../models/Story";
-import {inject, transient} from "aurelia-framework";
+import {inject, Factory} from "aurelia-framework";
 
-@inject(StoryFactory)
-@transient()
+@inject(Factory.of(Story))
 export class StoryCollection extends BaseCollection<Story> {
-    constructor(factory: StoryFactory) {
-        super(factory);
+    constructor(private factory: (any?) => Story, data?: any[]) {
+        super();
+
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
+        }
+    }
+
+    protected itemFromObject(item: any): Story {
+
+        if (item instanceof Story)  {
+            return item;
+        }
+
+        return this.factory(item);
     }
 }

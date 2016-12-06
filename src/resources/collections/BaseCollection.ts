@@ -32,19 +32,16 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Identifiable} from "../interfaces/Identifiable";
-import {JSONFactory} from "../interfaces/JSONFactory";
+import {Identifiable} from '../interfaces/Identifiable';
 
-import {transient} from "aurelia-framework";
-
-@transient()
 export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
 
     private _data: Array<DATA_TYPE> = [];
-    private factory: JSONFactory;
 
-    constructor(factory = null) {
-        this.factory = factory;
+    constructor(data? : any[]) {
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
+        }
     }
 
     get length(): number {
@@ -60,13 +57,17 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
     }
 
     public save(passedItem: any): void {
-        let item = this.itemFromJSON(passedItem);
+        let item = this.itemFromObject(passedItem);
+
+        if (item.id == undefined) {
+            throw Error("Unable to save object as it has no id set");
+        }
 
         let foundIndex = this.findIndex(item);
 
         if (foundIndex) {
             this._data[foundIndex] = item;
-            return
+            return;
         }
 
         this._data.push(item);
@@ -106,11 +107,7 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
         this._data.forEach(callback, thisArg);
     }
 
-    protected itemFromJSON(item: any): DATA_TYPE {
-        if (this.factory) {
-            return this.factory.make(item) as DATA_TYPE;
-        }
-
+    protected itemFromObject(item: any): DATA_TYPE {
         return item as DATA_TYPE;
     }
 }

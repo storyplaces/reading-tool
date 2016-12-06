@@ -32,52 +32,55 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-import {Identifiable} from "../interfaces/Identifiable";
 import {PageCollection} from "../collections/PageCollection";
 import {PagesMapViewSettings} from "./PagesMapViewSettings";
-import {JSONable} from "../interfaces/JSONable";
+import {Factory, inject} from "aurelia-framework";
+import {BaseModel} from "./BaseModel";
 
-import {NewInstance} from "aurelia-dependency-injection";
-import {inject} from 'aurelia-framework';
-
-@inject(NewInstance.of(PageCollection))
-export class Story implements Identifiable, JSONable {
-    id: string;
+@inject(Factory.of(PageCollection), Factory.of(PagesMapViewSettings))
+export class Story extends BaseModel {
     name: string;
     pages: PageCollection;
-    cachedMediaIds : Array<number>;
-    conditions;
-    functions;
-    tags : Array<string>;
-    description : string;
-    author : string;
-    pagesMapViewSettings : PagesMapViewSettings;
+    cachedMediaIds: Array<number>;
+    conditions: any;
+    functions: any;
+    tags: Array<string>;
+    description: string;
+    author: string;
+    pagesMapViewSettings: PagesMapViewSettings;
 
-
-    constructor(pages: PageCollection) {
-        this.pages = pages;
+    constructor(private pageCollectionFactory: (any?) => PageCollection,
+                private pagesMapViewSettingsFactory: (any?) => PagesMapViewSettings,
+                data?: any) {
+        super();
+        this.fromObject(data);
     }
 
-    public fromJSON({id = '', name = '', pages = [], cachedMediaIds = [], conditions = [], pagesMapViewSettings = {}, functions = [], tags = [], author = '', description = ''} = {}) {
+    public fromObject({id = undefined, name = undefined, pages = undefined, cachedMediaIds = undefined, conditions = undefined, pagesMapViewSettings = undefined, functions = undefined, tags = undefined, author = undefined, description = undefined} = {}) {
         this.id = id;
-        this.cachedMediaIds = cachedMediaIds ;
-        this.conditions = conditions;
-        this.pagesMapViewSettings = pagesMapViewSettings instanceof PagesMapViewSettings ? pagesMapViewSettings : new PagesMapViewSettings(pagesMapViewSettings);
-        this.functions = functions;
-        this.tags = tags;
         this.author = author;
+        this.cachedMediaIds = cachedMediaIds;
+        this.conditions = conditions;
         this.description = description;
+        this.functions = functions;
+        this.pages = this.pageCollectionFactory(pages);
+        this.pagesMapViewSettings = this.pagesMapViewSettingsFactory(pagesMapViewSettings);
         this.name = name;
-        this.pages.saveMany(pages);
+        this.tags = tags;
     }
 
     public toJSON() {
         return {
             id: this.id,
-            name: this.name,
+            author: this.author,
+            cachedMediaIds: this.cachedMediaIds,
+            conditions: this.conditions,
+            description: this.description,
+            functions: this.functions,
             pages: this.pages,
-            pagesMapViewSettings: this.pagesMapViewSettings
+            pagesMapViewSettings: this.pagesMapViewSettings,
+            name: this.name,
+            tags: this.tags
         }
     }
 }

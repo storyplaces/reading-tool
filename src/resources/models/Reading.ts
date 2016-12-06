@@ -32,22 +32,26 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {VariableCollection} from "../collections/VariableCollection";
+import {inject, Factory} from "aurelia-framework";
+import {BaseModel} from "./BaseModel";
 
-import {Identifiable} from "../interfaces/Identifiable";
-import {JSONable} from "../interfaces/JSONable";
+@inject(Factory.of(VariableCollection))
+export class Reading extends BaseModel {
+    variables: VariableCollection;
+    userId: string;
+    readingId: string;
 
-export class Reading implements Identifiable, JSONable{
+    constructor(private variableCollectionFactory: (any?) => VariableCollection, data?: any) {
+        super();
+        this.fromObject(data);
+    }
 
-    id: string;
-    state: Array<any>;
-    userId: any;
-    readingId: any;
-
-    fromJSON({id = "", readingId = "", userId = "", state = []} = {}) {
+    fromObject({id = undefined, readingId = undefined, userId = undefined, variables = undefined} = {}) {
         this.id = id;
         this.readingId = readingId;
         this.userId = userId;
-        this.state = state;
+        this.variables = this.variableCollectionFactory(variables);
     }
 
     toJSON() {
@@ -55,7 +59,7 @@ export class Reading implements Identifiable, JSONable{
             id: this.id,
             readingId: this.readingId,
             userId: this.userId,
-            state: this.state,
+            variables: this.variables,
         }
     }
 }

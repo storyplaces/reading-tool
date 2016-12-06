@@ -32,29 +32,26 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {JSONable} from "../interfaces/JSONable";
-import {fromObjectInterface} from "../interfaces/fromObjectInterface";
 
-export class PagesMapViewSettings implements JSONable, fromObjectInterface {
-    map: boolean;
-    pageDistance: boolean;
-    pageArrows: boolean;
+import {BaseModel} from "./BaseModel";
+
+export class Variable extends BaseModel{
+    value: any;
 
     constructor(data?: any) {
+        super();
         this.fromObject(data);
     }
 
-    public fromObject({map = undefined, pageArrows = undefined, pageDistance = undefined} = {}) {
-        this.map = map;
-        this.pageArrows = pageArrows;
-        this.pageDistance = pageDistance;
+    fromObject({id = undefined, value = undefined} = {}) {
+        this.id = id;
+        this.value = value;
     }
 
-    public toJSON() {
+    toJSON() {
         return {
-            map: this.map,
-            pageArrows: this.pageArrows,
-            pageDistance: this.pageDistance
-        };
+            id: this.id,
+            value: this.value
+        }
     }
 }
