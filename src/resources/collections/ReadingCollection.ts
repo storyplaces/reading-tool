@@ -1,9 +1,9 @@
-/*!*****************************************************************
+/*******************************************************************
  *
- * ReadingPlaces
+ * StoryPlaces
  *
  This application was developed as part of the Leverhulme Trust funded
- ReadingPlaces Project. For more information, please visit storyplaces.soton.ac.uk
+ StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
  Copyright (c) 2016
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
@@ -18,7 +18,7 @@
  * Redistributions in binary form must reproduce the above copyright
  notice, this list of conditions and the following disclaimer in the
  documentation and/or other materials provided with the distribution.
- * The name of the Universities of Southampton nor the name of its
+ * The name of the University of Southampton nor the name of its
  contributors may be used to endorse or promote products derived from
  this software without specific prior written permission.
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -32,6 +32,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 import {BaseCollection} from "./BaseCollection";
 import {Reading} from "../models/Reading";
 import {inject, Factory} from "aurelia-framework";
