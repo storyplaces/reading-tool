@@ -6,6 +6,7 @@ import {HttpClient} from 'aurelia-fetch-client';
 
 let client = new HttpClient()
     .configure(config => {
+        // TODO: Put these in a config file
         config
             .withBaseUrl('https://localhost:8080/storyplaces')
             .withDefaults({
@@ -16,7 +17,7 @@ let client = new HttpClient()
 
     });
 
-export class Fetch {
+export class StoryplacesAPI {
 
     getStoryList(): Promise<Response> {
         return client.fetch('/story');

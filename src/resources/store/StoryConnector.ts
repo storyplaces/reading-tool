@@ -7,12 +7,12 @@ import {AbstractConnector} from "./AbstractConnector";
 import {StoryCollection} from "../collections/StoryCollection";
 import {autoinject} from 'aurelia-framework';
 import {Story} from "../models/Story";
-import {Fetch} from "./fetch"
+import {StoryplacesAPI} from "./StoryplacesAPI"
 
 @autoinject()
 export class StoryConnector extends AbstractConnector<Story> {
 
-    constructor(private storyCollection : StoryCollection, private fetch : Fetch) {
+    constructor(private storyCollection : StoryCollection, private storyplacesAPI : StoryplacesAPI) {
         super();
     }
 
@@ -25,7 +25,7 @@ export class StoryConnector extends AbstractConnector<Story> {
     }
 
     fetchAll(): Promise<Array<Story>> {
-        return this.fetch.getStoryList().then(stories => {
+        return this.storyplacesAPI.getStoryList().then(stories => {
             stories.json().then (stories => {
                 return this.storyCollection.saveMany(stories)
             });
@@ -33,7 +33,7 @@ export class StoryConnector extends AbstractConnector<Story> {
     }
 
     fetchById(id: string): Promise<Story> {
-        return this.fetch.getStory(id).then(story => {
+        return this.storyplacesAPI.getStory(id).then(story => {
             story.json().then (story => {
                 return this.storyCollection.save(story)
             });
