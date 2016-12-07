@@ -33,24 +33,25 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {Identifiable} from "../interfaces/Identifiable";
+import {JSONable} from "../interfaces/JSONable";
+import {FromObjectInterface} from "../interfaces/FromObjectInterface";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
-    }
+export abstract class BaseModel implements Identifiable, JSONable, FromObjectInterface{
+    _id: string;
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
+    set id(id) {
+        if (id != undefined && typeof id != "string") {
+            throw TypeError("Unable to set id as it is not a string");
         }
 
-        return this.factory(item);
+        this._id = id;
     }
+
+    get id() {
+        return this._id;
+    }
+
+    public abstract toJSON();
+    public abstract fromObject(any);
 }

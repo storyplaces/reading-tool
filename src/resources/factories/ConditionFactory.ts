@@ -33,24 +33,24 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {ComparisonCondition} from "../models/conditions/ComparisonCondition";
+import {resolver, Container} from "aurelia-framework";
+import {BaseCondition} from "../models/conditions/BaseCondition";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
+type comparisonObject= {
+    type: string;
+}
+
+@resolver()
+export class ConditionFactory {
+    public get(container: Container) {
+        return (data: comparisonObject): BaseCondition => {
+            switch (data.type) {
+                case 'comparison':
+                    return container.invoke(ComparisonCondition, [data]);
+                default:
+                    throw TypeError("Bad comparison type");
+            }
         }
-    }
-
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
-
-        return this.factory(item);
     }
 }

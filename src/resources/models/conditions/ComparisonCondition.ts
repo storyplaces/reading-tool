@@ -33,24 +33,35 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {BaseCondition} from "./BaseCondition";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
+export class ComparisonCondition extends BaseCondition {
+    id: string;
+    type: string;
+    a: string;
+    b: string;
+    aType: string;
+    bType: string;
+
+    constructor({id = "", type = "", a = "", b = "", aType = "", bType = ""} = {}) {
         super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
+
+        this.id = id;
+        this.type = type;
+        this.a = a;
+        this.b = b;
+        this.aType = aType;
+        this.bType = bType;
     }
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
-
-        return this.factory(item);
+    toJson() {
+        return {
+            id: this.id,
+            type: this.type,
+            a: this.a,
+            b: this.b,
+            aType: this.aType,
+            bType: this.bType
+        };
     }
 }

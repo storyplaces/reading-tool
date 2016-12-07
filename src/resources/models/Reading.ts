@@ -33,24 +33,34 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
+import {VariableCollection} from "../collections/VariableCollection";
 import {inject, Factory} from "aurelia-framework";
+import {BaseModel} from "./BaseModel";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
+@inject(Factory.of(VariableCollection))
+export class Reading extends BaseModel {
+    variables: VariableCollection;
+    userId: string;
+    readingId: string;
+
+    constructor(private variableCollectionFactory: (any?) => VariableCollection, data?: any) {
         super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
+        this.fromObject(data);
     }
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
+    fromObject({id = undefined, readingId = undefined, userId = undefined, variables = undefined} = {}) {
+        this.id = id;
+        this.readingId = readingId;
+        this.userId = userId;
+        this.variables = this.variableCollectionFactory(variables);
+    }
 
-        return this.factory(item);
+    toJSON() {
+        return {
+            id: this.id,
+            readingId: this.readingId,
+            userId: this.userId,
+            variables: this.variables,
+        }
     }
 }

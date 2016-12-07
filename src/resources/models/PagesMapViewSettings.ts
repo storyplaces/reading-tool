@@ -33,24 +33,29 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {JSONable} from "../interfaces/JSONable";
+import {FromObjectInterface} from "../interfaces/FromObjectInterface";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
+export class PagesMapViewSettings implements JSONable, FromObjectInterface {
+    map: boolean;
+    pageDistance: boolean;
+    pageArrows: boolean;
+
+    constructor(data?: any) {
+        this.fromObject(data);
     }
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
+    public fromObject({map = undefined, pageArrows = undefined, pageDistance = undefined} = {}) {
+        this.map = map;
+        this.pageArrows = pageArrows;
+        this.pageDistance = pageDistance;
+    }
 
-        return this.factory(item);
+    public toJSON() {
+        return {
+            map: this.map,
+            pageArrows: this.pageArrows,
+            pageDistance: this.pageDistance
+        };
     }
 }

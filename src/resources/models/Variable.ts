@@ -33,24 +33,37 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {BaseModel} from "./BaseModel";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
+export class Variable extends BaseModel {
+    private _value: string|number|boolean;
+
+    get value(): string|number|boolean {
+        return this._value
+    };
+
+    set value(value: string|number|boolean) {
+        if (value != undefined && typeof value != 'string' && typeof value != 'number' && typeof value != 'boolean') {
+            throw TypeError("Variable value can only be a string, a number or a boolean");
         }
+
+        this._value = value;
     }
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
+    constructor(data?: any) {
+        super();
+        this.fromObject(data);
+    }
 
-        return this.factory(item);
+    fromObject({id = undefined, value = undefined} = {}) {
+        this.id = id;
+        this.value = value;
+    }
+
+    toJSON() {
+        return {
+            id: this.id,
+            value: this.value
+        }
     }
 }

@@ -33,24 +33,34 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {Container} from "aurelia-framework";
+import {ConditionFactory} from "../../../src/resources/factories/ConditionFactory";
+import {ComparisonCondition} from "../../../src/resources/models/conditions/ComparisonCondition";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
-    }
+describe("ConditionFactory", () => {
+    let container: Container;
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
+    beforeEach(() => {
+        container = new Container().makeGlobal();
+        spyOn(container, 'invoke').and.returnValue(null);
+    });
 
-        return this.factory(item);
-    }
-}
+    afterEach(() => {
+       container = null;
+    });
+
+    it("throws an error when an invalid type is passed", () => {
+        let factory = new ConditionFactory().get(container);
+
+        expect(() => {factory({type:"other"})}).toThrow();
+    });
+
+    it("invokes a ComparisonCondition when the type of condition is passed", () => {
+        let factory = new ConditionFactory().get(container);
+        let data = {type:"comparison"};
+
+        factory(data);
+
+        expect(container.invoke).toHaveBeenCalledWith(ComparisonCondition, [data]);
+    });
+});

@@ -33,24 +33,55 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {Page} from "../../../src/resources/models/Page";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
-    }
+describe("Page model", () => {
+    let factoryCalledWith;
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
+    // let factory = (data) => {
+    //     factoryCalledWith = data;
+    //     return data as VariableCollection;
+    // };
 
-        return this.factory(item);
-    }
-}
+    beforeEach(() => {
+        factoryCalledWith = "set to something random";
+    });
+
+    afterEach(() => {
+    });
+
+    it("can be instantiated with no data", () => {
+        let model = new Page();
+
+        expect(model.id).toBeUndefined();
+        expect(model.name).toBeUndefined();
+        expect(model.conditions).toBeUndefined();
+    });
+
+    it("can be instantiated with data", () => {
+        let model = new Page({id: "1", name: "name", conditions: [{id: "2"}]});
+
+        expect(model.id).toEqual("1");
+        expect(model.name).toEqual("name");
+        expect(model.conditions).toEqual([{id: "2"}]);
+
+    });
+
+    it("can have an anonymous object passed to it", () => {
+        let model = new Page();
+
+        model.fromObject({id: "1", name: "name", conditions: [{id: "2"}]});
+
+        expect(model.id).toEqual("1");
+        expect(model.name).toEqual("name");
+        expect(model.conditions).toEqual([{id: "2"}]);
+    });
+
+    it("can be cast to JSON", () => {
+        let model = new Page({id: "1", name: "name", conditions: [{id: "2"}]});
+
+        let result = JSON.stringify(model);
+
+        expect(result).toEqual('{"id":"1","name":"name","conditions":[{"id":"2"}]}');
+    });
+});

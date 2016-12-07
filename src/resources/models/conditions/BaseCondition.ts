@@ -33,24 +33,22 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {Identifiable} from "../../interfaces/Identifiable";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
-    }
+export abstract class BaseCondition implements Identifiable {
+    _id: string;
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
+    set id(id) {
+        if (id != undefined && typeof id != "string") {
+            throw TypeError("Unable to set id as it is not a string");
         }
 
-        return this.factory(item);
+        this._id = id;
     }
+
+    get id() {
+        return this._id;
+    }
+
+    type:string;
 }
