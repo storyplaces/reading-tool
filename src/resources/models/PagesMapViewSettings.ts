@@ -34,9 +34,9 @@
  */
 
 import {JSONable} from "../interfaces/JSONable";
-import {fromObjectInterface} from "../interfaces/fromObjectInterface";
+import {FromObjectInterface} from "../interfaces/FromObjectInterface";
 
-export class PagesMapViewSettings implements JSONable, fromObjectInterface {
+export class PagesMapViewSettings implements JSONable, FromObjectInterface {
     map: boolean;
     pageDistance: boolean;
     pageArrows: boolean;

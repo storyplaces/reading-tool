@@ -33,6 +33,6 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export interface fromObjectInterface{
+export interface FromObjectInterface{
     fromObject(data);
 }

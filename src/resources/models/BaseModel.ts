@@ -35,9 +35,9 @@
 
 import {Identifiable} from "../interfaces/Identifiable";
 import {JSONable} from "../interfaces/JSONable";
-import {fromObjectInterface} from "../interfaces/fromObjectInterface";
+import {FromObjectInterface} from "../interfaces/FromObjectInterface";
 
-export abstract class BaseModel implements Identifiable, JSONable, fromObjectInterface{
+export abstract class BaseModel implements Identifiable, JSONable, FromObjectInterface{
     _id: string;
 
     set id(id) {
