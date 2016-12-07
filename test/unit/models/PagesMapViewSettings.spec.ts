@@ -34,11 +34,22 @@
  */
 
 import {PagesMapViewSettings} from "../../../src/resources/models/PagesMapViewSettings";
+import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
 describe("PagesMapViewSettings model", () => {
 
+    let typeChecker: TypeChecker;
+
+    beforeEach(() => {
+        typeChecker = new TypeChecker();
+    });
+
+    afterEach(() => {
+        typeChecker = null;
+    });
+
     it("can be instantiated with no data", () => {
-        let model = new PagesMapViewSettings;
+        let model = new PagesMapViewSettings(typeChecker);
 
         expect(model.map).toBeUndefined();
         expect(model.pageArrows).toBeUndefined();
@@ -47,7 +58,7 @@ describe("PagesMapViewSettings model", () => {
 
     it("can be instantiated with an object", () => {
         let data = {map: true, pageArrows: true, pageDistance: true};
-        let model = new PagesMapViewSettings(data);
+        let model = new PagesMapViewSettings(typeChecker, data);
 
         expect(model.map).toEqual(true);
         expect(model.pageArrows).toEqual(true);
@@ -56,7 +67,7 @@ describe("PagesMapViewSettings model", () => {
 
     it("can have an anonymous object passed to it", () => {
         let data = {map: true, pageArrows: true, pageDistance: true};
-        let model = new PagesMapViewSettings();
+        let model = new PagesMapViewSettings(typeChecker);
         model.fromObject(data);
 
         expect(model.map).toEqual(true);
@@ -64,9 +75,27 @@ describe("PagesMapViewSettings model", () => {
         expect(model.pageDistance).toEqual(true);
     });
 
+    it("will throw an error when map is set to something other than a boolean or undefined", () => {
+        let model = new PagesMapViewSettings(typeChecker);
+
+        expect(() => {model.map = 1 as any}).toThrow();
+    });
+
+    it("will throw an error when pageArrows is set to something other than a boolean or undefined", () => {
+        let model = new PagesMapViewSettings(typeChecker);
+
+        expect(() => {model.pageArrows = 1 as any}).toThrow();
+    });
+
+    it("will throw an error when pageDistance is set to something other than a boolean or undefined", () => {
+        let model = new PagesMapViewSettings(typeChecker);
+
+        expect(() => {model.pageDistance = 1 as any}).toThrow();
+    });
+
     it("will convert to JSON", () => {
         let data = {map: true, pageArrows: true, pageDistance: true};
-        let model = new PagesMapViewSettings(data);
+        let model = new PagesMapViewSettings(typeChecker, data);
 
         let result = JSON.stringify(model);
 

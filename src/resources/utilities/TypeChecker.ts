@@ -33,48 +33,24 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseModel} from "./BaseModel";
-import {TypeChecker} from "../utilities/TypeChecker";
-import {inject} from "aurelia-framework";
-
-@inject(TypeChecker)
-export class Page extends BaseModel{
-
-    private _name: string;
-    private _conditions: Array<Object>;
-
-    constructor(private typeChecker: TypeChecker, data?: any) {
-        super();
-        this.fromObject(data);
-    }
-
-    public fromObject({id = undefined, name = undefined, conditions = undefined} = {}) {
-        this.id = id;
-        this.name = name;
-        this.conditions = conditions;
-    }
-
-    public toJSON() {
-        return {
-            id: this.id,
-            name: this.name,
-            conditions: this.conditions,
+export class TypeChecker {
+    validateAsScalarOrUndefined(fieldName: string, value: any, scalarType: string) {
+        if (value !== undefined && typeof value !== scalarType) {
+            throw TypeError(fieldName + " must be a " + scalarType);
         }
     }
 
-    get conditions(): Array<Object> {
-        return this._conditions;
+    validateAsStringOrUndefined(fieldName: string, value: any) {
+        this.validateAsScalarOrUndefined(fieldName, value, 'string');
     }
 
-    set conditions(value: Array<Object>) {
-        this._conditions = value;
-    }
-    get name(): string {
-        return this._name;
+    validateAsBooleanOrUndefined(fieldName: string, value: any) {
+        this.validateAsScalarOrUndefined(fieldName, value, 'boolean');
     }
 
-    set name(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Name", value);
-        this._name = value;
+    validateAsObjectOrUndefined(fieldName: string, value: any, objectName: string, object: Function) {
+        if (value !== undefined && !(value instanceof object)) {
+            throw TypeError(fieldName + " must be of type " + objectName);
+        }
     }
 }

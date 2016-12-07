@@ -32,18 +32,19 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {VariableCollection} from "../collections/VariableCollection";
 import {inject, Factory} from "aurelia-framework";
 import {BaseModel} from "./BaseModel";
+import {TypeChecker} from "../utilities/TypeChecker";
 
-@inject(Factory.of(VariableCollection))
+@inject(Factory.of(VariableCollection), TypeChecker)
 export class Reading extends BaseModel {
-    variables: VariableCollection;
-    userId: string;
-    readingId: string;
 
-    constructor(private variableCollectionFactory: (any?) => VariableCollection, data?: any) {
+    private _variables: VariableCollection;
+    private _userId: string;
+    private _readingId: string;
+
+    constructor(private variableCollectionFactory: (any?) => VariableCollection, private typeChecker: TypeChecker, data?: any) {
         super();
         this.fromObject(data);
     }
@@ -62,5 +63,32 @@ export class Reading extends BaseModel {
             userId: this.userId,
             variables: this.variables,
         }
+    }
+
+    get readingId(): string {
+        return this._readingId;
+    }
+
+    set readingId(value: string) {
+        this.typeChecker.validateAsStringOrUndefined('ReadingId', value);
+        this._readingId = value;
+    }
+
+    get userId(): string {
+        return this._userId;
+    }
+
+    set userId(userId: string) {
+        this.typeChecker.validateAsStringOrUndefined('UserId', userId);
+        this._userId = userId;
+    }
+
+    get variables(): VariableCollection {
+        return this._variables;
+    }
+
+    set variables(value: VariableCollection) {
+        this.typeChecker.validateAsObjectOrUndefined("Variables", value, "VariableCollection", VariableCollection);
+        this._variables = value;
     }
 }

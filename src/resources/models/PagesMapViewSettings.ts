@@ -35,13 +35,17 @@
 
 import {JSONable} from "../interfaces/JSONable";
 import {FromObjectInterface} from "../interfaces/FromObjectInterface";
+import {TypeChecker} from "../utilities/TypeChecker";
+import {inject} from "aurelia-framework";
 
+@inject(TypeChecker)
 export class PagesMapViewSettings implements JSONable, FromObjectInterface {
-    map: boolean;
-    pageDistance: boolean;
-    pageArrows: boolean;
 
-    constructor(data?: any) {
+    private _map: boolean;
+    private _pageDistance: boolean;
+    private _pageArrows: boolean;
+
+    constructor(private typeChecker: TypeChecker, data?: any) {
         this.fromObject(data);
     }
 
@@ -57,5 +61,30 @@ export class PagesMapViewSettings implements JSONable, FromObjectInterface {
             pageArrows: this.pageArrows,
             pageDistance: this.pageDistance
         };
+    }
+
+    get map(): boolean {
+        return this._map;
+    }
+
+    set map(value: boolean) {
+        this.typeChecker.validateAsBooleanOrUndefined("Map", value);
+        this._map = value;
+    }
+    get pageDistance(): boolean {
+        return this._pageDistance;
+    }
+
+    set pageDistance(value: boolean) {
+        this.typeChecker.validateAsBooleanOrUndefined("PageDistance", value);
+        this._pageDistance = value;
+    }
+    get pageArrows(): boolean {
+        return this._pageArrows;
+    }
+
+    set pageArrows(value: boolean) {
+        this.typeChecker.validateAsBooleanOrUndefined("PageArrows", value);
+        this._pageArrows = value;
     }
 }

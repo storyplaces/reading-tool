@@ -34,9 +34,11 @@
  */
 
 import {Page} from "../../../src/resources/models/Page";
+import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
 describe("Page model", () => {
     let factoryCalledWith;
+    let typeChecker: TypeChecker;
 
     // let factory = (data) => {
     //     factoryCalledWith = data;
@@ -45,13 +47,15 @@ describe("Page model", () => {
 
     beforeEach(() => {
         factoryCalledWith = "set to something random";
+        typeChecker = new TypeChecker;
     });
 
     afterEach(() => {
+        typeChecker = null;
     });
 
     it("can be instantiated with no data", () => {
-        let model = new Page();
+        let model = new Page(typeChecker);
 
         expect(model.id).toBeUndefined();
         expect(model.name).toBeUndefined();
@@ -59,16 +63,15 @@ describe("Page model", () => {
     });
 
     it("can be instantiated with data", () => {
-        let model = new Page({id: "1", name: "name", conditions: [{id: "2"}]});
+        let model = new Page(typeChecker, {id: "1", name: "name", conditions: [{id: "2"}]});
 
         expect(model.id).toEqual("1");
         expect(model.name).toEqual("name");
         expect(model.conditions).toEqual([{id: "2"}]);
-
     });
 
     it("can have an anonymous object passed to it", () => {
-        let model = new Page();
+        let model = new Page(typeChecker);
 
         model.fromObject({id: "1", name: "name", conditions: [{id: "2"}]});
 
@@ -77,8 +80,14 @@ describe("Page model", () => {
         expect(model.conditions).toEqual([{id: "2"}]);
     });
 
+    it("will throw an exception when name is set to something other than a string or undefined", () => {
+        let model = new Page(typeChecker);
+
+        expect(() => {model.name = 1 as any}).toThrow()
+    });
+
     it("can be cast to JSON", () => {
-        let model = new Page({id: "1", name: "name", conditions: [{id: "2"}]});
+        let model = new Page(typeChecker, {id: "1", name: "name", conditions: [{id: "2"}]});
 
         let result = JSON.stringify(model);
 

@@ -32,26 +32,27 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {PageCollection} from "../collections/PageCollection";
 import {PagesMapViewSettings} from "./PagesMapViewSettings";
 import {Factory, inject} from "aurelia-framework";
 import {BaseModel} from "./BaseModel";
+import {TypeChecker} from "../utilities/TypeChecker";
 
-@inject(Factory.of(PageCollection), Factory.of(PagesMapViewSettings))
+@inject(Factory.of(PageCollection), Factory.of(PagesMapViewSettings), TypeChecker)
 export class Story extends BaseModel {
-    name: string;
-    pages: PageCollection;
-    cachedMediaIds: Array<number>;
-    conditions: any;
-    functions: any;
-    tags: Array<string>;
-    description: string;
-    author: string;
-    pagesMapViewSettings: PagesMapViewSettings;
+    private _author: string;
+    private _name: string;
+    private _description: string;
+    private _pages: PageCollection;
+    private _cachedMediaIds: Array<number>;
+    private _conditions: any;
+    private _functions: any;
+    private _tags: Array<string>;
+    private _pagesMapViewSettings: PagesMapViewSettings;
 
     constructor(private pageCollectionFactory: (any?) => PageCollection,
                 private pagesMapViewSettingsFactory: (any?) => PagesMapViewSettings,
+                private typeChecker: TypeChecker,
                 data?: any) {
         super();
         this.fromObject(data);
@@ -84,4 +85,82 @@ export class Story extends BaseModel {
             tags: this.tags
         }
     }
+
+    get author(): string {
+        return this._author;
+    }
+
+    set author(author: string) {
+        this.typeChecker.validateAsStringOrUndefined('Author', author);
+        this._author = author;
+    }
+
+    get name(): string {
+        return this._name;
+    }
+
+    set name(name: string) {
+        this.typeChecker.validateAsStringOrUndefined('Name', name);
+        this._name = name;
+    }
+
+    get description(): string {
+        return this._description;
+    }
+
+    set description(description: string) {
+        this.typeChecker.validateAsStringOrUndefined('Description', description);
+        this._description = description;
+    }
+
+    get pagesMapViewSettings(): PagesMapViewSettings {
+        return this._pagesMapViewSettings;
+    }
+
+    set pagesMapViewSettings(pagesMapViewSettings) {
+        this.typeChecker.validateAsObjectOrUndefined("PagesMapViewSettings", pagesMapViewSettings, "PagesMapViewSettings", PagesMapViewSettings);
+        this._pagesMapViewSettings = pagesMapViewSettings
+    }
+
+    get pages(): PageCollection {
+        return this._pages;
+    }
+
+    set pages(pages: PageCollection) {
+        this.typeChecker.validateAsObjectOrUndefined("Pages", pages, "PageCollection", PageCollection);
+        this._pages = pages;
+    }
+
+    get tags(): Array<string> {
+        return this._tags;
+    }
+
+    set tags(value: Array<string>) {
+        this._tags = value;
+    }
+
+    get functions(): any {
+        return this._functions;
+    }
+
+    set functions(value: any) {
+        this._functions = value;
+    }
+
+    get conditions(): any {
+        return this._conditions;
+    }
+
+    set conditions(value: any) {
+        this._conditions = value;
+    }
+
+    get cachedMediaIds(): Array<number> {
+        return this._cachedMediaIds;
+    }
+
+    set cachedMediaIds(value: Array<number>) {
+        this._cachedMediaIds = value;
+    }
+
 }

@@ -33,6 +33,6 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export class CondtionCreationException extends Error {
+export class ConditionCreationException extends Error {
 
 }

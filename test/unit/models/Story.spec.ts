@@ -36,31 +36,40 @@
 import {Story} from "../../../src/resources/models/Story";
 import {PageCollection} from "../../../src/resources/collections/PageCollection";
 import {PagesMapViewSettings} from "../../../src/resources/models/PagesMapViewSettings";
+import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
 describe("Story model", () => {
     let pagesMapViewSettingsFactoryCalledWith;
     let pageCollectionFactoryCalledWith;
+    let typeChecker: TypeChecker
+
 
     let pageCollectionFactory = (data) => {
         pageCollectionFactoryCalledWith = data;
-        return data as PageCollection;
+        return undefined;
     };
+
 
     let pagesMapViewSettingsFactory = (data) => {
         pagesMapViewSettingsFactoryCalledWith = data;
-        return data as PagesMapViewSettings;
+        return undefined;
     };
+
 
     beforeEach(() => {
         pageCollectionFactoryCalledWith = "set to something random";
         pagesMapViewSettingsFactoryCalledWith = "set to something random";
+        typeChecker = new TypeChecker();
     });
+
 
     afterEach(() => {
+        typeChecker = null;
     });
 
+
     it("can be instantiated with no data", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
 
         expect(model.id).toBeUndefined();
         expect(model.author).toBeUndefined();
@@ -77,13 +86,14 @@ describe("Story model", () => {
         expect(pagesMapViewSettingsFactoryCalledWith).toBeUndefined();
     });
 
+
     it("can be instantiated with data", () => {
         let data = {
             id: "id", name: "name", cachedMediaIds: ["cachedMediaId"], conditions: [{id: "condition"}], description: "description", functions: [{id: "function"}],
             pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"]
         };
 
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, data);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker, data);
 
         expect(model.id).toEqual("id");
         expect(model.author).toEqual("author");
@@ -91,13 +101,15 @@ describe("Story model", () => {
         expect(model.conditions).toEqual([{id: "condition"}]);
         expect(model.description).toEqual("description");
         expect(model.functions).toEqual([{id: "function"}]);
-        expect(model.pages).toEqual([{id: "page"}]);
-        expect(model.pagesMapViewSettings).toEqual({setting: true});
         expect(model.name).toEqual("name");
         expect(model.tags).toEqual(["tag"]);
+
+        expect(model.pages).toEqual(undefined);
+        expect(model.pagesMapViewSettings).toEqual(undefined);
         expect(pageCollectionFactoryCalledWith).toEqual([{id: "page"}]);
         expect(pagesMapViewSettingsFactoryCalledWith).toEqual({setting: true});
     });
+
 
     it("can have an anonymous Object passed to it", () => {
         let data = {
@@ -105,7 +117,7 @@ describe("Story model", () => {
             pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"]
         };
 
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
         model.fromObject(data);
 
         expect(model.id).toEqual("id");
@@ -114,25 +126,63 @@ describe("Story model", () => {
         expect(model.conditions).toEqual([{id: "condition"}]);
         expect(model.description).toEqual("description");
         expect(model.functions).toEqual([{id: "function"}]);
-        expect(model.pages).toEqual([{id: "page"}]);
-        expect(model.pagesMapViewSettings).toEqual({setting: true});
         expect(model.name).toEqual("name");
         expect(model.tags).toEqual(["tag"]);
+
+        expect(model.pages).toEqual(undefined);
+        expect(model.pagesMapViewSettings).toEqual(undefined);
         expect(pageCollectionFactoryCalledWith).toEqual([{id: "page"}]);
         expect(pagesMapViewSettingsFactoryCalledWith).toEqual({setting: true});
     });
 
-    it("can have JSON passed to it", () => {
+
+    it("will throw an error if name is not set to a string or undefined", () => {
+       let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+
+       expect(() => {model.name = 1 as any}).toThrow();
+    });
+
+
+    it("will throw an error if description is not set to a string or undefined", () => {
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+
+        expect(() => {model.description = 1 as any}).toThrow();
+    });
+
+
+    it("will throw an error if author is not set to a string or undefined", () => {
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+
+        expect(() => {model.author = 1 as any}).toThrow();
+    });
+
+
+    it("will throw an error if pages is not set to a PagesCollection object", () => {
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+
+        expect(() => {model.pages = 1 as any}).toThrow();
+    });
+
+
+    it("will throw an error if pagesMapViewSettings is not set to a PagesCollection object", () => {
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+
+        expect(() => {model.pagesMapViewSettings = 1 as any}).toThrow();
+    });
+
+
+    it("will output JSON when passed to JSON.stringify", () => {
         let data = {
             id: "id", name: "name", cachedMediaIds: ["cachedMediaId"], conditions: [{id: "condition"}], description: "description", functions: [{id: "function"}],
             pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"]
         };
 
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, data);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker, data);
+
 
         let result = JSON.stringify(model);
 
-        expect(result).toEqual('{"id":"id","author":"author","cachedMediaIds":["cachedMediaId"],"conditions":[{"id":"condition"}],"description":"description","functions":[{"id":"function"}],"pages":[{"id":"page"}],"pagesMapViewSettings":{"setting":true},"name":"name","tags":["tag"]}');
+        //TODO:  Make this a real test as we don't have any sub modules!
+        expect(result).toEqual('{"id":"id","author":"author","cachedMediaIds":["cachedMediaId"],"conditions":[{"id":"condition"}],"description":"description","functions":[{"id":"function"}],"name":"name","tags":["tag"]}');
     });
-
 });
