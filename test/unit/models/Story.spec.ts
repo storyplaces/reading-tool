@@ -37,6 +37,7 @@ describe("Story model", () => {
         expect(model.pagesMapViewSettings).toEqual(undefined);
         expect(model.name).toEqual(undefined);
         expect(model.tags).toEqual(undefined);
+
         expect(pageCollectionFactoryCalledWith).toBeUndefined();
         expect(pagesMapViewSettingsFactoryCalledWith).toBeUndefined();
     });

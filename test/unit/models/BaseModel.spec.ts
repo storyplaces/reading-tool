@@ -1,11 +1,9 @@
 /**
  * Created by kep1u13 on 06/12/2016.
  */
-import {Container} from "aurelia-framework";
 import {BaseModel} from "../../../src/resources/models/BaseModel";
 
 describe("BaseModel", () => {
-    let container: Container;
 
     class TestModel extends BaseModel {
 
@@ -17,65 +15,53 @@ describe("BaseModel", () => {
         }
     }
 
-    function resolve(object: Function, data?: any) {
-        return container.invoke(object, [data]);
-    }
-
-    beforeEach(() => {
-        container = new Container().makeGlobal();
-    });
-
-    afterEach(() => {
-        container = null;
-    });
-
 
     it("will throw an error if id is set to something other than a string", () => {
-        let model = resolve(TestModel);
+        let model = new TestModel;
 
         expect(() => {
-            model.id = 1
+            model.id = 1 as any
         }).toThrow();
 
         expect(() => {
-            model.id = false
+            model.id = false as any
         }).toThrow();
 
         expect(() => {
-            model.id = {}
+            model.id = {} as any
         }).toThrow();
 
         expect(() => {
-            model.id = () => {
-            }
+            model.id = function () {
+            } as any
         }).toThrow();
     });
 
     it("will throw an error if id is passed to fromObject as something other than a string", () => {
-        let model = resolve(TestModel);
+        let model = new TestModel;
 
         expect(() => {
-            model.fromObject({id: 1})
+            model.fromObject({id: 1} as any)
         }).toThrow();
 
         expect(() => {
-            model.fromObject({id: false})
+            model.fromObject({id: false} as any)
         }).toThrow();
 
         expect(() => {
-            model.fromObject({id: {}})
+            model.fromObject({id: {}} as any)
         }).toThrow();
 
         expect(() => {
             model.fromObject({
-                id: () => {
-                }
+                id: function () {
+                } as any
             })
         }).toThrow();
     });
 
     it("will not throw an error if id is set to a string", () => {
-        let model = resolve(TestModel);
+        let model = new TestModel;
 
         model.id = "1";
 
@@ -83,13 +69,12 @@ describe("BaseModel", () => {
     });
 
     it("will have toJSON called when passed to JSONStringify", () => {
-        let model = resolve(TestModel);
+        let model = new TestModel;
 
-        spyOn(model, 'toJSON').and.returnValue({test: true});
+        spyOn(model, 'toJSON');
 
-        let result = JSON.stringify(model);
+        JSON.stringify(model);
 
         expect(model.toJSON).toHaveBeenCalledTimes(1);
-        expect(result).toEqual('{"test":true}');
     })
 });

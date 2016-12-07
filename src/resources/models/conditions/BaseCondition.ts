@@ -36,7 +36,19 @@
 import {Identifiable} from "../../interfaces/Identifiable";
 
 export abstract class BaseCondition implements Identifiable {
-    id: string;
-    type: string;
+    _id: string;
 
+    set id(id) {
+        if (id != undefined && typeof id != "string") {
+            throw TypeError("Unable to set id as it is not a string");
+        }
+
+        this._id = id;
+    }
+
+    get id() {
+        return this._id;
+    }
+
+    type:string;
 }

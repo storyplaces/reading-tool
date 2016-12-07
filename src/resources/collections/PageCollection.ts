@@ -40,7 +40,7 @@ import {inject, Factory} from "aurelia-framework";
 export class PageCollection extends BaseCollection<Page> {
     constructor(private factory: (any?) => Page, data?: any[]) {
         super();
-        if (data) {
+        if (data && Array.isArray(data)) {
             this.saveMany(data);
         }
     }

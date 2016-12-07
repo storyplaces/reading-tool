@@ -36,4 +36,14 @@ describe("Variable model", () => {
 
         expect(result).toEqual('{"id":"1","value":true}');
     });
+
+    it("will throw an error if value is set to something other than a string, boolean, number or undefined", () => {
+        let model = new Variable;
+
+        let testModel = new Variable;
+
+        expect(() => {model.value = {} as any}).toThrow();
+        expect(() => {model.value = function(){} as any}).toThrow();
+        expect(() => {model.value = testModel as any}).toThrow();
+    });
 });

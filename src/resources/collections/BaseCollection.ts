@@ -38,12 +38,6 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
 
     private _data: Array<DATA_TYPE> = [];
 
-    constructor(data? : any[]) {
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
-    }
-
     get length(): number {
         return this._data.length;
     }

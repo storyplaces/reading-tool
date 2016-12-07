@@ -32,11 +32,22 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {BaseModel} from "./BaseModel";
 
-export class Variable extends BaseModel{
-    value: any;
+export class Variable extends BaseModel {
+    private _value: string|number|boolean;
+
+    get value(): string|number|boolean {
+        return this._value
+    };
+
+    set value(value: string|number|boolean) {
+        if (value != undefined && typeof value != 'string' && typeof value != 'number' && typeof value != 'boolean') {
+            throw TypeError("Variable value can only be a string, a number or a boolean");
+        }
+
+        this._value = value;
+    }
 
     constructor(data?: any) {
         super();

@@ -31,20 +31,28 @@
  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
+ */
 import {BaseCollection} from "./BaseCollection";
-
 import {BaseCondition} from "../models/conditions/BaseCondition";
-import {ConditionFactory} from "../models/factories/ConditionFactory";
-import {inject, transient} from "aurelia-framework";
+import {ConditionFactory} from "../factories/ConditionFactory";
+import {inject} from "aurelia-framework";
 
 @inject(ConditionFactory)
-@transient()
 export class ConditionCollection extends BaseCollection<BaseCondition> {
 
-    constructor(private conditionFactory: ConditionFactory) {
-        super(conditionFactory);
+    constructor(private conditionFactory: (any?) => BaseCondition, data?: any[]) {
+        super();
+
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
+        }
     }
 
+    protected itemFromObject(item: any): BaseCondition {
+        if (item instanceof BaseCondition) {
+            return item as BaseCondition;
+        }
+
+        return this.conditionFactory(item);
+    }
 }
