@@ -33,24 +33,20 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {TypeChecker} from "../../utilities/TypeChecker";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
+import {Reading} from "../Reading";
+import {BaseModel} from "../BaseModel";
+
+export abstract class BaseCondition extends BaseModel{
+    constructor(typeChecker: TypeChecker) {
+        super(typeChecker);
     }
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
+    abstract get type();
+    abstract set type(value: any);
 
-        return this.factory(item);
-    }
+    protected _type:string;
+
+    abstract execute(reading: Reading);
 }

@@ -33,24 +33,26 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {Identifiable} from "../interfaces/Identifiable";
+import {JSONable} from "../interfaces/JSONable";
+import {FromObjectInterface} from "../interfaces/FromObjectInterface";
+import {TypeChecker} from "../utilities/TypeChecker";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
+export abstract class BaseModel implements Identifiable, JSONable, FromObjectInterface{
+    protected _id: string;
+
+    constructor(protected typeChecker: TypeChecker) {
     }
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
-
-        return this.factory(item);
+    set id(id) {
+        this.typeChecker.validateAsStringOrUndefined("Id", id);
+        this._id = id;
     }
+
+    get id() {
+        return this._id;
+    }
+
+    public abstract toJSON();
+    public abstract fromObject(any);
 }

@@ -32,25 +32,63 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
+import {VariableCollection} from "../collections/VariableCollection";
 import {inject, Factory} from "aurelia-framework";
+import {BaseModel} from "./BaseModel";
+import {TypeChecker} from "../utilities/TypeChecker";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
+@inject(Factory.of(VariableCollection), TypeChecker)
+export class Reading extends BaseModel {
+
+    private _variables: VariableCollection;
+    private _userId: string;
+    private _readingId: string;
+
+    constructor(private variableCollectionFactory: (any?) => VariableCollection, typeChecker: TypeChecker, data?: any) {
+        super(typeChecker);
+        this.fromObject(data);
+    }
+
+    fromObject({id = undefined, readingId = undefined, userId = undefined, variables = undefined} = {}) {
+        this.id = id;
+        this.readingId = readingId;
+        this.userId = userId;
+        this.variables = this.variableCollectionFactory(variables);
+    }
+
+    toJSON() {
+        return {
+            id: this.id,
+            readingId: this.readingId,
+            userId: this.userId,
+            variables: this.variables,
         }
     }
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
+    get readingId(): string {
+        return this._readingId;
+    }
 
-        return this.factory(item);
+    set readingId(value: string) {
+        this.typeChecker.validateAsStringOrUndefined('ReadingId', value);
+        this._readingId = value;
+    }
+
+    get userId(): string {
+        return this._userId;
+    }
+
+    set userId(userId: string) {
+        this.typeChecker.validateAsStringOrUndefined('UserId', userId);
+        this._userId = userId;
+    }
+
+    get variables(): VariableCollection {
+        return this._variables;
+    }
+
+    set variables(value: VariableCollection) {
+        this.typeChecker.validateAsObjectOrUndefined("Variables", value, "VariableCollection", VariableCollection);
+        this._variables = value;
     }
 }

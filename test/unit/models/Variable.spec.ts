@@ -33,24 +33,52 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {Variable} from "../../../src/resources/models/Variable";
+import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
-    }
+describe("Variable model", () => {
+    let typeChecker = new TypeChecker;
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
+    it("can be instantiated with no data", () => {
+        let model = new Variable(typeChecker);
 
-        return this.factory(item);
-    }
-}
+        expect(model.id).toBeUndefined();
+        expect(model.value).toBeUndefined();
+    });
+
+    it("can be instantiated with an object", () => {
+        let data = {id: "1", value: true};
+        let model = new Variable(typeChecker, data);
+
+        expect(model.id).toEqual("1");
+        expect(model.value).toEqual(true);
+    });
+
+    it("can have an anonymous object passed to it", () => {
+        let data = {id: "1", value: true};
+        let model = new Variable(typeChecker);
+        model.fromObject(data);
+
+        expect(model.id).toEqual("1");
+        expect(model.value).toEqual(true);
+    });
+
+    it("will convert to JSON", () => {
+        let data = {id: "1", value: true};
+        let model = new Variable(typeChecker, data);
+
+        let result = JSON.stringify(model);
+
+        expect(result).toEqual('{"id":"1","value":true}');
+    });
+
+    it("will throw an error if value is set to something other than a string, boolean, number or undefined", () => {
+        let model = new Variable(typeChecker);
+
+        let testModel = new Variable(typeChecker);
+
+        expect(() => {model.value = {} as any}).toThrow();
+        expect(() => {model.value = function(){} as any}).toThrow();
+        expect(() => {model.value = testModel as any}).toThrow();
+    });
+});

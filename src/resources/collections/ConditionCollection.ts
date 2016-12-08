@@ -34,23 +34,26 @@
  */
 
 import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {BaseCondition} from "../models/conditions/BaseCondition";
+import {ConditionFactory} from "../factories/ConditionFactory";
+import {inject} from "aurelia-framework";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
+@inject(ConditionFactory)
+export class ConditionCollection extends BaseCollection<BaseCondition> {
+
+    constructor(private conditionFactory: (any?) => BaseCondition, data?: any[]) {
         super();
+
         if (data && Array.isArray(data)) {
             this.saveMany(data);
         }
     }
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
+    protected itemFromObject(item: any): BaseCondition {
+        if (item instanceof BaseCondition) {
+            return item as BaseCondition;
         }
 
-        return this.factory(item);
+        return this.conditionFactory(item);
     }
 }

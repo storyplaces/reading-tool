@@ -34,20 +34,21 @@
  */
 
 import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
+import {Variable} from "../models/Variable";
 import {inject, Factory} from "aurelia-framework";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
+@inject(Factory.of(Variable))
+export class VariableCollection extends BaseCollection<Variable> {
+    constructor(private factory: (any?) => Variable, data?: any[]) {
         super();
+
         if (data && Array.isArray(data)) {
             this.saveMany(data);
         }
     }
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
+    protected itemFromObject(item: any): Variable {
+        if (item instanceof Variable)  {
             return item;
         }
 

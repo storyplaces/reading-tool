@@ -33,24 +33,83 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {BaseModel} from "../../../src/resources/models/BaseModel";
+import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
+describe("BaseModel", () => {
+    let typeChecker = new TypeChecker;
+
+    class TestModel extends BaseModel {
+
+
+        toJSON() {
+        }
+
+        fromObject({id = undefined}) {
+            this.id = id;
         }
     }
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
 
-        return this.factory(item);
-    }
-}
+    it("will throw an error if id is set to something other than a string", () => {
+        let model = new TestModel(typeChecker);
+
+        expect(() => {
+            model.id = 1 as any
+        }).toThrow();
+
+        expect(() => {
+            model.id = false as any
+        }).toThrow();
+
+        expect(() => {
+            model.id = {} as any
+        }).toThrow();
+
+        expect(() => {
+            model.id = function () {
+            } as any
+        }).toThrow();
+    });
+
+    it("will throw an error if id is passed to fromObject as something other than a string", () => {
+        let model = new TestModel(typeChecker);
+
+        expect(() => {
+            model.fromObject({id: 1} as any)
+        }).toThrow();
+
+        expect(() => {
+            model.fromObject({id: false} as any)
+        }).toThrow();
+
+        expect(() => {
+            model.fromObject({id: {}} as any)
+        }).toThrow();
+
+        expect(() => {
+            model.fromObject({
+                id: function () {
+                } as any
+            })
+        }).toThrow();
+    });
+
+    it("will not throw an error if id is set to a string", () => {
+        let model = new TestModel(typeChecker);
+
+        model.id = "1";
+
+        expect(model.id).toEqual("1");
+    });
+
+    it("will have toJSON called when passed to JSONStringify", () => {
+        let model = new TestModel(typeChecker);
+
+        spyOn(model, 'toJSON');
+
+        JSON.stringify(model);
+
+        expect(model.toJSON).toHaveBeenCalledTimes(1);
+    })
+});

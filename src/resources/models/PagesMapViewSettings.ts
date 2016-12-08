@@ -33,24 +33,58 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
+import {JSONable} from "../interfaces/JSONable";
+import {FromObjectInterface} from "../interfaces/FromObjectInterface";
+import {TypeChecker} from "../utilities/TypeChecker";
+import {inject} from "aurelia-framework";
 
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
+@inject(TypeChecker)
+export class PagesMapViewSettings implements JSONable, FromObjectInterface {
+
+    private _map: boolean;
+    private _pageDistance: boolean;
+    private _pageArrows: boolean;
+
+    constructor(private typeChecker: TypeChecker, data?: any) {
+        this.fromObject(data);
     }
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
+    public fromObject({map = undefined, pageArrows = undefined, pageDistance = undefined} = {}) {
+        this.map = map;
+        this.pageArrows = pageArrows;
+        this.pageDistance = pageDistance;
+    }
 
-        return this.factory(item);
+    public toJSON() {
+        return {
+            map: this.map,
+            pageArrows: this.pageArrows,
+            pageDistance: this.pageDistance
+        };
+    }
+
+    get map(): boolean {
+        return this._map;
+    }
+
+    set map(value: boolean) {
+        this.typeChecker.validateAsBooleanOrUndefined("Map", value);
+        this._map = value;
+    }
+    get pageDistance(): boolean {
+        return this._pageDistance;
+    }
+
+    set pageDistance(value: boolean) {
+        this.typeChecker.validateAsBooleanOrUndefined("PageDistance", value);
+        this._pageDistance = value;
+    }
+    get pageArrows(): boolean {
+        return this._pageArrows;
+    }
+
+    set pageArrows(value: boolean) {
+        this.typeChecker.validateAsBooleanOrUndefined("PageArrows", value);
+        this._pageArrows = value;
     }
 }

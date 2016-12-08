@@ -33,24 +33,34 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BaseCollection} from "./BaseCollection";
-import {Page} from "../models/Page";
-import {inject, Factory} from "aurelia-framework";
-
-@inject(Factory.of(Page))
-export class PageCollection extends BaseCollection<Page> {
-    constructor(private factory: (any?) => Page, data?: any[]) {
-        super();
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
+export class TypeChecker {
+    protected validateAsScalarOrUndefined(fieldName: string, value: any, scalarType: string) {
+        if (value !== undefined && typeof value !== scalarType) {
+            throw TypeError(fieldName + " must be a " + scalarType + ", a " + typeof value + " was passed.");
         }
     }
 
-    protected itemFromObject(item: any): Page {
-        if (item instanceof Page) {
-            return item;
-        }
+    validateAsStringOrUndefined(fieldName: string, value: any) {
+        this.validateAsScalarOrUndefined(fieldName, value, 'string');
+    }
 
-        return this.factory(item);
+    validateAsNumberOrUndefined(fieldName: string, value: any) {
+        this.validateAsScalarOrUndefined(fieldName, value, 'number');
+    }
+
+    validateAsBooleanOrUndefined(fieldName: string, value: any) {
+        this.validateAsScalarOrUndefined(fieldName, value, 'boolean');
+    }
+
+    validateAsObjectOrUndefined(fieldName: string, value: any, objectName: string, object: Function) {
+        if (value !== undefined && !(value instanceof object)) {
+            throw TypeError(fieldName + " must be of type " + objectName);
+        }
+    }
+
+    validateScalarValue(fieldName: string, expected: any, actual: any) {
+        if (expected !== actual) {
+            throw TypeError(fieldName + " was expected to be " + expected + " but was " + actual);
+        }
     }
 }
