@@ -5,15 +5,16 @@
 
 import {AbstractConnector} from "./AbstractConnector";
 import {StoryCollection} from "../collections/StoryCollection";
-import {autoinject} from 'aurelia-framework';
+import {inject, NewInstance} from 'aurelia-framework';
 import {Story} from "../models/Story";
-import {StoryplacesAPI} from "./StoryplacesAPI"
+import {StoryPlacesAPI} from "./StoryplacesAPI"
 
-@autoinject()
+@inject(StoryCollection, NewInstance.of(StoryPlacesAPI))
 export class StoryConnector extends AbstractConnector<Story> {
 
-    constructor(private storyCollection : StoryCollection, private storyplacesAPI : StoryplacesAPI) {
+    constructor(private storyCollection : StoryCollection, private storyplacesAPI : StoryPlacesAPI) {
         super();
+        this.storyplacesAPI.path = "/stories/";
     }
 
     get all(): Array<Story> {
@@ -25,29 +26,31 @@ export class StoryConnector extends AbstractConnector<Story> {
     }
 
     fetchAll(): Promise<Array<Story>> {
-        return this.storyplacesAPI.getStoryList().then(stories => {
-            stories.json().then (stories => {
-                return this.storyCollection.saveMany(stories)
+        return this.storyplacesAPI.getAll().then(stories => {
+            return stories.json().then (stories => {
+                this.storyCollection.saveMany(stories);
             });
         })
     }
 
     fetchById(id: string): Promise<Story> {
-        return this.storyplacesAPI.getStory(id).then(story => {
-            story.json().then (story => {
-                return this.storyCollection.save(story)
+        return this.storyplacesAPI.getOne(id).then(story => {
+            return story.json().then (story => {
+                this.storyCollection.save(story);
             });
         })
     }
 
     save(object: Story): Promise<Story> {
-        return new Promise((success, failure) => {
-            return success(new Story);
+        return this.storyplacesAPI.save(object).then(story => {
+            return story.json().then (story => {
+                this.storyCollection.save(story);
+            });
         });
     }
 
     remove(id: string): Promise<boolean> {
-        return new Promise((success, failure) => {
+        return new Promise((success) => {
             return success(true);
         });
     }
