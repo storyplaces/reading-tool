@@ -45,14 +45,7 @@ export class ComparisonCondition extends BaseCondition {
     private _aType: string;
     private _bType: string;
 
-    private validTypes = {
-        'Integer': this.typeChecker.validateAsNumberOrUndefined,
-        'String' : this.typeChecker.validateAsStringOrUndefined,
-        'Boolean' : this.typeChecker.validateAsBooleanOrUndefined,
-        'Variable' : this.typeChecker.validateAsStringOrUndefined
-    };
-
-    constructor(typeChecker: TypeChecker, data? :any) {
+    constructor(typeChecker: TypeChecker, data?: any) {
         super(typeChecker);
 
         if (data) {
@@ -133,7 +126,7 @@ export class ComparisonCondition extends BaseCondition {
     private validateType(typeName: string, type: any) {
         this.typeChecker.validateAsStringOrUndefined(typeName, type);
 
-        if (this.validTypes[typeName] === undefined) {
+        if (!this.isValidType(type)) {
             throw TypeError("The type '" + typeName + "' must be a valid type");
         }
     }
@@ -147,7 +140,7 @@ export class ComparisonCondition extends BaseCondition {
             throw TypeError("Type of " + valueName + " must be set before setting value");
         }
 
-        if (this.validTypes[type] === undefined) {
+        if (!this.isValidType(type)) {
             throw TypeError("The type for variable '" + valueName + "' must be a valid type");
         }
 
@@ -155,7 +148,23 @@ export class ComparisonCondition extends BaseCondition {
     }
 
     private validateValueAgainstType(valueName: string, value: any, type: string) {
-        let typeCheckerForComparisonType = this.validTypes[type];
-        typeCheckerForComparisonType(valueName, value);
+        switch (type) {
+            case 'Integer' :
+                this.typeChecker.validateAsNumberOrUndefined(valueName, value);
+                break;
+            case 'String':
+                this.typeChecker.validateAsStringOrUndefined(valueName, value);
+                break;
+            case 'Boolean':
+                this.typeChecker.validateAsBooleanOrUndefined(valueName, value);
+                break;
+            case 'Variable' :
+                this.typeChecker.validateAsStringOrUndefined(valueName, value);
+                break;
+        }
+    }
+
+    private isValidType(type) {
+        return (type == 'Integer' || type == 'String' || type == 'Boolean' || type == 'Variable');
     }
 }
