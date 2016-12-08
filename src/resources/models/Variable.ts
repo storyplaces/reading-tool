@@ -34,6 +34,10 @@
  */
 
 import {BaseModel} from "./BaseModel";
+import {TypeChecker} from "../utilities/TypeChecker";
+import {inject} from "aurelia-framework";
+
+@inject(TypeChecker)
 
 export class Variable extends BaseModel {
     private _value: string|number|boolean;
@@ -50,8 +54,8 @@ export class Variable extends BaseModel {
         this._value = value;
     }
 
-    constructor(data?: any) {
-        super();
+    constructor(typeChecker: TypeChecker, data?: any) {
+        super(typeChecker);
         this.fromObject(data);
     }
 

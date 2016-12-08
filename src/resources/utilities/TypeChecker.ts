@@ -34,14 +34,18 @@
  */
 
 export class TypeChecker {
-    validateAsScalarOrUndefined(fieldName: string, value: any, scalarType: string) {
+    protected validateAsScalarOrUndefined(fieldName: string, value: any, scalarType: string) {
         if (value !== undefined && typeof value !== scalarType) {
-            throw TypeError(fieldName + " must be a " + scalarType);
+            throw TypeError(fieldName + " must be a " + scalarType + ", a " + typeof value + " was passed.");
         }
     }
 
     validateAsStringOrUndefined(fieldName: string, value: any) {
         this.validateAsScalarOrUndefined(fieldName, value, 'string');
+    }
+
+    validateAsNumberOrUndefined(fieldName: string, value: any) {
+        this.validateAsScalarOrUndefined(fieldName, value, 'number');
     }
 
     validateAsBooleanOrUndefined(fieldName: string, value: any) {
@@ -51,6 +55,12 @@ export class TypeChecker {
     validateAsObjectOrUndefined(fieldName: string, value: any, objectName: string, object: Function) {
         if (value !== undefined && !(value instanceof object)) {
             throw TypeError(fieldName + " must be of type " + objectName);
+        }
+    }
+
+    validateScalarValue(fieldName: string, expected: any, actual: any) {
+        if (expected !== actual) {
+            throw TypeError(fieldName + " was expected to be " + expected + " but was " + actual);
         }
     }
 }

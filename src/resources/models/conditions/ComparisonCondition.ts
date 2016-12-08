@@ -32,29 +32,44 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {BaseCondition} from "./BaseCondition";
+import {TypeChecker} from "../../utilities/TypeChecker";
+import {Reading} from "../Reading";
+import {inject} from "aurelia-framework";
+
+@inject(TypeChecker)
 
 export class ComparisonCondition extends BaseCondition {
-    id: string;
-    type: string;
-    a: string;
-    b: string;
-    aType: string;
-    bType: string;
+    private _a: string|number|boolean;
+    private _b: string|number|boolean;
+    private _aType: string;
+    private _bType: string;
 
-    constructor({id = "", type = "", a = "", b = "", aType = "", bType = ""} = {}) {
-        super();
+    private validTypes = {
+        'Integer': this.typeChecker.validateAsNumberOrUndefined,
+        'String' : this.typeChecker.validateAsStringOrUndefined,
+        'Boolean' : this.typeChecker.validateAsBooleanOrUndefined,
+        'Variable' : this.typeChecker.validateAsStringOrUndefined
+    };
 
-        this.id = id;
-        this.type = type;
-        this.a = a;
-        this.b = b;
-        this.aType = aType;
-        this.bType = bType;
+    constructor(typeChecker: TypeChecker, data? :any) {
+        super(typeChecker);
+
+        if (data) {
+            this.fromObject(data);
+        }
     }
 
-    toJson() {
+    fromObject({id = "", type = "", a = "", b = "", aType = "", bType = ""}) {
+        this.id = id;
+        this.type = type;
+        this.aType = aType;
+        this.bType = bType;
+        this.a = a;
+        this.b = b;
+    }
+
+    toJSON() {
         return {
             id: this.id,
             type: this.type,
@@ -63,5 +78,84 @@ export class ComparisonCondition extends BaseCondition {
             aType: this.aType,
             bType: this.bType
         };
+    }
+
+    execute(reading: Reading) {
+
+    }
+
+    get type(): string {
+        return this._type;
+    }
+
+    set type(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("Type", value);
+        this.typeChecker.validateScalarValue("Type", "comparison", value);
+        this._type = value;
+    }
+
+    get aType(): string {
+        return this._aType;
+    }
+
+    set aType(value: string) {
+        this.validateType("aType", value);
+        this._aType = value;
+    }
+
+    get bType(): string {
+        return this._bType;
+    }
+
+    set bType(value: string) {
+        this.validateType("bType", value);
+        this._bType = value;
+    }
+
+    get a(): string|number|boolean {
+        return this._a;
+    }
+
+    set a(value: string|number|boolean) {
+        this.validateValue('a', value, this.aType);
+        this._a = value;
+    }
+
+    get b(): string|number|boolean {
+        return this._b;
+    }
+
+    set b(value: string|number|boolean) {
+        this.validateValue('b', value, this.bType);
+        this._b = value;
+    }
+
+    private validateType(typeName: string, type: any) {
+        this.typeChecker.validateAsStringOrUndefined(typeName, type);
+
+        if (this.validTypes[typeName] === undefined) {
+            throw TypeError("The type '" + typeName + "' must be a valid type");
+        }
+    }
+
+    private validateValue(valueName: string, value: any, type: string) {
+        if (value === undefined) {
+            return;
+        }
+
+        if (type === undefined) {
+            throw TypeError("Type of " + valueName + " must be set before setting value");
+        }
+
+        if (this.validTypes[type] === undefined) {
+            throw TypeError("The type for variable '" + valueName + "' must be a valid type");
+        }
+
+        this.validateValueAgainstType(valueName, value, type);
+    }
+
+    private validateValueAgainstType(valueName: string, value: any, type: string) {
+        let typeCheckerForComparisonType = this.validTypes[type];
+        typeCheckerForComparisonType(valueName, value);
     }
 }

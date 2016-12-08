@@ -36,15 +36,16 @@
 import {Identifiable} from "../interfaces/Identifiable";
 import {JSONable} from "../interfaces/JSONable";
 import {FromObjectInterface} from "../interfaces/FromObjectInterface";
+import {TypeChecker} from "../utilities/TypeChecker";
 
 export abstract class BaseModel implements Identifiable, JSONable, FromObjectInterface{
-    _id: string;
+    protected _id: string;
+
+    constructor(protected typeChecker: TypeChecker) {
+    }
 
     set id(id) {
-        if (id != undefined && typeof id != "string") {
-            throw TypeError("Unable to set id as it is not a string");
-        }
-
+        this.typeChecker.validateAsStringOrUndefined("Id", id);
         this._id = id;
     }
 

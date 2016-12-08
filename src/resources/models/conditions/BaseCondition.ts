@@ -33,22 +33,20 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Identifiable} from "../../interfaces/Identifiable";
+import {TypeChecker} from "../../utilities/TypeChecker";
 
-export abstract class BaseCondition implements Identifiable {
-    _id: string;
+import {Reading} from "../Reading";
+import {BaseModel} from "../BaseModel";
 
-    set id(id) {
-        if (id != undefined && typeof id != "string") {
-            throw TypeError("Unable to set id as it is not a string");
-        }
-
-        this._id = id;
+export abstract class BaseCondition extends BaseModel{
+    constructor(typeChecker: TypeChecker) {
+        super(typeChecker);
     }
 
-    get id() {
-        return this._id;
-    }
+    abstract get type();
+    abstract set type(value: any);
 
-    type:string;
+    protected _type:string;
+
+    abstract execute(reading: Reading);
 }

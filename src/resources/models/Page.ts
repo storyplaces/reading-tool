@@ -43,8 +43,8 @@ export class Page extends BaseModel{
     private _name: string;
     private _conditions: Array<Object>;
 
-    constructor(private typeChecker: TypeChecker, data?: any) {
-        super();
+    constructor(typeChecker: TypeChecker, data?: any) {
+        super(typeChecker);
         this.fromObject(data);
     }
 

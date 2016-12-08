@@ -34,10 +34,13 @@
  */
 
 import {Variable} from "../../../src/resources/models/Variable";
+import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
 describe("Variable model", () => {
+    let typeChecker = new TypeChecker;
+
     it("can be instantiated with no data", () => {
-        let model = new Variable;
+        let model = new Variable(typeChecker);
 
         expect(model.id).toBeUndefined();
         expect(model.value).toBeUndefined();
@@ -45,7 +48,7 @@ describe("Variable model", () => {
 
     it("can be instantiated with an object", () => {
         let data = {id: "1", value: true};
-        let model = new Variable(data);
+        let model = new Variable(typeChecker, data);
 
         expect(model.id).toEqual("1");
         expect(model.value).toEqual(true);
@@ -53,7 +56,7 @@ describe("Variable model", () => {
 
     it("can have an anonymous object passed to it", () => {
         let data = {id: "1", value: true};
-        let model = new Variable();
+        let model = new Variable(typeChecker);
         model.fromObject(data);
 
         expect(model.id).toEqual("1");
@@ -62,7 +65,7 @@ describe("Variable model", () => {
 
     it("will convert to JSON", () => {
         let data = {id: "1", value: true};
-        let model = new Variable(data);
+        let model = new Variable(typeChecker, data);
 
         let result = JSON.stringify(model);
 
@@ -70,9 +73,9 @@ describe("Variable model", () => {
     });
 
     it("will throw an error if value is set to something other than a string, boolean, number or undefined", () => {
-        let model = new Variable;
+        let model = new Variable(typeChecker);
 
-        let testModel = new Variable;
+        let testModel = new Variable(typeChecker);
 
         expect(() => {model.value = {} as any}).toThrow();
         expect(() => {model.value = function(){} as any}).toThrow();

@@ -44,8 +44,8 @@ export class Reading extends BaseModel {
     private _userId: string;
     private _readingId: string;
 
-    constructor(private variableCollectionFactory: (any?) => VariableCollection, private typeChecker: TypeChecker, data?: any) {
-        super();
+    constructor(private variableCollectionFactory: (any?) => VariableCollection, typeChecker: TypeChecker, data?: any) {
+        super(typeChecker);
         this.fromObject(data);
     }
 

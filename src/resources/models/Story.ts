@@ -38,7 +38,11 @@ import {Factory, inject} from "aurelia-framework";
 import {BaseModel} from "./BaseModel";
 import {TypeChecker} from "../utilities/TypeChecker";
 
-@inject(Factory.of(PageCollection), Factory.of(PagesMapViewSettings), TypeChecker)
+@inject(
+    Factory.of(PageCollection),
+    Factory.of(PagesMapViewSettings),
+    TypeChecker
+)
 export class Story extends BaseModel {
     private _author: string;
     private _name: string;
@@ -52,9 +56,9 @@ export class Story extends BaseModel {
 
     constructor(private pageCollectionFactory: (any?) => PageCollection,
                 private pagesMapViewSettingsFactory: (any?) => PagesMapViewSettings,
-                private typeChecker: TypeChecker,
+                typeChecker: TypeChecker,
                 data?: any) {
-        super();
+        super(typeChecker);
         this.fromObject(data);
     }
 

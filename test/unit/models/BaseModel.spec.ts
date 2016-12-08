@@ -34,10 +34,13 @@
  */
 
 import {BaseModel} from "../../../src/resources/models/BaseModel";
+import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
 describe("BaseModel", () => {
+    let typeChecker = new TypeChecker;
 
     class TestModel extends BaseModel {
+
 
         toJSON() {
         }
@@ -49,7 +52,7 @@ describe("BaseModel", () => {
 
 
     it("will throw an error if id is set to something other than a string", () => {
-        let model = new TestModel;
+        let model = new TestModel(typeChecker);
 
         expect(() => {
             model.id = 1 as any
@@ -70,7 +73,7 @@ describe("BaseModel", () => {
     });
 
     it("will throw an error if id is passed to fromObject as something other than a string", () => {
-        let model = new TestModel;
+        let model = new TestModel(typeChecker);
 
         expect(() => {
             model.fromObject({id: 1} as any)
@@ -93,7 +96,7 @@ describe("BaseModel", () => {
     });
 
     it("will not throw an error if id is set to a string", () => {
-        let model = new TestModel;
+        let model = new TestModel(typeChecker);
 
         model.id = "1";
 
@@ -101,7 +104,7 @@ describe("BaseModel", () => {
     });
 
     it("will have toJSON called when passed to JSONStringify", () => {
-        let model = new TestModel;
+        let model = new TestModel(typeChecker);
 
         spyOn(model, 'toJSON');
 
