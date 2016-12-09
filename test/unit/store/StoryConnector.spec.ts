@@ -31,12 +31,12 @@ describe("StoryConnector", () => {
         new StoryConnector(storyCollection, storyPlacesAPI);
     });
 
-    it("sets the storyPlacesAPI path to /stories/", () => {
+    it("sets the storyPlacesAPI path to /story/", () => {
         let storyCollection = resolve(StoryCollection);
         let storyPlacesAPI = resolve(StoryPlacesAPI);
 
         new StoryConnector(storyCollection, storyPlacesAPI);
-        expect(storyPlacesAPI.path).toEqual("/stories/");
+        expect(storyPlacesAPI.path).toEqual("/story/");
 
     });
 
