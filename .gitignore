@@ -3,3 +3,4 @@ coverage
 scripts
 .idea
 .DS_STORE
+src/config/config.ts

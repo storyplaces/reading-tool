@@ -5,20 +5,23 @@
 import {HttpClient} from 'aurelia-fetch-client';
 import {autoinject} from 'aurelia-framework';
 import {Identifiable} from "../interfaces/Identifiable";
+import {Config} from "../../config/Config";
 
 @autoinject()
 export class StoryPlacesAPI {
     private _path;
 
-    constructor(private client: HttpClient) {
+    constructor(private client: HttpClient, private config: Config) {
+        let headers = {};
+
+        headers[this.config.read('authHeader')] = 'thisisadefaultpass';
+
         this.client.configure(config => {
             // TODO: Put these in a config file
             config
-                .withBaseUrl('https://localhost:8080/storyplaces')
+                .withBaseUrl(this.config.read('server'))
                 .withDefaults({
-                    headers: {
-                        'X-Auth-Token': 'thisisadefaultpass'
-                    }
+                    headers: headers
                 })
 
         })
