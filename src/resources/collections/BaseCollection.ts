@@ -60,7 +60,7 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
 
         let foundIndex = this.findIndex(item);
 
-        if (foundIndex) {
+        if (foundIndex !== undefined) {
             this._data[foundIndex] = item;
             return;
         }
@@ -74,7 +74,7 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
 
     private findIndexById(itemId: string): number|null {
         let foundIndex = this._data.findIndex(found => found.id == itemId);
-        return foundIndex != -1 ? foundIndex : null;
+        return foundIndex != -1 ? foundIndex : undefined;
     }
 
     public saveMany(items: Array<any>): void {

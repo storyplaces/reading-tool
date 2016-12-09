@@ -132,17 +132,29 @@ describe("Base collection", () => {
     it("will overwrite an entry if the id key matches", () => {
         let model1 = {id: "1", data: "data1"};
         let model2 = {id: "2", data: "data2"};
-        let model2Alternative = {id: "2", data: "dataAlternative"};
+        let model1Alternative = {id: "1", data: "data1Alternative"};
+        let model2Alternative = {id: "2", data: "data2Alternative"};
 
         let collection = new TestCollection;
         collection.saveMany([model1, model2]);
 
+        collection.save(model1Alternative);
+
+        expect(collection.all.length).toEqual(2);
+        expect(collection.get("1").id).toEqual("1");
+        expect(collection.get("1").data).toEqual("data1Alternative");
+        expect(collection.get("2").id).toEqual("2");
+        expect(collection.get("2").data).toEqual("data2");
+
         collection.save(model2Alternative);
 
+        expect(collection.all.length).toEqual(2);
         expect(collection.get("1").id).toEqual("1");
-        expect(collection.get("1").data).toEqual("data1");
+        expect(collection.get("1").data).toEqual("data1Alternative");
         expect(collection.get("2").id).toEqual("2");
-        expect(collection.get("2").data).toEqual("dataAlternative");
+        expect(collection.get("2").data).toEqual("data2Alternative");
+
+
     });
 
     it("will return a JSON array when passed to JSON.stringify", () => {
