@@ -21,13 +21,14 @@ module.exports = function(config) {
     files: files,
     exclude: [],
     preprocessors: {
-      [project.unitTestRunner.source]: [project.transpiler.id]
+      [project.unitTestRunner.source]: [project.transpiler.id],
+      'scripts/app-bundle.js': 'coverage'
     },
     typescriptPreprocessor: {
       typescript: require('typescript'),
       options: tsconfig.compilerOptions
     },
-    reporters: ['progress'],
+    reporters: ['progress', 'coverage'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
