@@ -14,7 +14,7 @@ export class StoryConnector extends AbstractConnector<Story> {
 
     constructor(private storyCollection : StoryCollection, private storyplacesAPI : StoryPlacesAPI) {
         super();
-        this.storyplacesAPI.path = "/stories/";
+        this.storyplacesAPI.path = "/story/";
     }
 
     get all(): Array<Story> {

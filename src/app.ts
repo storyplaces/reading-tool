@@ -32,19 +32,19 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-import {Router, RouterConfiguration} from 'aurelia-router';
+import {Router, RouterConfiguration} from "aurelia-router";
 
 export class App {
-  router: Router;
+    router: Router;
 
-  configureRouter(config: RouterConfiguration, router: Router){
-    config.title = 'StoryPlaces';
+    configureRouter(config: RouterConfiguration, router: Router) {
+        config.title = 'StoryPlaces';
 
-    config.map([
-      { route: '', moduleId: 'components/story-list', title: 'Story List'}
-    ])
+        config.map([
+            {route: '', moduleId: 'pages/story-overview-page', title: 'Story List'},
+            {route: '/story/:id', moduleId: 'pages/story-detail-page', title: 'Story', name: 'story-detail'}
+        ]);
 
-    this.router = router;
-  }
+        this.router = router;
+    }
 }

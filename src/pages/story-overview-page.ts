@@ -6,7 +6,7 @@ import {StoryConnector} from '../resources/store/StoryConnector';
 import {autoinject} from 'aurelia-framework';
 
 @autoinject()
-export class StoryList{
+export class StoryOverviewPage{
     selectedId = 0;
 
     constructor(private storyConnector: StoryConnector) { }
