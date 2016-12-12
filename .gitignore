@@ -4,3 +4,5 @@ scripts
 .idea
 .DS_STORE
 src/config/config.ts
+css/bootstrap*
+fonts/glyphicons-halflings-regular*
