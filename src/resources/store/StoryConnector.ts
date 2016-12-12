@@ -9,7 +9,7 @@ import {inject, NewInstance} from 'aurelia-framework';
 import {Story} from "../models/Story";
 import {StoryPlacesAPI} from "./StoryplacesAPI"
 
-@inject(StoryCollection, NewInstance.of(StoryPlacesAPI))
+@inject(NewInstance.of(StoryCollection), NewInstance.of(StoryPlacesAPI))
 export class StoryConnector extends AbstractConnector<Story> {
 
     constructor(private storyCollection : StoryCollection, private storyplacesAPI : StoryPlacesAPI) {

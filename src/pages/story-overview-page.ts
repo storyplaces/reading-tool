@@ -3,24 +3,24 @@
  */
 
 import {StoryConnector} from '../resources/store/StoryConnector';
-import {autoinject} from 'aurelia-framework';
+import {autoinject, computedFrom} from 'aurelia-framework';
 
 @autoinject()
 export class StoryOverviewPage{
-    selectedId = 0;
-
     constructor(private storyConnector: StoryConnector) { }
 
     attached() {
-        this.storyConnector.fetchAll();
+        //this.refresh();
     }
 
+    @computedFrom('storyConnector.all')
     get stories(){
+        console.log("get all");
         return this.storyConnector.all;
     }
 
-    select(story){
-        this.selectedId = story.id;
-        return true;
+    refresh() {
+        this.storyConnector.fetchAll();
     }
+
 }

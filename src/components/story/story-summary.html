@@ -33,13 +33,12 @@
   -->
 
 <template>
-    <a route-href="route: story-detail; params.bind: { id: story.id}" class="list-group-item">
+    <a route-href="route: story-detail; params.bind: { storyId: story.id}" class="list-group-item">
         <h4 class="list-group-item-heading">${story.name}<small> - ${story.author}</small></h4>
-        <div class=" list-group-item-text row">
+        <div class=" list-group-item-text ">
             <!--TODO: Make this behave a bit better on narrow screens-->
-            <div class="col-sm-6"><span class="label label-success">Meta data</span></div>
-            <div class="col-sm-6 text-right"><span class="label label-default" repeat.for="tag of story.tags">${tag}</span></div>
-        </div>
+            <span class="label label-success">Meta data</span> <span class="label label-default" repeat.for="tag of story.tags">${tag}</span>
         <!--<p innerhtml.bind="story.description" class="list-group-item-text"></p>-->
+        </div>
     </a>
 </template>
