@@ -10,7 +10,7 @@ export class StoryOverviewPage{
     constructor(private storyConnector: StoryConnector) { }
 
     attached() {
-        //this.refresh();
+        this.refresh();
     }
 
     @computedFrom('storyConnector.all')
