@@ -1,11 +1,10 @@
-import {bindable,containerless} from "aurelia-framework";
 /*******************************************************************
  *
  * StoryPlaces
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) 2016
+ Copyright (c) $today.year
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -33,14 +32,54 @@ import {bindable,containerless} from "aurelia-framework";
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {StageComponent} from "aurelia-testing";
+import {bootstrap} from "aurelia-bootstrapper";
+import {Container} from "aurelia-framework";
 
-@containerless()
-export class CollapsiblePanel{
+describe('StorySummary', () => {
+    let component;
 
-    @bindable title: string;
-    @bindable id:string;
+    let testId1 = "test1-id";
+    let testName1 = "test1-name";
+    let testAuthor1 = "test1-author";
 
-    get idRef() {
-        return "#" + this.id;
+    let testId2 = "test2-id";
+    let testName2 = "test2-name";
+    let testAuthor2 = "test2-author";
+
+    let stories;
+
+    let container: Container;
+
+    function resolve(object: Function, data?: any) {
+        return container.invoke(object, [data]);
     }
-}
+
+    beforeEach(() => {
+        container = new Container().makeGlobal();
+        stories = [
+            {id: testId1, name: testName1, author: testAuthor1, tags: ["Southampton"]},
+            {id: testId2, name: testName2, author: testAuthor2, tags: ["Bournemouth"]}
+        ];
+
+        component = StageComponent
+            .withResources('components/story/story-overview-list')
+            .inView('<story-overview-list stories.bind="stories"></story-overview-list>')
+            .boundTo({stories: stories});
+    });
+
+    it('renders the contents of the stories', done => {
+        component.create(bootstrap).then(() => {
+            const listElement = document.querySelector("div");
+            expect(listElement.innerHTML).toContain("test1-name");
+            expect(listElement.innerHTML).toContain("test2-name");
+            done();
+        });
+    });
+
+    afterEach(() => {
+        component.dispose();
+        stories = undefined;
+        container = undefined;
+    });
+});

@@ -1,11 +1,10 @@
-import {bindable,containerless} from "aurelia-framework";
 /*******************************************************************
  *
  * StoryPlaces
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) 2016
+ Copyright (c) $today.year
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -34,13 +33,48 @@ import {bindable,containerless} from "aurelia-framework";
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@containerless()
-export class CollapsiblePanel{
+import {StageComponent} from 'aurelia-testing';
+import {bootstrap} from 'aurelia-bootstrapper';
 
-    @bindable title: string;
-    @bindable id:string;
+describe('CollapsiblePanel', () => {
+    let component;
 
-    get idRef() {
-        return "#" + this.id;
-    }
-}
+    let testId = "test-id";
+    let testTitle = "test-title";
+    let testContents = "test-contents";
+
+    beforeEach(() => {
+        component = StageComponent
+            .withResources('components/elements/collapsible-panel' )
+            .inView('<collapsible-panel id.bind="id" title.bind="title">' + testContents + '</collapsible-panel>')
+            .boundTo({ id: testId, title: testTitle });
+    });
+
+    it('should render contents inside', done => {
+        component.create(bootstrap).then(() => {
+            const contentsElement = document.querySelector(`#${testId}`);
+            expect(contentsElement.innerHTML).toContain(testContents);
+            done();
+        });
+    });
+
+    it('should set the href on the collapse toggle correctly', done => {
+        component.create(bootstrap).then(() => {
+            const collapseElement = document.querySelector(`[data-toggle="collapse"]`);
+            expect(collapseElement.getAttribute("href")).toEqual(`#${testId}`);
+            done();
+        });
+    });
+
+    it('should set the contents on the collapse toggle correctly (ie the title)', done => {
+        component.create(bootstrap).then(() => {
+            const collapseElement = document.querySelector(`[data-toggle="collapse"]`);
+            expect(collapseElement.innerHTML).toEqual(testTitle);
+            done();
+        });
+    });
+
+    afterEach(() => {
+        component.dispose();
+    });
+});
