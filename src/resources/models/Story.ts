@@ -62,7 +62,18 @@ export class Story extends BaseModel {
         this.fromObject(data);
     }
 
-    public fromObject(data = {id : undefined, name : undefined, pages : undefined, cachedMediaIds : undefined, conditions : undefined, pagesMapViewSettings : undefined, functions : undefined, tags : undefined, author : undefined, description : undefined}) {
+    public fromObject(data = {
+        id: undefined,
+        name: undefined,
+        pages: undefined,
+        cachedMediaIds: undefined,
+        conditions: undefined,
+        pagesMapViewSettings: undefined,
+        functions: undefined,
+        tags: undefined,
+        author: undefined,
+        description: undefined
+    }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.author = data.author;

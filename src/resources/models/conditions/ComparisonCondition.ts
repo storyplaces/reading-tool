@@ -53,13 +53,14 @@ export class ComparisonCondition extends BaseCondition {
         }
     }
 
-    fromObject({id = "", type = "", a = "", b = "", aType = "", bType = ""}) {
-        this.id = id;
-        this.type = type;
-        this.aType = aType;
-        this.bType = bType;
-        this.a = a;
-        this.b = b;
+    fromObject(data = {id: undefined, type: undefined, a: undefined, b: undefined, aType: undefined, bType: undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.type = data.type;
+        this.aType = data.aType;
+        this.bType = data.bType;
+        this.a = data.a;
+        this.b = data.b;
     }
 
     toJSON() {

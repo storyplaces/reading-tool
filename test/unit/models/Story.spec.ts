@@ -32,10 +32,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {Story} from "../../../src/resources/models/Story";
-import {PageCollection} from "../../../src/resources/collections/PageCollection";
-import {PagesMapViewSettings} from "../../../src/resources/models/PagesMapViewSettings";
 import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
 describe("Story model", () => {
@@ -139,43 +136,58 @@ describe("Story model", () => {
     it("will throw an error if something other than an object is passed to fromObject", () => {
         let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
 
-        expect(() => {model.fromObject([] as any)}).toThrow();
-        expect(() => {model.fromObject("a" as any)}).toThrow();
+        expect(() => {
+            model.fromObject([] as any)
+        }).toThrow();
+
+        expect(() => {
+            model.fromObject("a" as any)
+        }).toThrow();
     });
 
 
     it("will throw an error if name is not set to a string or undefined", () => {
-       let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
 
-       expect(() => {model.name = 1 as any}).toThrow();
+        expect(() => {
+            model.name = 1 as any
+        }).toThrow();
     });
 
 
     it("will throw an error if description is not set to a string or undefined", () => {
         let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
 
-        expect(() => {model.description = 1 as any}).toThrow();
+        expect(() => {
+            model.description = 1 as any
+        }).toThrow();
     });
 
 
     it("will throw an error if author is not set to a string or undefined", () => {
         let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
 
-        expect(() => {model.author = 1 as any}).toThrow();
+        expect(() => {
+            model.author = 1 as any
+        }).toThrow();
     });
 
 
     it("will throw an error if pages is not set to a PagesCollection object", () => {
         let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
 
-        expect(() => {model.pages = 1 as any}).toThrow();
+        expect(() => {
+            model.pages = 1 as any
+        }).toThrow();
     });
 
 
     it("will throw an error if pagesMapViewSettings is not set to a PagesCollection object", () => {
         let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
 
-        expect(() => {model.pagesMapViewSettings = 1 as any}).toThrow();
+        expect(() => {
+            model.pagesMapViewSettings = 1 as any
+        }).toThrow();
     });
 
 

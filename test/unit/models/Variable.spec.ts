@@ -32,7 +32,6 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {Variable} from "../../../src/resources/models/Variable";
 import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
@@ -66,8 +65,12 @@ describe("Variable model", () => {
     it("will throw an error if something other than an object is passed to fromObject", () => {
         let model = new Variable(typeChecker);
 
-        expect(() => {model.fromObject([] as any)}).toThrow();
-        expect(() => {model.fromObject("a" as any)}).toThrow();
+        expect(() => {
+            model.fromObject([] as any)
+        }).toThrow();
+        expect(() => {
+            model.fromObject("a" as any)
+        }).toThrow();
     });
 
     it("will convert to JSON", () => {
@@ -84,8 +87,15 @@ describe("Variable model", () => {
 
         let testModel = new Variable(typeChecker);
 
-        expect(() => {model.value = {} as any}).toThrow();
-        expect(() => {model.value = function(){} as any}).toThrow();
-        expect(() => {model.value = testModel as any}).toThrow();
+        expect(() => {
+            model.value = {} as any
+        }).toThrow();
+        expect(() => {
+            model.value = function () {
+            } as any
+        }).toThrow();
+        expect(() => {
+            model.value = testModel as any
+        }).toThrow();
     });
 });
