@@ -1,0 +1,7 @@
+<template>
+    <require from="./reading-summary"></require>
+
+    <ul class="list-group">
+        <reading-summary repeat.for="reading of readings" story.bind="reading"></reading-summary>
+    </ul>
+</template>
