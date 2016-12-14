@@ -35,10 +35,15 @@
 import {autoinject, BindingEngine} from "aurelia-framework";
 import {Gps, GpsState} from "./Gps";
 
+export enum LocationSource {
+    GPS = 1,
+    Map = 2
+}
+
 @autoinject()
 export class Location {
 
-    gpsOK: boolean = false;
+    ok: boolean = false;
     gpsPermissionDenied: boolean = false;
     gpsUnavailable: boolean = false;
     gpsUnsupported: boolean = false;
@@ -47,22 +52,36 @@ export class Location {
     longitude: number;
     heading: number;
 
+    private _source: LocationSource = LocationSource.GPS;
+
     constructor(private gps: Gps, private bindingEngine: BindingEngine) {
-        this.bindingEngine.propertyObserver(gps, 'state').subscribe((newState: GpsState) => {
-            this.gpsOK = (newState == GpsState.INITIALISING || newState == GpsState.OK);
+        this.updateStateFromGps(gps.state);
+
+        this.bindingEngine.propertyObserver(this.gps, 'state')
+            .subscribe((newState: GpsState) => {
+                this.updateStateFromGps(newState);
+            });
+
+        this.bindingEngine.propertyObserver(this.gps, 'position')
+            .subscribe((newPosition: Position) => {
+                this.updatePositionFromGps(newPosition)
+            });
+    }
+
+    private updateStateFromGps(newState: GpsState) {
+        if (this._source == LocationSource.GPS) {
+            this.ok = (newState == GpsState.INITIALISING || newState == GpsState.OK);
             this.gpsPermissionDenied = (newState == GpsState.PERMISSION_DENIED);
             this.gpsUnavailable = (newState == GpsState.ERROR);
             this.gpsUnsupported = (newState == GpsState.POSITION_UNSUPPORTED);
-        });
+        }
+    }
 
-        this.bindingEngine.propertyObserver(gps, 'position').subscribe((newLocation: Position) => {
-            if (this.gpsOK) {
-                this.latitude = newLocation.coords.latitude;
-                this.longitude = newLocation.coords.longitude;
-                this.heading = newLocation.coords.heading;
-            }
-
-            // To add manual override of the GPS stuff do it here.
-        });
+    private updatePositionFromGps(newPosition: Position) {
+        if (this._source == LocationSource.GPS && this.ok) {
+            this.latitude = newPosition.coords.latitude;
+            this.longitude = newPosition.coords.longitude;
+            this.heading = newPosition.coords.heading;
+        }
     }
 }
