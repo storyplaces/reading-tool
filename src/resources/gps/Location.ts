@@ -1,10 +1,10 @@
-/*!*****************************************************************
+/*******************************************************************
  *
  * StoryPlaces
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) 2016
+ Copyright (c) $today.year
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -32,26 +32,37 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Router, RouterConfiguration} from "aurelia-router";
-import {Location} from "./resources/gps/Location";
-import {autoinject} from "aurelia-framework";
+import {autoinject, BindingEngine} from "aurelia-framework";
+import {Gps, GpsState} from "./Gps";
 
 @autoinject()
-export class App {
-    router: Router;
+export class Location {
 
-    constructor(private location: Location) {
+    gpsOK: boolean = false;
+    gpsPermissionDenied: boolean = false;
+    gpsUnavailable: boolean = false;
+    gpsUnsupported: boolean = false;
+
+    latitude: number;
+    longitude: number;
+    heading: number;
+
+    constructor(private gps: Gps, private bindingEngine: BindingEngine) {
+        this.bindingEngine.propertyObserver(gps, 'state').subscribe((newState: GpsState) => {
+            this.gpsOK = (newState == GpsState.INITIALISING || newState == GpsState.OK);
+            this.gpsPermissionDenied = (newState == GpsState.PERMISSION_DENIED);
+            this.gpsUnavailable = (newState == GpsState.ERROR);
+            this.gpsUnsupported = (newState == GpsState.POSITION_UNSUPPORTED);
+        });
+
+        this.bindingEngine.propertyObserver(gps, 'position').subscribe((newLocation: Position) => {
+            if (this.gpsOK) {
+                this.latitude = newLocation.coords.latitude;
+                this.longitude = newLocation.coords.longitude;
+                this.heading = newLocation.coords.heading;
+            }
+
+            // To add manual override of the GPS stuff do it here.
+        });
     }
-
-    configureRouter(config: RouterConfiguration, router: Router) {
-        config.title = 'StoryPlaces';
-
-        config.map([
-            {route: '', name: 'home', moduleId: 'pages/story-overview-page', title: 'Story List'},
-            {route: '/story/:storyId', moduleId: 'pages/story-detail-page', title: 'Story', name: 'story-detail'}
-        ]);
-
-        this.router = router;
-    }
-
 }

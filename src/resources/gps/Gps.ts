@@ -33,34 +33,42 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum GpsState {
+export enum GpsState {
+    INITIALISING = 0,
     OK = 1,
     PERMISSION_DENIED = 2,
-    POSITION_UNAVAILABLE = 3,
-    TIMEOUT = 4,
-    UNKNOWN_ERROR = 5,
-    UNSUPPORTED = 6
-}
-
-type GpsLocation = {
-    coords: {
-        latitude,
-        longitude,
-        accuracy,
-        altitude,
-        altitudeAccuracy,
-        heading,
-        speed
-    },
-    timestamp
+    POSITION_UNSUPPORTED = 3,
+    ERROR = 4
 }
 
 export class Gps {
-    public state : GpsState;
-    public location: GpsLocation;
-
+    public state: GpsState = GpsState.INITIALISING;
+    public position: Position;
 
     constructor() {
+        if (!navigator.geolocation) {
+            this.state = GpsState.POSITION_UNSUPPORTED;
+            return;
+        }
 
+        navigator.geolocation.watchPosition(
+            (position: Position) => {
+                this.state = GpsState.OK;
+                this.position = position;
+            },
+            (failure: PositionError) => {
+                this.state = failure.code == failure.PERMISSION_DENIED ? GpsState.PERMISSION_DENIED : GpsState.ERROR;
+                this.position = undefined;
+            },
+            this.GPSOptions()
+        );
+    }
+
+    private GPSOptions(): PositionOptions {
+        return {
+            enableHighAccuracy: true,
+            maximumAge: 30000,
+            timeout: 30000
+        };
     }
 }
