@@ -32,7 +32,6 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {BaseModel} from "./BaseModel";
 import {TypeChecker} from "../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
@@ -48,10 +47,11 @@ export class Page extends BaseModel{
         this.fromObject(data);
     }
 
-    public fromObject({id = undefined, name = undefined, conditions = undefined} = {}) {
-        this.id = id;
-        this.name = name;
-        this.conditions = conditions;
+    public fromObject(data: any = {id:undefined, name: undefined, conditions: undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.name = data.name;
+        this.conditions = data.conditions;
     }
 
     public toJSON() {

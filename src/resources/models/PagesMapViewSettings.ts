@@ -32,7 +32,6 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {JSONable} from "../interfaces/JSONable";
 import {FromObjectInterface} from "../interfaces/FromObjectInterface";
 import {TypeChecker} from "../utilities/TypeChecker";
@@ -49,10 +48,11 @@ export class PagesMapViewSettings implements JSONable, FromObjectInterface {
         this.fromObject(data);
     }
 
-    public fromObject({map = undefined, pageArrows = undefined, pageDistance = undefined} = {}) {
-        this.map = map;
-        this.pageArrows = pageArrows;
-        this.pageDistance = pageDistance;
+    public fromObject(data: any = {map: undefined, pageArrows: undefined, pageDistance: undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.map = data.map;
+        this.pageArrows = data.pageArrows;
+        this.pageDistance = data.pageDistance;
     }
 
     public toJSON() {
@@ -71,6 +71,7 @@ export class PagesMapViewSettings implements JSONable, FromObjectInterface {
         this.typeChecker.validateAsBooleanOrUndefined("Map", value);
         this._map = value;
     }
+
     get pageDistance(): boolean {
         return this._pageDistance;
     }
@@ -79,6 +80,7 @@ export class PagesMapViewSettings implements JSONable, FromObjectInterface {
         this.typeChecker.validateAsBooleanOrUndefined("PageDistance", value);
         this._pageDistance = value;
     }
+
     get pageArrows(): boolean {
         return this._pageArrows;
     }

@@ -32,7 +32,6 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {PagesMapViewSettings} from "../../../src/resources/models/PagesMapViewSettings";
 import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
@@ -75,22 +74,40 @@ describe("PagesMapViewSettings model", () => {
         expect(model.pageDistance).toEqual(true);
     });
 
+    it("will throw an error if something other than an object is passed to fromObject", () => {
+        let model = new PagesMapViewSettings(typeChecker);
+
+        expect(() => {
+            model.fromObject([] as any)
+        }).toThrow();
+
+        expect(() => {
+            model.fromObject("a" as any)
+        }).toThrow();
+    });
+
     it("will throw an error when map is set to something other than a boolean or undefined", () => {
         let model = new PagesMapViewSettings(typeChecker);
 
-        expect(() => {model.map = 1 as any}).toThrow();
+        expect(() => {
+            model.map = 1 as any
+        }).toThrow();
     });
 
     it("will throw an error when pageArrows is set to something other than a boolean or undefined", () => {
         let model = new PagesMapViewSettings(typeChecker);
 
-        expect(() => {model.pageArrows = 1 as any}).toThrow();
+        expect(() => {
+            model.pageArrows = 1 as any
+        }).toThrow();
     });
 
     it("will throw an error when pageDistance is set to something other than a boolean or undefined", () => {
         let model = new PagesMapViewSettings(typeChecker);
 
-        expect(() => {model.pageDistance = 1 as any}).toThrow();
+        expect(() => {
+            model.pageDistance = 1 as any
+        }).toThrow();
     });
 
     it("will convert to JSON", () => {

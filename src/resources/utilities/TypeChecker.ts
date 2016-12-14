@@ -63,4 +63,12 @@ export class TypeChecker {
             throw TypeError(fieldName + " was expected to be " + expected + " but was " + actual);
         }
     }
+
+    validateAsObjectAndNotArray(fieldName: string, value: any) {
+        this.validateAsObjectOrUndefined(fieldName, value, "Object", Object);
+
+        if (Array.isArray(value)) {
+            throw TypeError(fieldName + " was expected not to be an array");
+        }
+    }
 }

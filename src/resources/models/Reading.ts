@@ -49,11 +49,12 @@ export class Reading extends BaseModel {
         this.fromObject(data);
     }
 
-    fromObject({id = undefined, readingId = undefined, userId = undefined, variables = undefined} = {}) {
-        this.id = id;
-        this.readingId = readingId;
-        this.userId = userId;
-        this.variables = this.variableCollectionFactory(variables);
+    fromObject(data: any = {id: undefined, readingId: undefined, userId: undefined, variables: undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.readingId = data.readingId;
+        this.userId = data.userId;
+        this.variables = this.variableCollectionFactory(data.variables);
     }
 
     toJSON() {

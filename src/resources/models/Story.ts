@@ -62,17 +62,29 @@ export class Story extends BaseModel {
         this.fromObject(data);
     }
 
-    public fromObject({id = undefined, name = undefined, pages = undefined, cachedMediaIds = undefined, conditions = undefined, pagesMapViewSettings = undefined, functions = undefined, tags = undefined, author = undefined, description = undefined} = {}) {
-        this.id = id;
-        this.author = author;
-        this.cachedMediaIds = cachedMediaIds;
-        this.conditions = conditions;
-        this.description = description;
-        this.functions = functions;
-        this.pages = this.pageCollectionFactory(pages);
-        this.pagesMapViewSettings = this.pagesMapViewSettingsFactory(pagesMapViewSettings);
-        this.name = name;
-        this.tags = tags;
+    public fromObject(data = {
+        id: undefined,
+        name: undefined,
+        pages: undefined,
+        cachedMediaIds: undefined,
+        conditions: undefined,
+        pagesMapViewSettings: undefined,
+        functions: undefined,
+        tags: undefined,
+        author: undefined,
+        description: undefined
+    }) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.author = data.author;
+        this.cachedMediaIds = data.cachedMediaIds;
+        this.conditions = data.conditions;
+        this.description = data.description;
+        this.functions = data.functions;
+        this.pages = this.pageCollectionFactory(data.pages);
+        this.pagesMapViewSettings = this.pagesMapViewSettingsFactory(data.pagesMapViewSettings);
+        this.name = data.name;
+        this.tags = data.tags;
     }
 
     public toJSON() {

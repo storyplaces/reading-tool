@@ -32,13 +32,12 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {Identifiable} from "../interfaces/Identifiable";
 import {JSONable} from "../interfaces/JSONable";
 import {FromObjectInterface} from "../interfaces/FromObjectInterface";
 import {TypeChecker} from "../utilities/TypeChecker";
 
-export abstract class BaseModel implements Identifiable, JSONable, FromObjectInterface{
+export abstract class BaseModel implements Identifiable, JSONable, FromObjectInterface {
     protected _id: string;
 
     constructor(protected typeChecker: TypeChecker) {
@@ -54,5 +53,6 @@ export abstract class BaseModel implements Identifiable, JSONable, FromObjectInt
     }
 
     public abstract toJSON();
+
     public abstract fromObject(any);
 }
