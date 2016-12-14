@@ -80,6 +80,13 @@ describe("Page model", () => {
         expect(model.conditions).toEqual([{id: "2"}]);
     });
 
+    it("will throw an error if something other than an object is passed to fromObject", () => {
+        let model = new Page(typeChecker);
+
+        expect(() => {model.fromObject([] as any)}).toThrow();
+        expect(() => {model.fromObject("a" as any)}).toThrow();
+    });
+
     it("will throw an exception when name is set to something other than a string or undefined", () => {
         let model = new Page(typeChecker);
 

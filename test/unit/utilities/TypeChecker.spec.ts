@@ -199,6 +199,37 @@ describe("TypeChecker", () => {
             typeChecker.validateScalarValue("test", undefined, undefined);
         }).not.toThrow();
     });
+    //endregion
+
+    //region Plain object
+    it("throws an error if you don't pass an object", () => {
+        let typeChecker = new TypeChecker();
+        expect(() => {
+            typeChecker.validateAsObjectAndNotArray("test", "a");
+        }).toThrow();
+    });
+
+    it("throws an error if you pass an array", () => {
+        let typeChecker = new TypeChecker();
+        expect(() => {
+            typeChecker.validateAsObjectAndNotArray("test", ["a"]);
+        }).toThrow();
+    });
+
+    it("does not throw an error if you pass an object", () => {
+        let typeChecker = new TypeChecker();
+        expect(() => {
+            typeChecker.validateAsObjectAndNotArray("test", {a:"a"});
+        }).not.toThrow();
+    });
+
+    it("does not throw an error if you pass undefined", () => {
+        let typeChecker = new TypeChecker();
+        expect(() => {
+            typeChecker.validateAsObjectAndNotArray("test", undefined);
+        }).not.toThrow();
+    });
+
 
     //endregion
 });

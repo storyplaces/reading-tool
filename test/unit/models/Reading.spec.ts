@@ -84,6 +84,15 @@ describe("Reading model", () => {
         expect(factoryCalledWith).toEqual([{id: "2"}]);
     });
 
+
+    it("will throw an error if something other than an object is passed to fromObject", () => {
+        let model = new Reading(factory, typeChecker);
+
+        expect(() => {model.fromObject([] as any)}).toThrow();
+        expect(() => {model.fromObject("a" as any)}).toThrow();
+    });
+
+
     it("will throw an error when readingId is set to something other than a string or undefined", () => {
         let model = new Reading(factory, typeChecker);
 

@@ -59,9 +59,10 @@ export class Variable extends BaseModel {
         this.fromObject(data);
     }
 
-    fromObject({id = undefined, value = undefined} = {}) {
-        this.id = id;
-        this.value = value;
+    fromObject(data = {id:undefined, value:undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.value = data.value;
     }
 
     toJSON() {
