@@ -53,6 +53,14 @@ describe("ComparisonCondition", () => {
         expect(comparisonCondition instanceof ComparisonCondition).toBeTruthy();
     });
 
+
+    it("will throw an error if something other than an object is passed to fromObject", () => {
+        let model = new ComparisonCondition(typeChecker);
+
+        expect(() => {model.fromObject([] as any)}).toThrow();
+        expect(() => {model.fromObject("a" as any)}).toThrow();
+    });
+
     it("can have its type set to comparison", () => {
         let comparisonCondition = new ComparisonCondition(typeChecker);
         comparisonCondition.type = "comparison";

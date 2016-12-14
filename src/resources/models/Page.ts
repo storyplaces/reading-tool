@@ -48,10 +48,11 @@ export class Page extends BaseModel{
         this.fromObject(data);
     }
 
-    public fromObject({id = undefined, name = undefined, conditions = undefined} = {}) {
-        this.id = id;
-        this.name = name;
-        this.conditions = conditions;
+    public fromObject(data: any = {id:undefined, name: undefined, conditions: undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.name = data.name;
+        this.conditions = data.conditions;
     }
 
     public toJSON() {

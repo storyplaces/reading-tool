@@ -49,10 +49,11 @@ export class PagesMapViewSettings implements JSONable, FromObjectInterface {
         this.fromObject(data);
     }
 
-    public fromObject({map = undefined, pageArrows = undefined, pageDistance = undefined} = {}) {
-        this.map = map;
-        this.pageArrows = pageArrows;
-        this.pageDistance = pageDistance;
+    public fromObject(data: any = {map:undefined, pageArrows:undefined, pageDistance:undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.map = data.map;
+        this.pageArrows = data.pageArrows;
+        this.pageDistance = data.pageDistance;
     }
 
     public toJSON() {

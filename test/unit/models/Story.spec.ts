@@ -136,6 +136,14 @@ describe("Story model", () => {
     });
 
 
+    it("will throw an error if something other than an object is passed to fromObject", () => {
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+
+        expect(() => {model.fromObject([] as any)}).toThrow();
+        expect(() => {model.fromObject("a" as any)}).toThrow();
+    });
+
+
     it("will throw an error if name is not set to a string or undefined", () => {
        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
 

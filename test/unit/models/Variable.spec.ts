@@ -63,6 +63,13 @@ describe("Variable model", () => {
         expect(model.value).toEqual(true);
     });
 
+    it("will throw an error if something other than an object is passed to fromObject", () => {
+        let model = new Variable(typeChecker);
+
+        expect(() => {model.fromObject([] as any)}).toThrow();
+        expect(() => {model.fromObject("a" as any)}).toThrow();
+    });
+
     it("will convert to JSON", () => {
         let data = {id: "1", value: true};
         let model = new Variable(typeChecker, data);
