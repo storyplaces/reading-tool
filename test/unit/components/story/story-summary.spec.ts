@@ -53,7 +53,7 @@ describe('StorySummary', () => {
 
     beforeEach(() => {
         container = new Container().makeGlobal();
-        story = {id: testId, name: testName, author: testAuthor, tags: ["Southampton", "Bournemouth"]};
+        story = {id: testId, name: testName, author: testAuthor, tags: ["Southampton", "Bournemouth"], audience: ""};
 
         component = StageComponent
             .withResources('components/story/story-summary')
@@ -71,7 +71,7 @@ describe('StorySummary', () => {
     //     });
     // });
 
-    it('should set the title and subtitle correctly', done => {
+    it('sets the title and subtitle correctly', done => {
         component.create(bootstrap).then(() => {
             const titleElement = document.querySelector("h4");
             expect(titleElement.innerHTML).toEqual("test-name<small> - test-author</small>");
@@ -79,10 +79,35 @@ describe('StorySummary', () => {
         });
     });
 
-    it('should shows the metadata field (hardcoded at the moment)', done => {
+    it('shows the family friendly label when the audience is set as family', done => {
+        story.audience="family";
         component.create(bootstrap).then(() => {
             const metaDataElement = document.querySelector("div.list-group-item-text");
-            expect(metaDataElement.innerHTML).toContain('<span class="label label-success">Meta data</span>');
+            expect(metaDataElement.innerHTML).toContain('<span class="label label-success">Family Friendly</span>');
+            expect(metaDataElement.innerHTML).not.toContain('Advisory Content');
+            expect(metaDataElement.innerHTML).not.toContain('General Audience');
+            done();
+        });
+    });
+
+    it('shows the family advisory content label when the audience is set as advisory', done => {
+        story.audience="advisory";
+        component.create(bootstrap).then(() => {
+            const metaDataElement = document.querySelector("div.list-group-item-text");
+            expect(metaDataElement.innerHTML).toContain('<span class="label label-danger">Advisory Content</span>');
+            expect(metaDataElement.innerHTML).not.toContain('Family Friendly');
+            expect(metaDataElement.innerHTML).not.toContain('General Audience');
+            done();
+        });
+    });
+
+    it('shows the general audience content label when the audience is set as general', done => {
+        story.audience="general";
+        component.create(bootstrap).then(() => {
+            const metaDataElement = document.querySelector("div.list-group-item-text");
+            expect(metaDataElement.innerHTML).toContain('<span class="label label-info">General Audience</span>');
+            expect(metaDataElement.innerHTML).not.toContain('Family Friendly');
+            expect(metaDataElement.innerHTML).not.toContain('Advisory Content');
             done();
         });
     });

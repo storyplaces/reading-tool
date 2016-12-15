@@ -53,6 +53,7 @@ export class Story extends BaseModel {
     private _functions: any;
     private _tags: Array<string>;
     private _pagesMapViewSettings: PagesMapViewSettings;
+    private _audience: string;
 
     constructor(private pageCollectionFactory: (any?) => PageCollection,
                 private pagesMapViewSettingsFactory: (any?) => PagesMapViewSettings,
@@ -72,7 +73,8 @@ export class Story extends BaseModel {
         functions: undefined,
         tags: undefined,
         author: undefined,
-        description: undefined
+        description: undefined,
+        audience: undefined
     }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
@@ -85,6 +87,7 @@ export class Story extends BaseModel {
         this.pagesMapViewSettings = this.pagesMapViewSettingsFactory(data.pagesMapViewSettings);
         this.name = data.name;
         this.tags = data.tags;
+        this.audience = data.audience;
     }
 
     public toJSON() {
@@ -98,8 +101,18 @@ export class Story extends BaseModel {
             pages: this.pages,
             pagesMapViewSettings: this.pagesMapViewSettings,
             name: this.name,
-            tags: this.tags
+            tags: this.tags,
+            audience: this.audience
         }
+    }
+
+    get audience(): string {
+        return this._audience;
+    }
+
+    set audience(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("Audience", value);
+        this._audience = value;
     }
 
     get author(): string {
