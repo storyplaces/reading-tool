@@ -48,21 +48,21 @@ export class TypeFactory implements Resolver {
 
     public get(container: Container) {
         return (data: TypedObject): any => {
-            if ((typeof data.type == 'string') && this._config[data.type]) {
-                let requestedObject = this._config[data.type];
-
-                if (!(requestedObject instanceof Function)) {
-                    throw new TypeError("Unknown class to instantiate");
-                }
-
-                if (data instanceof requestedObject) {
-                    return data;
-                }
-
-                return container.invoke(requestedObject, [data]);
+            if ((typeof data.type != 'string') || !this._config[data.type]) {
+                throw new TypeError("Unknown object type " + data.type);
             }
 
-            throw new TypeError("Unknown object type " + data.type);
+            let requestedObject = this._config[data.type];
+
+            if (!(requestedObject instanceof Function)) {
+                throw new TypeError("Unknown class to instantiate");
+            }
+
+            if (data instanceof requestedObject) {
+                return data;
+            }
+
+            return container.invoke(requestedObject, [data]);
         }
     }
 
