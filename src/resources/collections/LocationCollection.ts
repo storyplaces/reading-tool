@@ -32,35 +32,28 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {BaseCollection} from "./BaseCollection";
+import {BaseLocation} from "../models/locations/BaseLocation";
+import {TypeFactory} from "../factories/TypeFactory";
+import {CircleLocation} from "../models/locations/CircleLocation";
+import {inject} from "aurelia-framework";
 
-import {Container} from "aurelia-framework";
-import {ConditionFactory} from "../../../src/resources/factories/ConditionFactory";
-import {ComparisonCondition} from "../../../src/resources/models/conditions/ComparisonCondition";
+@inject(TypeFactory.withMapping({'circle': CircleLocation}))
+export class LocationCollection extends BaseCollection<BaseLocation> {
 
-describe("ConditionFactory", () => {
-    let container: Container;
+    constructor(private locationFactory: (any?) => BaseLocation, data?: any[]) {
+        super();
 
-    beforeEach(() => {
-        container = new Container().makeGlobal();
-        spyOn(container, 'invoke').and.returnValue(null);
-    });
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
+        }
+    }
 
-    afterEach(() => {
-       container = null;
-    });
+    protected itemFromObject(item: any): BaseLocation {
+        if (item instanceof BaseLocation) {
+            return item as BaseLocation;
+        }
 
-    it("throws an error when an invalid type is passed", () => {
-        let factory = new ConditionFactory().get(container);
-
-        expect(() => {factory({type:"other"})}).toThrow();
-    });
-
-    it("invokes a ComparisonCondition when the type of condition is passed", () => {
-        let factory = new ConditionFactory().get(container);
-        let data = {type:"comparison"};
-
-        factory(data);
-
-        expect(container.invoke).toHaveBeenCalledWith(ComparisonCondition, [data]);
-    });
-});
+        return this.locationFactory(item);
+    }
+}

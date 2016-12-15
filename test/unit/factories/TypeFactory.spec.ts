@@ -32,28 +32,55 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {BaseCollection} from "./BaseCollection";
-import {BaseCondition} from "../models/conditions/BaseCondition";
-import {TypeFactory} from "../factories/TypeFactory";
-import {ComparisonCondition} from "../models/conditions/ComparisonCondition";
-import {inject} from "aurelia-framework";
 
-@inject(TypeFactory.withMapping({'comparison': ComparisonCondition}))
-export class ConditionCollection extends BaseCollection<BaseCondition> {
+import {Container} from "aurelia-framework";
+import {ComparisonCondition} from "../../../src/resources/models/conditions/ComparisonCondition";
+import {TypeFactory} from "../../../src/resources/factories/TypeFactory";
 
-    constructor(private conditionFactory: (any?) => BaseCondition, data?: any[]) {
-        super();
+describe("ConditionFactory", () => {
+    let container: Container;
+    let factory: (any?) => any;
 
-        if (data && Array.isArray(data)) {
-            this.saveMany(data);
-        }
+    class TestType {
+        public type = "test";
     }
 
-    protected itemFromObject(item: any): BaseCondition {
-        if (item instanceof BaseCondition) {
-            return item as BaseCondition;
-        }
+    beforeEach(() => {
+        container = new Container().makeGlobal();
+        spyOn(container, 'invoke').and.returnValue(null);
+        factory = TypeFactory.withMapping({'test': TestType}).get(container);
+    });
 
-        return this.conditionFactory(item);
-    }
-}
+    afterEach(() => {
+       container = undefined;
+       factory = undefined;
+    });
+
+    it("throws an error when an invalid type is passed", () => {
+        expect(() => {factory({type:"other"})}).toThrow();
+    });
+
+    it("throws an error when type is not a string", () => {
+        expect(() => {factory({type:1})}).toThrow();
+    });
+
+    it("invokes a TestType when the type of test is passed", () => {
+        let data = {type:"test", other:true};
+        factory(data);
+
+        expect(container.invoke).toHaveBeenCalledWith(TestType, [data]);
+    });
+
+    it("returns the passed object if matches the configured mapping", () => {
+        let data = new TestType();
+        let result = factory(data);
+
+        expect(container.invoke).not.toHaveBeenCalled();
+        expect(result).toBe(data);
+    });
+
+    it("throws an error if the mapping does not point to a Class", () => {
+        factory = TypeFactory.withMapping({'test': 'a'}).get(container);
+        expect(() => {factory({type:1})}).toThrow();
+    });
+});
