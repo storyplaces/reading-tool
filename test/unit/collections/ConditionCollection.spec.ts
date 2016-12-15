@@ -37,11 +37,20 @@ import {ConditionCollection} from "../../../src/resources/collections/ConditionC
 import {BaseCondition} from "../../../src/resources/models/conditions/BaseCondition";
 import {Reading} from "../../../src/resources/models/Reading";
 import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
+import {Container} from "aurelia-framework";
+import {ComparisonCondition} from "../../../src/resources/models/conditions/ComparisonCondition";
 
 describe("ConditionCollection", () => {
 
     let conditionFactoryCalledWith;
     let typeChecker = new TypeChecker();
+
+    let container:Container = new Container().makeGlobal();
+
+    function resolve(object: Function, data? : any) {
+        return container.invoke(object, [data]);
+    }
+
 
     let conditionFactory = (data) => {
         conditionFactoryCalledWith = data;
@@ -52,6 +61,12 @@ describe("ConditionCollection", () => {
     };
     
     class Condition extends BaseCondition{
+        get type(){return "type"};
+        set type(value: any){};
+
+        fromObject(any) {
+        }
+
         constructor(typeChecker: TypeChecker) {
             super(typeChecker);
         }
@@ -142,5 +157,11 @@ describe("ConditionCollection", () => {
         expect(collection.all[1] instanceof Condition).toBeTruthy();
         expect(collection.all[1]).toBe(model2);
         expect(conditionFactoryCalledWith).toEqual("notYetCalled");
+    });
+
+    it("generates the correct Condition for the supplied type", () => {
+        let collection = resolve(ConditionCollection, [{id:"123", type:"comparison", aType:"String", a:"a", bType: "String", b:"b"}]);
+
+        expect(collection.get("123") instanceof ComparisonCondition).toBeTruthy();
     });
 });

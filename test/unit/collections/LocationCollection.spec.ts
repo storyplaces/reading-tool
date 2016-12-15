@@ -35,11 +35,18 @@
 import {LocationCollection} from "../../../src/resources/collections/LocationCollection";
 import {BaseLocation} from "../../../src/resources/models/locations/BaseLocation";
 import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
+import {Container} from "aurelia-framework";
+import {CircleLocation} from "../../../src/resources/models/locations/CircleLocation";
 
 describe("LocationCollection", () => {
 
     let locationFactoryCalledWith;
     let typeChecker = new TypeChecker();
+    let container:Container = new Container().makeGlobal();
+
+    function resolve(object: Function, data? : any) {
+        return container.invoke(object, [data]);
+    }
 
     let locationFactory = (data) => {
         locationFactoryCalledWith = data;
@@ -146,5 +153,11 @@ describe("LocationCollection", () => {
         expect(collection.all[1] instanceof Location).toBeTruthy();
         expect(collection.all[1]).toBe(model2);
         expect(locationFactoryCalledWith).toEqual("notYetCalled");
+    });
+
+    it("generates the correct Location for the supplied type", () => {
+        let collection = resolve(LocationCollection, [{id:"123", type:"circle"}]);
+
+        expect(collection.get("123") instanceof CircleLocation).toBeTruthy();
     });
 });
