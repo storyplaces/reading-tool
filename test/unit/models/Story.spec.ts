@@ -38,6 +38,7 @@ import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 describe("Story model", () => {
     let pagesMapViewSettingsFactoryCalledWith;
     let pageCollectionFactoryCalledWith;
+    let locationFactoryCalledWith;
     let typeChecker: TypeChecker
 
 
@@ -46,9 +47,13 @@ describe("Story model", () => {
         return undefined;
     };
 
-
     let pagesMapViewSettingsFactory = (data) => {
         pagesMapViewSettingsFactoryCalledWith = data;
+        return undefined;
+    };
+
+    let locationFactory = (data) => {
+        locationFactoryCalledWith = data;
         return undefined;
     };
 
@@ -66,7 +71,7 @@ describe("Story model", () => {
 
 
     it("can be instantiated with no data", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, typeChecker);
 
         expect(model.id).toBeUndefined();
         expect(model.author).toBeUndefined();
@@ -87,10 +92,10 @@ describe("Story model", () => {
     it("can be instantiated with data", () => {
         let data = {
             id: "id", name: "name", cachedMediaIds: ["cachedMediaId"], conditions: [{id: "condition"}], description: "description", functions: [{id: "function"}],
-            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"]
+            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"], audience: "general", locations:[{id:"location"}]
         };
 
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker, data);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, typeChecker, data);
 
         expect(model.id).toEqual("id");
         expect(model.author).toEqual("author");
@@ -104,6 +109,7 @@ describe("Story model", () => {
         expect(model.pages).toEqual(undefined);
         expect(model.pagesMapViewSettings).toEqual(undefined);
         expect(pageCollectionFactoryCalledWith).toEqual([{id: "page"}]);
+        expect(locationFactoryCalledWith).toEqual([{id: "location"}]);
         expect(pagesMapViewSettingsFactoryCalledWith).toEqual({setting: true});
     });
 
@@ -111,10 +117,10 @@ describe("Story model", () => {
     it("can have an anonymous Object passed to it", () => {
         let data = {
             id: "id", name: "name", cachedMediaIds: ["cachedMediaId"], conditions: [{id: "condition"}], description: "description", functions: [{id: "function"}],
-            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"]
+            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"], audience: "general", locations:[{id:"location"}]
         };
 
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, typeChecker);
         model.fromObject(data);
 
         expect(model.id).toEqual("id");
@@ -129,12 +135,13 @@ describe("Story model", () => {
         expect(model.pages).toEqual(undefined);
         expect(model.pagesMapViewSettings).toEqual(undefined);
         expect(pageCollectionFactoryCalledWith).toEqual([{id: "page"}]);
+        expect(locationFactoryCalledWith).toEqual([{id: "location"}]);
         expect(pagesMapViewSettingsFactoryCalledWith).toEqual({setting: true});
     });
 
 
     it("will throw an error if something other than an object is passed to fromObject", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, typeChecker);
 
         expect(() => {
             model.fromObject([] as any)
@@ -147,7 +154,7 @@ describe("Story model", () => {
 
 
     it("will throw an error if name is not set to a string or undefined", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, typeChecker);
 
         expect(() => {
             model.name = 1 as any
@@ -156,7 +163,7 @@ describe("Story model", () => {
 
 
     it("will throw an error if description is not set to a string or undefined", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, typeChecker);
 
         expect(() => {
             model.description = 1 as any
@@ -165,7 +172,7 @@ describe("Story model", () => {
 
 
     it("will throw an error if author is not set to a string or undefined", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, typeChecker);
 
         expect(() => {
             model.author = 1 as any
@@ -173,8 +180,8 @@ describe("Story model", () => {
     });
 
 
-    it("will throw an error if pages is not set to a PagesCollection object", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+    it("will throw an error if pages is not set to a PageCollection object", () => {
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, typeChecker);
 
         expect(() => {
             model.pages = 1 as any
@@ -183,10 +190,18 @@ describe("Story model", () => {
 
 
     it("will throw an error if pagesMapViewSettings is not set to a PagesCollection object", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, typeChecker);
 
         expect(() => {
             model.pagesMapViewSettings = 1 as any
+        }).toThrow();
+    });
+
+    it("will throw an error if locations is not set to a LocationCollection object", () => {
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, typeChecker);
+
+        expect(() => {
+            model.locations = 1 as any
         }).toThrow();
     });
 
@@ -197,8 +212,7 @@ describe("Story model", () => {
             pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"]
         };
 
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, typeChecker, data);
-
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, typeChecker, data);
 
         let result = JSON.stringify(model);
 

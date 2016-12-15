@@ -37,13 +37,16 @@ import {PagesMapViewSettings} from "./PagesMapViewSettings";
 import {Factory, inject} from "aurelia-framework";
 import {BaseModel} from "./BaseModel";
 import {TypeChecker} from "../utilities/TypeChecker";
+import {LocationCollection} from "../collections/LocationCollection";
 
 @inject(
     Factory.of(PageCollection),
     Factory.of(PagesMapViewSettings),
+    Factory.of(LocationCollection),
     TypeChecker
 )
 export class Story extends BaseModel {
+
     private _author: string;
     private _name: string;
     private _description: string;
@@ -54,9 +57,11 @@ export class Story extends BaseModel {
     private _tags: Array<string>;
     private _pagesMapViewSettings: PagesMapViewSettings;
     private _audience: string;
+    private _locations: LocationCollection;
 
     constructor(private pageCollectionFactory: (any?) => PageCollection,
                 private pagesMapViewSettingsFactory: (any?) => PagesMapViewSettings,
+                private locationCollectionFactory: (any?) => LocationCollection,
                 typeChecker: TypeChecker,
                 data?: any) {
         super(typeChecker);
@@ -74,7 +79,8 @@ export class Story extends BaseModel {
         tags: undefined,
         author: undefined,
         description: undefined,
-        audience: undefined
+        audience: undefined,
+        locations: undefined,
     }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
@@ -88,6 +94,7 @@ export class Story extends BaseModel {
         this.name = data.name;
         this.tags = data.tags;
         this.audience = data.audience;
+        this.locations = this.locationCollectionFactory(data.locations);
     }
 
     public toJSON() {
@@ -102,7 +109,8 @@ export class Story extends BaseModel {
             pagesMapViewSettings: this.pagesMapViewSettings,
             name: this.name,
             tags: this.tags,
-            audience: this.audience
+            audience: this.audience,
+            locations: this.locations,
         }
     }
 
@@ -190,6 +198,15 @@ export class Story extends BaseModel {
 
     set cachedMediaIds(value: Array<number>) {
         this._cachedMediaIds = value;
+    }
+
+    get locations(): LocationCollection {
+        return this._locations;
+    }
+
+    set locations(value: LocationCollection) {
+        this.typeChecker.validateAsObjectOrUndefined("Locations", value, "LocationCollection", LocationCollection);
+        this._locations = value;
     }
 
 }
