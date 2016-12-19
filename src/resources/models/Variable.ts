@@ -39,16 +39,14 @@ import {inject} from "aurelia-framework";
 @inject(TypeChecker)
 
 export class Variable extends BaseModel {
-    private _value: string|number|boolean;
+    private _value: string;
 
-    get value(): string|number|boolean {
+    get value(): string {
         return this._value
     };
 
-    set value(value: string|number|boolean) {
-        if (value != undefined && typeof value != 'string' && typeof value != 'number' && typeof value != 'boolean') {
-            throw TypeError("Variable value can only be a string, a number or a boolean");
-        }
+    set value(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("Value", value)
 
         this._value = value;
     }

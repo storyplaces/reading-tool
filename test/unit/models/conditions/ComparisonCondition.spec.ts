@@ -47,6 +47,12 @@ describe("ComparisonCondition", () => {
 
     });
 
+    it("can be created with data", () => {
+        let comparisonCondition = new ComparisonCondition(typeChecker, {type: "comparison"});
+
+        expect(comparisonCondition instanceof ComparisonCondition).toBeTruthy();
+    });
+
     it("can be created with no data", () => {
         let comparisonCondition = new ComparisonCondition(typeChecker);
 
@@ -97,13 +103,6 @@ describe("ComparisonCondition", () => {
 
     it("can have its aType set to Integer", () => {
         let comparisonCondition = new ComparisonCondition(typeChecker);
-        comparisonCondition.aType = "Boolean";
-
-        expect(comparisonCondition.aType).toEqual("Boolean");
-    });
-
-    it("can have its aType set to Integer", () => {
-        let comparisonCondition = new ComparisonCondition(typeChecker);
         comparisonCondition.aType = "Variable";
 
         expect(comparisonCondition.aType).toEqual("Variable");
@@ -130,13 +129,6 @@ describe("ComparisonCondition", () => {
         comparisonCondition.bType = "String";
 
         expect(comparisonCondition.bType).toEqual("String");
-    });
-
-    it("can have its bType set to Integer", () => {
-        let comparisonCondition = new ComparisonCondition(typeChecker);
-        comparisonCondition.bType = "Boolean";
-
-        expect(comparisonCondition.bType).toEqual("Boolean");
     });
 
     it("can have its bType set to Integer", () => {
@@ -174,16 +166,16 @@ describe("ComparisonCondition", () => {
         let comparisonCondition = new ComparisonCondition(typeChecker);
         comparisonCondition.aType = "String";
         expect(() => {
-            comparisonCondition.a = 1;
+            comparisonCondition.a = 1 as any;
         }).toThrow();
     });
 
     it("can have the a variable set as an integer if aType is set to Integer", () => {
         let comparisonCondition = new ComparisonCondition(typeChecker);
         comparisonCondition.aType = "Integer";
-        comparisonCondition.a = 12;
+        comparisonCondition.a = "12";
 
-        expect(comparisonCondition.a).toEqual(12);
+        expect(comparisonCondition.a).toEqual("12");
     });
 
     it("will throw an error if the a variable is not an integer and aType is set to Integer", () => {
@@ -192,21 +184,9 @@ describe("ComparisonCondition", () => {
         expect(() => {
             comparisonCondition.a = "value";
         }).toThrow();
-    });
 
-    it("can have the a variable set as a boolean if aType is set to Boolean", () => {
-        let comparisonCondition = new ComparisonCondition(typeChecker);
-        comparisonCondition.aType = "Boolean";
-        comparisonCondition.a = true;
-
-        expect(comparisonCondition.a).toEqual(true);
-    });
-
-    it("will throw an error if the a variable is not a boolean and aType is set to Boolean", () => {
-        let comparisonCondition = new ComparisonCondition(typeChecker);
-        comparisonCondition.aType = "Boolean";
         expect(() => {
-            comparisonCondition.a = "value";
+            comparisonCondition.a = 12 as any;
         }).toThrow();
     });
 
@@ -222,20 +202,20 @@ describe("ComparisonCondition", () => {
         let comparisonCondition = new ComparisonCondition(typeChecker);
         comparisonCondition.aType = "Variable";
         expect(() => {
-            comparisonCondition.a = 1;
+            comparisonCondition.a = 1 as any;
         }).toThrow();
     });
     //region
 
     //region b variable
-    it("will throw an error if the b variable is set before bType", () => {
+    it("will throw an error if the b variable is set before aType", () => {
         let comparisonCondition = new ComparisonCondition(typeChecker);
         expect(() => {
             comparisonCondition.b = "Value"
         }).toThrow();
     });
 
-    it("can have the b variable set as a string if bType is set to String", () => {
+    it("can have the b variable set as a string if aType is set to String", () => {
         let comparisonCondition = new ComparisonCondition(typeChecker);
         comparisonCondition.bType = "String";
         comparisonCondition.b = "value";
@@ -243,47 +223,35 @@ describe("ComparisonCondition", () => {
         expect(comparisonCondition.b).toEqual("value");
     });
 
-    it("will throw an error if the b variable is not a string and bType is set to String", () => {
+    it("will throw an error if the b variable is not a string and aType is set to String", () => {
         let comparisonCondition = new ComparisonCondition(typeChecker);
         comparisonCondition.bType = "String";
         expect(() => {
-            comparisonCondition.b = 1;
+            comparisonCondition.b = 1 as any;
         }).toThrow();
     });
 
-    it("can have the b variable set as an integer if bType is set to Integer", () => {
+    it("can have the b variable set as an integer if aType is set to Integer", () => {
         let comparisonCondition = new ComparisonCondition(typeChecker);
         comparisonCondition.bType = "Integer";
-        comparisonCondition.b = 12;
+        comparisonCondition.b = "12";
 
-        expect(comparisonCondition.b).toEqual(12);
+        expect(comparisonCondition.b).toEqual("12");
     });
 
-    it("will throw an error if the b variable is not an integer and bType is set to Integer", () => {
+    it("will throw an error if the b variable is not an integer and aType is set to Integer", () => {
         let comparisonCondition = new ComparisonCondition(typeChecker);
         comparisonCondition.bType = "Integer";
         expect(() => {
             comparisonCondition.b = "value";
         }).toThrow();
-    });
 
-    it("can have the b variable set as a boolean if bType is set to Boolean", () => {
-        let comparisonCondition = new ComparisonCondition(typeChecker);
-        comparisonCondition.bType = "Boolean";
-        comparisonCondition.b = true;
-
-        expect(comparisonCondition.b).toEqual(true);
-    });
-
-    it("will throw an error if the b variable is not a boolean and bType is set to Boolean", () => {
-        let comparisonCondition = new ComparisonCondition(typeChecker);
-        comparisonCondition.bType = "Boolean";
         expect(() => {
-            comparisonCondition.b = "value";
+            comparisonCondition.b = 12 as any;
         }).toThrow();
     });
 
-    it("can have the b variable set as string (ie variable reference) a if bType is set to Variable", () => {
+    it("can have the b variable set as string (ie variable reference) a if aType is set to Variable", () => {
         let comparisonCondition = new ComparisonCondition(typeChecker);
         comparisonCondition.bType = "Variable";
         comparisonCondition.b = "12345ABC";
@@ -291,13 +259,14 @@ describe("ComparisonCondition", () => {
         expect(comparisonCondition.b).toEqual("12345ABC");
     });
 
-    it("will throw an error if the b variable is not a string (ie variable reference) and bType is set to Variable", () => {
+    it("will throw an error if the b variable is not a string (ie variable reference) and aType is set to Variable", () => {
         let comparisonCondition = new ComparisonCondition(typeChecker);
         comparisonCondition.bType = "Variable";
         expect(() => {
-            comparisonCondition.b = 1;
+            comparisonCondition.b = 1 as any;
         }).toThrow();
     });
+
     //region
 
 

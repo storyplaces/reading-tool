@@ -47,6 +47,4 @@ export abstract class BaseCondition extends BaseModel{
     abstract set type(value: any);
 
     protected _type:string;
-
-    abstract execute(reading: Reading);
 }

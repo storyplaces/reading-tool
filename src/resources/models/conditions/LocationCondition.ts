@@ -32,62 +32,67 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Variable} from "../../../src/resources/models/Variable";
-import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
+import {BaseCondition} from "./BaseCondition";
+import {TypeChecker} from "../../utilities/TypeChecker";
+import {inject} from "aurelia-framework";
 
-describe("Variable model", () => {
-    let typeChecker = new TypeChecker;
+@inject(TypeChecker)
 
-    it("can be instantiated with no data", () => {
-        let model = new Variable(typeChecker);
+export class CheckCondition extends BaseCondition {
+    private _bool: string;
+    private _location: string;
 
-        expect(model.id).toBeUndefined();
-        expect(model.value).toBeUndefined();
-    });
+    constructor(typeChecker: TypeChecker, data?: any) {
+        super(typeChecker);
 
-    it("can be instantiated with an object", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker, data);
+        if (data) {
+            this.fromObject(data);
+        }
+    }
 
-        expect(model.id).toEqual("1");
-        expect(model.value).toEqual("a");
-    });
+    fromObject(data = {id: undefined, type: undefined, bool: undefined, location: undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.type = data.type;
+        this.bool = data.bool;
+        this.location = data.location;
+    }
 
-    it("can have an anonymous object passed to it", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker);
-        model.fromObject(data);
+    toJSON() {
+        return {
+            id: this.id,
+            type: this.type,
+            bool: this.bool,
+            location: this.location
+        };
+    }
 
-        expect(model.id).toEqual("1");
-        expect(model.value).toEqual("a");
-    });
+    get type(): string {
+        return this._type;
+    }
 
-    it("will throw an error if something other than an object is passed to fromObject", () => {
-        let model = new Variable(typeChecker);
+    set type(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("Type", value);
+        this.typeChecker.validateScalarValue("Type", "check", value);
+        this._type = value;
+    }
 
-        expect(() => {
-            model.fromObject([] as any)
-        }).toThrow();
-        expect(() => {
-            model.fromObject("a" as any)
-        }).toThrow();
-    });
+    get bool(): string {
+        return this._bool;
+    }
 
-    it("will convert to JSON", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker, data);
+    set bool(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("bool", value);
+        this._bool = value;
+    }
 
-        let result = JSON.stringify(model);
+    get location(): string {
+        return this._location;
+    }
 
-        expect(result).toEqual('{"id":"1","value":"a"}');
-    });
+    set location(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("location", value);
+        this._location = value;
+    }
 
-    it("will throw an error if value is set to something other than a string", () => {
-        let model = new Variable(typeChecker);
-
-
-        expect(() => {
-            model.value = 1 as any
-        }).toThrow();
-    });
-});
+}
