@@ -1,7 +1,11 @@
 <template>
     <require from="./reading-summary"></require>
 
+    Then
+    ${storyId}
     <ul class="list-group">
-        <reading-summary repeat.for="reading of readings" story.bind="reading"></reading-summary>
+        <reading-summary repeat.for="reading of readings" reading.bind="reading"></reading-summary>
     </ul>
+
+    <button class="btn" click.delegate="newReading()"><span class="glyphicon glyphicon-plus"></span>Create a new reading</button>
 </template>

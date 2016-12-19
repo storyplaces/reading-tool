@@ -42,7 +42,8 @@ export class App {
 
         config.map([
             {route: '', name: 'home', moduleId: 'pages/story-overview-page', title: 'Story List'},
-            {route: '/story/:storyId', moduleId: 'pages/story-detail-page', title: 'Story', name: 'story-detail'}
+            {route: '/story/:storyId', moduleId: 'pages/story-detail-page', title: 'Story', name: 'story-detail'},
+            {route: '/story/:storyId/reading/:readingId', moduleId: 'pages/story-detail-page', title: 'Reading', name: 'reading-detail'},
         ]);
 
         this.router = router;

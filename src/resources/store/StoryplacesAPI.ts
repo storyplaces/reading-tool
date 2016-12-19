@@ -15,6 +15,7 @@ export class StoryPlacesAPI {
         let headers = {};
 
         headers['X-Auth-Token'] = this.config.read('server_auth_password');
+        headers['Content-Type'] = "application/json";
 
         this.client.configure(config => {
             // TODO: Put these in a config file
@@ -55,6 +56,7 @@ export class StoryPlacesAPI {
         } else {
             method = 'post';
         }
+        console.log(JSON.stringify(object));
         return this.client.fetch(this._path, {
             method: method,
             body: JSON.stringify(object)

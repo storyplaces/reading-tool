@@ -53,4 +53,9 @@ export class ReadingConnector extends AbstractConnector<Reading> {
         });
     }
 
+    byStoryId(storyId: string): Array<Reading> {
+        //TODO: Make this return based on storyId.
+        return this.readingCollection.all;
+        
+    }
 }
