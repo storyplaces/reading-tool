@@ -39,15 +39,14 @@
 
     <div class="content">
         <div class="text-center content-top-padding">
-            <h2>${story.name}<br><small>${story.author}</small></h2>
-            <div class="row ">
+            <h2>${story.name}<br>
+                <small>${story.author}</small>
+            </h2>
 
-                <collapsible-panel title="Description" id="description-collapse">${story.description}</collapsible-panel>
+            <collapsible-panel title="Description" id="description-collapse">${story.description}</collapsible-panel>
 
-                <collapsible-panel title="Available Readings" id="readings-collapse">
-                    <reading-overview-list story-id.bind="storyId" class="content-top-padding reading-overview-list"></reading-overview-list>
-                </collapsible-panel>
-            </div>
+            <reading-overview-list story-id.bind="storyId" class="content-top-padding reading-overview-list"></reading-overview-list>
+
         </div>
     </div>
 </template>

@@ -28,8 +28,8 @@ export class ReadingOverviewListCustomElement{
     }
 
     newReading() {
-        console.log(this.storyId);
-        var reading = this.readingFactory({storyId: this.storyId, userId: "placeholder"});
+        var readingName = "Reading " + (this.readings.length+1);
+        var reading = this.readingFactory({storyId: this.storyId, userId: "placeholder", name: readingName});
         this.readingConnector.save(reading);
         this.refresh();
     }

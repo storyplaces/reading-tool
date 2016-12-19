@@ -55,13 +55,14 @@ export class Reading extends BaseModel {
         this.id = data.id;
         this.storyId = data.storyId;
         this.userId = data.userId;
-        this.name = name;
+        this.name = data.name;
         this.variables = this.variableCollectionFactory(data.variables);
     }
 
     toJSON() {
         return {
             id: this.id,
+            name: this.name,
             storyId: this.storyId,
             userId: this.userId,
             variables: this.variables,
@@ -73,7 +74,7 @@ export class Reading extends BaseModel {
     }
 
     set name(value: string) {
-        this.typeChecker.validateAsStringOrUndefined('StoryId', value);
+        this.typeChecker.validateAsStringOrUndefined('Name', value);
         this._name = value;
     }
 
