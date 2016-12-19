@@ -32,83 +32,55 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {BaseModel} from "../../../src/resources/models/BaseModel";
-import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
-describe("BaseModel", () => {
-    let typeChecker = new TypeChecker;
+import {Container} from "aurelia-framework";
+import {ComparisonCondition} from "../../../src/resources/models/conditions/ComparisonCondition";
+import {TypeFactory} from "../../../src/resources/factories/TypeFactory";
 
-    class TestModel extends BaseModel {
+describe("ConditionFactory", () => {
+    let container: Container;
+    let factory: (any?) => any;
 
-
-        toJSON() {
-        }
-
-        fromObject({id = undefined}) {
-            this.id = id;
-        }
+    class TestType {
+        public type = "test";
     }
 
-
-    it("will throw an error if id is set to something other than a string", () => {
-        let model = new TestModel(typeChecker);
-
-        expect(() => {
-            model.id = 1 as any
-        }).toThrow();
-
-        expect(() => {
-            model.id = false as any
-        }).toThrow();
-
-        expect(() => {
-            model.id = {} as any
-        }).toThrow();
-
-        expect(() => {
-            model.id = function () {
-            } as any
-        }).toThrow();
+    beforeEach(() => {
+        container = new Container().makeGlobal();
+        spyOn(container, 'invoke').and.returnValue(null);
+        factory = TypeFactory.withMapping({'test': TestType}).get(container);
     });
 
-    it("will throw an error if id is passed to fromObject as something other than a string", () => {
-        let model = new TestModel(typeChecker);
-
-        expect(() => {
-            model.fromObject({id: 1} as any)
-        }).toThrow();
-
-        expect(() => {
-            model.fromObject({id: false} as any)
-        }).toThrow();
-
-        expect(() => {
-            model.fromObject({id: {}} as any)
-        }).toThrow();
-
-        expect(() => {
-            model.fromObject({
-                id: function () {
-                } as any
-            })
-        }).toThrow();
+    afterEach(() => {
+       container = undefined;
+       factory = undefined;
     });
 
-    it("will not throw an error if id is set to a string", () => {
-        let model = new TestModel(typeChecker);
-
-        model.id = "1";
-
-        expect(model.id).toEqual("1");
+    it("throws an error when an invalid type is passed", () => {
+        expect(() => {factory({type:"other"})}).toThrow();
     });
 
-    it("will have toJSON called when passed to JSONStringify", () => {
-        let model = new TestModel(typeChecker);
+    it("throws an error when type is not a string", () => {
+        expect(() => {factory({type:1})}).toThrow();
+    });
 
-        spyOn(model, 'toJSON');
+    it("invokes a TestType when the type of test is passed", () => {
+        let data = {type:"test", other:true};
+        factory(data);
 
-        JSON.stringify(model);
+        expect(container.invoke).toHaveBeenCalledWith(TestType, [data]);
+    });
 
-        expect(model.toJSON).toHaveBeenCalledTimes(1);
-    })
+    it("returns the passed object if matches the configured mapping", () => {
+        let data = new TestType();
+        let result = factory(data);
+
+        expect(container.invoke).not.toHaveBeenCalled();
+        expect(result).toBe(data);
+    });
+
+    it("throws an error if the mapping does not point to a Class", () => {
+        factory = TypeFactory.withMapping({'test': 'a'}).get(container);
+        expect(() => {factory({type:1})}).toThrow();
+    });
 });

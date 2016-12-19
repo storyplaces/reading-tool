@@ -37,13 +37,16 @@ import {PagesMapViewSettings} from "./PagesMapViewSettings";
 import {Factory, inject} from "aurelia-framework";
 import {BaseModel} from "./BaseModel";
 import {TypeChecker} from "../utilities/TypeChecker";
+import {LocationCollection} from "../collections/LocationCollection";
 
 @inject(
     Factory.of(PageCollection),
     Factory.of(PagesMapViewSettings),
+    Factory.of(LocationCollection),
     TypeChecker
 )
 export class Story extends BaseModel {
+
     private _author: string;
     private _name: string;
     private _description: string;
@@ -53,16 +56,32 @@ export class Story extends BaseModel {
     private _functions: any;
     private _tags: Array<string>;
     private _pagesMapViewSettings: PagesMapViewSettings;
+    private _audience: string;
+    private _locations: LocationCollection;
 
     constructor(private pageCollectionFactory: (any?) => PageCollection,
                 private pagesMapViewSettingsFactory: (any?) => PagesMapViewSettings,
+                private locationCollectionFactory: (any?) => LocationCollection,
                 typeChecker: TypeChecker,
                 data?: any) {
         super(typeChecker);
         this.fromObject(data);
     }
 
-    public fromObject(data = {id : undefined, name : undefined, pages : undefined, cachedMediaIds : undefined, conditions : undefined, pagesMapViewSettings : undefined, functions : undefined, tags : undefined, author : undefined, description : undefined}) {
+    public fromObject(data = {
+        id: undefined,
+        name: undefined,
+        pages: undefined,
+        cachedMediaIds: undefined,
+        conditions: undefined,
+        pagesMapViewSettings: undefined,
+        functions: undefined,
+        tags: undefined,
+        author: undefined,
+        description: undefined,
+        audience: undefined,
+        locations: undefined,
+    }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.author = data.author;
@@ -74,6 +93,8 @@ export class Story extends BaseModel {
         this.pagesMapViewSettings = this.pagesMapViewSettingsFactory(data.pagesMapViewSettings);
         this.name = data.name;
         this.tags = data.tags;
+        this.audience = data.audience;
+        this.locations = this.locationCollectionFactory(data.locations);
     }
 
     public toJSON() {
@@ -87,8 +108,19 @@ export class Story extends BaseModel {
             pages: this.pages,
             pagesMapViewSettings: this.pagesMapViewSettings,
             name: this.name,
-            tags: this.tags
+            tags: this.tags,
+            audience: this.audience,
+            locations: this.locations,
         }
+    }
+
+    get audience(): string {
+        return this._audience;
+    }
+
+    set audience(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("Audience", value);
+        this._audience = value;
     }
 
     get author(): string {
@@ -166,6 +198,15 @@ export class Story extends BaseModel {
 
     set cachedMediaIds(value: Array<number>) {
         this._cachedMediaIds = value;
+    }
+
+    get locations(): LocationCollection {
+        return this._locations;
+    }
+
+    set locations(value: LocationCollection) {
+        this.typeChecker.validateAsObjectOrUndefined("Locations", value, "LocationCollection", LocationCollection);
+        this._locations = value;
     }
 
 }

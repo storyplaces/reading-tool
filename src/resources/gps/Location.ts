@@ -4,7 +4,7 @@
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) 2016
+ Copyright (c) $today.year
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -32,35 +32,56 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {autoinject, BindingEngine} from "aurelia-framework";
+import {Gps, GpsState} from "./Gps";
 
-import {Container} from "aurelia-framework";
-import {ConditionFactory} from "../../../src/resources/factories/ConditionFactory";
-import {ComparisonCondition} from "../../../src/resources/models/conditions/ComparisonCondition";
+export enum LocationSource {
+    GPS = 1,
+    Map = 2
+}
 
-describe("ConditionFactory", () => {
-    let container: Container;
+@autoinject()
+export class Location {
 
-    beforeEach(() => {
-        container = new Container().makeGlobal();
-        spyOn(container, 'invoke').and.returnValue(null);
-    });
+    ok: boolean = false;
+    gpsPermissionDenied: boolean = false;
+    gpsUnavailable: boolean = false;
+    gpsUnsupported: boolean = false;
 
-    afterEach(() => {
-       container = null;
-    });
+    latitude: number;
+    longitude: number;
+    heading: number;
 
-    it("throws an error when an invalid type is passed", () => {
-        let factory = new ConditionFactory().get(container);
+    private _source: LocationSource = LocationSource.GPS;
 
-        expect(() => {factory({type:"other"})}).toThrow();
-    });
+    constructor(private gps: Gps, private bindingEngine: BindingEngine) {
+        this.updateStateFromGps(gps.state);
 
-    it("invokes a ComparisonCondition when the type of condition is passed", () => {
-        let factory = new ConditionFactory().get(container);
-        let data = {type:"comparison"};
+        this.bindingEngine.propertyObserver(this.gps, 'state')
+            .subscribe((newState: GpsState) => {
+                this.updateStateFromGps(newState);
+            });
 
-        factory(data);
+        this.bindingEngine.propertyObserver(this.gps, 'position')
+            .subscribe((newPosition: Position) => {
+                this.updatePositionFromGps(newPosition)
+            });
+    }
 
-        expect(container.invoke).toHaveBeenCalledWith(ComparisonCondition, [data]);
-    });
-});
+    private updateStateFromGps(newState: GpsState) {
+        if (this._source == LocationSource.GPS) {
+            this.ok = (newState == GpsState.INITIALISING || newState == GpsState.OK);
+            this.gpsPermissionDenied = (newState == GpsState.PERMISSION_DENIED);
+            this.gpsUnavailable = (newState == GpsState.ERROR);
+            this.gpsUnsupported = (newState == GpsState.POSITION_UNSUPPORTED);
+        }
+    }
+
+    private updatePositionFromGps(newPosition: Position) {
+        if (this._source == LocationSource.GPS && this.ok) {
+            this.latitude = newPosition.coords.latitude;
+            this.longitude = newPosition.coords.longitude;
+            this.heading = newPosition.coords.heading;
+        }
+    }
+}

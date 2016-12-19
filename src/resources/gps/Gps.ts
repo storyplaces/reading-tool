@@ -4,7 +4,7 @@
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) 2016
+ Copyright (c) $today.year
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -32,61 +32,43 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {JSONable} from "../interfaces/JSONable";
-import {FromObjectInterface} from "../interfaces/FromObjectInterface";
-import {TypeChecker} from "../utilities/TypeChecker";
-import {inject} from "aurelia-framework";
 
-@inject(TypeChecker)
-export class PagesMapViewSettings implements JSONable, FromObjectInterface {
+export enum GpsState {
+    INITIALISING = 0,
+    OK = 1,
+    PERMISSION_DENIED = 2,
+    POSITION_UNSUPPORTED = 3,
+    ERROR = 4
+}
 
-    private _map: boolean;
-    private _pageDistance: boolean;
-    private _pageArrows: boolean;
+export class Gps {
+    public state: GpsState = GpsState.INITIALISING;
+    public position: Position;
 
-    constructor(private typeChecker: TypeChecker, data?: any) {
-        this.fromObject(data);
+    constructor() {
+        if (!navigator.geolocation) {
+            this.state = GpsState.POSITION_UNSUPPORTED;
+            return;
+        }
+
+        navigator.geolocation.watchPosition(
+            (position: Position) => {
+                this.state = GpsState.OK;
+                this.position = position;
+            },
+            (failure: PositionError) => {
+                this.state = failure.code == failure.PERMISSION_DENIED ? GpsState.PERMISSION_DENIED : GpsState.ERROR;
+                this.position = undefined;
+            },
+            this.GPSOptions()
+        );
     }
 
-    public fromObject(data: any = {map: undefined, pageArrows: undefined, pageDistance: undefined}) {
-        this.typeChecker.validateAsObjectAndNotArray("Data", data);
-        this.map = data.map;
-        this.pageArrows = data.pageArrows;
-        this.pageDistance = data.pageDistance;
-    }
-
-    public toJSON() {
+    private GPSOptions(): PositionOptions {
         return {
-            map: this.map,
-            pageArrows: this.pageArrows,
-            pageDistance: this.pageDistance
+            enableHighAccuracy: true,
+            maximumAge: 30000,
+            timeout: 30000
         };
-    }
-
-    get map(): boolean {
-        return this._map;
-    }
-
-    set map(value: boolean) {
-        this.typeChecker.validateAsBooleanOrUndefined("Map", value);
-        this._map = value;
-    }
-
-    get pageDistance(): boolean {
-        return this._pageDistance;
-    }
-
-    set pageDistance(value: boolean) {
-        this.typeChecker.validateAsBooleanOrUndefined("PageDistance", value);
-        this._pageDistance = value;
-    }
-
-    get pageArrows(): boolean {
-        return this._pageArrows;
-    }
-
-    set pageArrows(value: boolean) {
-        this.typeChecker.validateAsBooleanOrUndefined("PageArrows", value);
-        this._pageArrows = value;
     }
 }

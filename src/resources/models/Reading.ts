@@ -50,8 +50,7 @@ export class Reading extends BaseModel {
         this.fromObject(data);
     }
 
-
-    fromObject(data: any = {id:undefined, storyId:undefined, userId:undefined, variables:undefined, name:undefined}) {
+    fromObject(data: any = {id: undefined, readingId: undefined, userId: undefined, variables: undefined, name:undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.storyId = data.storyId;

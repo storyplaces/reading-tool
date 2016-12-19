@@ -32,7 +32,6 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {Page} from "../../../src/resources/models/Page";
 import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
@@ -83,14 +82,21 @@ describe("Page model", () => {
     it("will throw an error if something other than an object is passed to fromObject", () => {
         let model = new Page(typeChecker);
 
-        expect(() => {model.fromObject([] as any)}).toThrow();
-        expect(() => {model.fromObject("a" as any)}).toThrow();
+        expect(() => {
+            model.fromObject([] as any)
+        }).toThrow();
+
+        expect(() => {
+            model.fromObject("a" as any)
+        }).toThrow();
     });
 
     it("will throw an exception when name is set to something other than a string or undefined", () => {
         let model = new Page(typeChecker);
 
-        expect(() => {model.name = 1 as any}).toThrow()
+        expect(() => {
+            model.name = 1 as any
+        }).toThrow()
     });
 
     it("can be cast to JSON", () => {

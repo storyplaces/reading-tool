@@ -32,9 +32,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {Reading} from "../../../src/resources/models/Reading";
-import {VariableCollection} from "../../../src/resources/collections/VariableCollection";
 import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
 describe("Reading model", () => {
@@ -87,28 +85,43 @@ describe("Reading model", () => {
     it("will throw an error if something other than an object is passed to fromObject", () => {
         let model = new Reading(factory, typeChecker);
 
-        expect(() => {model.fromObject([] as any)}).toThrow();
-        expect(() => {model.fromObject("a" as any)}).toThrow();
+        expect(() => {
+            model.fromObject([] as any)
+        }).toThrow();
+
+        expect(() => {
+            model.fromObject("a" as any)
+        }).toThrow();
     });
 
 
     it("will throw an error when readingId is set to something other than a string or undefined", () => {
         let model = new Reading(factory, typeChecker);
 
+<<<<<<< HEAD
         expect(() => {model.storyId = 1 as any}).toThrow();
+=======
+        expect(() => {
+            model.readingId = 1 as any
+        }).toThrow();
+>>>>>>> a8f1422e075730168784ff7760e33f4943c3c59a
     });
 
     it("will throw an error when userId is set to something other than a string or undefined", () => {
         let model = new Reading(factory, typeChecker);
 
-        expect(() => {model.userId = 1 as any}).toThrow();
+        expect(() => {
+            model.userId = 1 as any
+        }).toThrow();
     });
 
 
     it("will throw an error when variables is set to something other than an instance of VariableCollection", () => {
         let model = new Reading(factory, typeChecker);
 
-        expect(() => {model.variables = 1 as any}).toThrow();
+        expect(() => {
+            model.variables = 1 as any
+        }).toThrow();
     });
 
     it("can be cast to JSON", () => {

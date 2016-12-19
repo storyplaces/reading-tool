@@ -32,25 +32,41 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {resolver, Container, Resolver} from "aurelia-framework";
 
-import {ComparisonCondition} from "../models/conditions/ComparisonCondition";
-import {resolver, Container} from "aurelia-framework";
-import {BaseCondition} from "../models/conditions/BaseCondition";
-
-type comparisonObject= {
+type TypedObject= {
     type: string;
 }
 
 @resolver()
-export class ConditionFactory {
+export class TypeFactory implements Resolver {
+    private _config;
+
+    constructor(config) {
+        this._config = config;
+    }
+
     public get(container: Container) {
-        return (data: comparisonObject): BaseCondition => {
-            switch (data.type) {
-                case 'comparison':
-                    return container.invoke(ComparisonCondition, [data]);
-                default:
-                    throw TypeError("Bad comparison type");
+        return (data: TypedObject): any => {
+            if ((typeof data.type != 'string') || !this._config[data.type]) {
+                throw new TypeError("Unknown object type " + data.type);
             }
+
+            let requestedObject = this._config[data.type];
+
+            if (!(requestedObject instanceof Function)) {
+                throw new TypeError("Unknown class to instantiate");
+            }
+
+            if (data instanceof requestedObject) {
+                return data;
+            }
+
+            return container.invoke(requestedObject, [data]);
         }
+    }
+
+    public static withMapping(config: Object) {
+        return new TypeFactory(config);
     }
 }

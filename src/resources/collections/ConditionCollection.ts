@@ -32,13 +32,13 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {BaseCollection} from "./BaseCollection";
 import {BaseCondition} from "../models/conditions/BaseCondition";
-import {ConditionFactory} from "../factories/ConditionFactory";
+import {TypeFactory} from "../factories/TypeFactory";
+import {ComparisonCondition} from "../models/conditions/ComparisonCondition";
 import {inject} from "aurelia-framework";
 
-@inject(ConditionFactory)
+@inject(TypeFactory.withMapping({'comparison': ComparisonCondition}))
 export class ConditionCollection extends BaseCollection<BaseCondition> {
 
     constructor(private conditionFactory: (any?) => BaseCondition, data?: any[]) {

@@ -33,15 +33,8 @@
   -->
 
 <template>
-    <a route-href="route: story-detail; params.bind: { storyId: story.id}" class="list-group-item">
-        <h4 class="list-group-item-heading">${story.name}<small> - ${story.author}</small></h4>
-        <div class=" list-group-item-text ">
-            <!--TODO: Make this behave a bit better on narrow screens-->
-            <span if.bind="story.audience == 'family'" class="label label-success">Family Friendly</span>
-            <span if.bind="story.audience == 'general'" class="label label-info">General Audience</span>
-            <span if.bind="story.audience == 'advisory'" class="label label-danger">Advisory Content</span>
-            <span class="label label-default" repeat.for="tag of story.tags">${tag} </span>
-        <!--<p innerhtml.bind="story.description" class="list-group-item-text"></p>-->
+        <div class="row content-fullscreen">
+            <div class="col-xs-12 col-md-7 map-component">Map</div>
+            <div class="col-xs-12 col-md-5 pages-list-component">Pages</div>
         </div>
-    </a>
 </template>

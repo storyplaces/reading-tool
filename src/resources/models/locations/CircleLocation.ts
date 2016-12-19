@@ -32,83 +32,79 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {BaseModel} from "../../../src/resources/models/BaseModel";
-import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
+import {TypeChecker} from "../../utilities/TypeChecker";
+import {inject} from "aurelia-framework";
+import {BaseLocation} from "./BaseLocation";
 
-describe("BaseModel", () => {
-    let typeChecker = new TypeChecker;
+@inject(TypeChecker)
 
-    class TestModel extends BaseModel {
+export class CircleLocation extends BaseLocation {
 
+    private _lat: number;
+    private _lon: number;
+    private _radius: number;
 
-        toJSON() {
-        }
+    constructor(typeChecker: TypeChecker, data?: any) {
+        super(typeChecker);
 
-        fromObject({id = undefined}) {
-            this.id = id;
+        if (data) {
+            this.fromObject(data);
         }
     }
 
+    fromObject(data = {id: undefined, type: undefined, lon: undefined, lat: undefined, radius: undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.type = data.type;
+        this.lon = data.lon;
+        this.lat = data.lat;
+        this.radius = data.radius
+    }
 
-    it("will throw an error if id is set to something other than a string", () => {
-        let model = new TestModel(typeChecker);
+    toJSON() {
+        return {
+            id: this.id,
+            type: this.type,
+            lat: this.lat,
+            lon: this.lon,
+            radius: this.radius
+        };
+    }
 
-        expect(() => {
-            model.id = 1 as any
-        }).toThrow();
+    get type(): string {
+        return this._type;
+    }
 
-        expect(() => {
-            model.id = false as any
-        }).toThrow();
+    set type(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("Type", value);
+        this.typeChecker.validateScalarValue("Type", "circle", value);
+        this._type = value;
+    }
 
-        expect(() => {
-            model.id = {} as any
-        }).toThrow();
+    get radius(): number {
+        return this._radius;
+    }
 
-        expect(() => {
-            model.id = function () {
-            } as any
-        }).toThrow();
-    });
+    set radius(value: number) {
+        this.typeChecker.validateAsNumberOrUndefined("Radius", value);
+        this._radius = value;
+    }
 
-    it("will throw an error if id is passed to fromObject as something other than a string", () => {
-        let model = new TestModel(typeChecker);
+    get lon(): number {
+        return this._lon;
+    }
 
-        expect(() => {
-            model.fromObject({id: 1} as any)
-        }).toThrow();
+    set lon(value: number) {
+        this.typeChecker.validateAsNumberOrUndefined("Lon", value);
+        this._lon = value;
+    }
 
-        expect(() => {
-            model.fromObject({id: false} as any)
-        }).toThrow();
+    get lat(): number {
+        return this._lat;
+    }
 
-        expect(() => {
-            model.fromObject({id: {}} as any)
-        }).toThrow();
-
-        expect(() => {
-            model.fromObject({
-                id: function () {
-                } as any
-            })
-        }).toThrow();
-    });
-
-    it("will not throw an error if id is set to a string", () => {
-        let model = new TestModel(typeChecker);
-
-        model.id = "1";
-
-        expect(model.id).toEqual("1");
-    });
-
-    it("will have toJSON called when passed to JSONStringify", () => {
-        let model = new TestModel(typeChecker);
-
-        spyOn(model, 'toJSON');
-
-        JSON.stringify(model);
-
-        expect(model.toJSON).toHaveBeenCalledTimes(1);
-    })
-});
+    set lat(value: number) {
+        this.typeChecker.validateAsNumberOrUndefined("Lat", value);
+        this._lat = value;
+    }
+}

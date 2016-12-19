@@ -9,4 +9,5 @@ export class StorySummary{
 
     @bindable story: Story;
 
+
 }

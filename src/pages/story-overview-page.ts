@@ -4,6 +4,7 @@
 
 import {StoryConnector} from '../resources/store/StoryConnector';
 import {autoinject, computedFrom} from 'aurelia-framework';
+import {Gps} from "../resources/gps/Gps";
 
 @autoinject()
 export class StoryOverviewPage{

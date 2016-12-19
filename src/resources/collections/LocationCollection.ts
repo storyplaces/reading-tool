@@ -32,83 +32,28 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {BaseModel} from "../../../src/resources/models/BaseModel";
-import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
+import {BaseCollection} from "./BaseCollection";
+import {BaseLocation} from "../models/locations/BaseLocation";
+import {TypeFactory} from "../factories/TypeFactory";
+import {CircleLocation} from "../models/locations/CircleLocation";
+import {inject} from "aurelia-framework";
 
-describe("BaseModel", () => {
-    let typeChecker = new TypeChecker;
+@inject(TypeFactory.withMapping({'circle': CircleLocation}))
+export class LocationCollection extends BaseCollection<BaseLocation> {
 
-    class TestModel extends BaseModel {
+    constructor(private locationFactory: (any?) => BaseLocation, data?: any[]) {
+        super();
 
-
-        toJSON() {
-        }
-
-        fromObject({id = undefined}) {
-            this.id = id;
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
         }
     }
 
+    protected itemFromObject(item: any): BaseLocation {
+        if (item instanceof BaseLocation) {
+            return item as BaseLocation;
+        }
 
-    it("will throw an error if id is set to something other than a string", () => {
-        let model = new TestModel(typeChecker);
-
-        expect(() => {
-            model.id = 1 as any
-        }).toThrow();
-
-        expect(() => {
-            model.id = false as any
-        }).toThrow();
-
-        expect(() => {
-            model.id = {} as any
-        }).toThrow();
-
-        expect(() => {
-            model.id = function () {
-            } as any
-        }).toThrow();
-    });
-
-    it("will throw an error if id is passed to fromObject as something other than a string", () => {
-        let model = new TestModel(typeChecker);
-
-        expect(() => {
-            model.fromObject({id: 1} as any)
-        }).toThrow();
-
-        expect(() => {
-            model.fromObject({id: false} as any)
-        }).toThrow();
-
-        expect(() => {
-            model.fromObject({id: {}} as any)
-        }).toThrow();
-
-        expect(() => {
-            model.fromObject({
-                id: function () {
-                } as any
-            })
-        }).toThrow();
-    });
-
-    it("will not throw an error if id is set to a string", () => {
-        let model = new TestModel(typeChecker);
-
-        model.id = "1";
-
-        expect(model.id).toEqual("1");
-    });
-
-    it("will have toJSON called when passed to JSONStringify", () => {
-        let model = new TestModel(typeChecker);
-
-        spyOn(model, 'toJSON');
-
-        JSON.stringify(model);
-
-        expect(model.toJSON).toHaveBeenCalledTimes(1);
-    })
-});
+        return this.locationFactory(item);
+    }
+}
