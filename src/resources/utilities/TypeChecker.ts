@@ -71,4 +71,22 @@ export class TypeChecker {
             throw TypeError(fieldName + " was expected not to be an array");
         }
     }
+
+    isArrayOf(fieldName: string, value:any, itemType:string) {
+        if (!Array.isArray(value)) {
+            throw new TypeError(fieldName + " is not an array");
+        }
+
+        value.forEach((item) => {
+            this.validateAsScalarOrUndefined(fieldName + " item", item, itemType);
+        });
+    }
+
+    isUndefinedOrArrayOf(fieldName: string, value: any, itemType: string) {
+        if (value === undefined) {
+            return;
+        }
+
+        this.isArrayOf(fieldName, value, itemType)
+    }
 }

@@ -114,7 +114,8 @@ describe("TypeChecker", () => {
     });
 
     it("throws an error if type checking an object and you don't pass that object", () => {
-        class TestClass {}
+        class TestClass {
+        }
 
         let typeChecker = new TypeChecker();
         let testClass = new TestClass();
@@ -125,7 +126,8 @@ describe("TypeChecker", () => {
     });
 
     it("does not throw an error if type checking an object and you do pass that object", () => {
-        class TestClass {}
+        class TestClass {
+        }
 
         let typeChecker = new TypeChecker();
         let testClass = new TestClass();
@@ -202,35 +204,87 @@ describe("TypeChecker", () => {
     //endregion
 
     //region Plain object
-    it("throws an error if you don't pass an object", () => {
-        let typeChecker = new TypeChecker();
-        expect(() => {
-            typeChecker.validateAsObjectAndNotArray("test", "a");
-        }).toThrow();
+    describe("method validateAsObjectAndNotArray", () => {
+        it("throws an error if you don't pass an object", () => {
+            let typeChecker = new TypeChecker();
+            expect(() => {
+                typeChecker.validateAsObjectAndNotArray("test", "a");
+            }).toThrow();
+        });
+
+        it("throws an error if you pass an array", () => {
+            let typeChecker = new TypeChecker();
+            expect(() => {
+                typeChecker.validateAsObjectAndNotArray("test", ["a"]);
+            }).toThrow();
+        });
+
+        it("does not throw an error if you pass an object", () => {
+            let typeChecker = new TypeChecker();
+            expect(() => {
+                typeChecker.validateAsObjectAndNotArray("test", {a: "a"});
+            }).not.toThrow();
+        });
+
+        it("does not throw an error if you pass undefined", () => {
+            let typeChecker = new TypeChecker();
+            expect(() => {
+                typeChecker.validateAsObjectAndNotArray("test", undefined);
+            }).not.toThrow();
+        });
     });
-
-    it("throws an error if you pass an array", () => {
-        let typeChecker = new TypeChecker();
-        expect(() => {
-            typeChecker.validateAsObjectAndNotArray("test", ["a"]);
-        }).toThrow();
-    });
-
-    it("does not throw an error if you pass an object", () => {
-        let typeChecker = new TypeChecker();
-        expect(() => {
-            typeChecker.validateAsObjectAndNotArray("test", {a:"a"});
-        }).not.toThrow();
-    });
-
-    it("does not throw an error if you pass undefined", () => {
-        let typeChecker = new TypeChecker();
-        expect(() => {
-            typeChecker.validateAsObjectAndNotArray("test", undefined);
-        }).not.toThrow();
-    });
-
-
     //endregion
+
+    describe("method isArrayOf", () => {
+        it("does not throw an error if you pass an array of the required type", () => {
+            let typeChecker = new TypeChecker();
+
+            expect(() => {
+                typeChecker.isArrayOf("field", ["a", "b", "c"], "string");
+            }).not.toThrow();
+        });
+
+        it("throws an error if you pass an array with an item of the wrong type", () => {
+            let typeChecker = new TypeChecker();
+
+            expect(() => {
+                typeChecker.isArrayOf("field", ["a", "b", 1], "string");
+            }).toThrow();
+        });
+
+        it("throws an error if you pass something other than an array", () => {
+            let typeChecker = new TypeChecker();
+
+            expect(() => {
+                typeChecker.isArrayOf("field", "a", "string");
+            }).toThrow();
+        });
+
+        it("throws an error if you pass undefined", () => {
+            let typeChecker = new TypeChecker();
+
+            expect(() => {
+                typeChecker.isArrayOf("field", undefined, "string");
+            }).toThrow();
+        });
+    });
+
+    describe("method isUndefinedOrArrayOf", () => {
+        it("will not throw and error if undefined is passed", () => {
+            let typeChecker = new TypeChecker();
+
+            expect(() => {
+                typeChecker.isUndefinedOrArrayOf("field", undefined, "string");
+            }).not.toThrow();
+        });
+
+        it("will defer to isArrayOf if something other than undefined is passed", () => {
+            let typeChecker = new TypeChecker();
+            spyOn(typeChecker, 'isArrayOf').and.returnValue(undefined);
+
+            typeChecker.isUndefinedOrArrayOf("field", ["a", "b", "c"], "string");
+            expect(typeChecker.isArrayOf).toHaveBeenCalledWith("field", ["a", "b", "c"], "string");
+        });
+    });
 });
  
