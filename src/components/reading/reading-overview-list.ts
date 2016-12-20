@@ -23,7 +23,6 @@ export class ReadingOverviewListCustomElement{
 
     @computedFrom('readingConnector.byStoryId', 'storyId')
     get readings() : Array<Reading>{
-        console.log("get readings");
         return this.readingConnector.byStoryId(this.storyId);
     }
 
