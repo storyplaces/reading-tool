@@ -56,7 +56,6 @@ export class StoryPlacesAPI {
         } else {
             method = 'post';
         }
-        console.log(JSON.stringify(object));
         return this.client.fetch(this._path, {
             method: method,
             body: JSON.stringify(object)
