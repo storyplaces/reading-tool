@@ -32,62 +32,29 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Variable} from "../../../src/resources/models/Variable";
-import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
+import {TypeChecker} from "../../utilities/TypeChecker";
+import {BaseModel} from "../BaseModel";
 
-describe("Variable model", () => {
-    let typeChecker = new TypeChecker;
+export abstract class BaseFunction extends BaseModel {
 
-    it("can be instantiated with no data", () => {
-        let model = new Variable(typeChecker);
+    private _conditions: Array<string>;
 
-        expect(model.id).toBeUndefined();
-        expect(model.value).toBeUndefined();
-    });
+    constructor(typeChecker: TypeChecker) {
+        super(typeChecker);
+    }
 
-    it("can be instantiated with an object", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker, data);
+    abstract get type();
+    abstract set type(value: any);
 
-        expect(model.id).toEqual("1");
-        expect(model.value).toEqual("a");
-    });
+    protected _type: string;
 
-    it("can have an anonymous object passed to it", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker);
-        model.fromObject(data);
+    get conditions(): Array<string> {
+        return this._conditions;
+    }
 
-        expect(model.id).toEqual("1");
-        expect(model.value).toEqual("a");
-    });
+    set conditions(value: Array<string>) {
+        this.typeChecker.isUndefinedOrArrayOf("conditions",value,"string");
+        this._conditions = value;
+    }
 
-    it("will throw an error if something other than an object is passed to fromObject", () => {
-        let model = new Variable(typeChecker);
-
-        expect(() => {
-            model.fromObject([] as any)
-        }).toThrow();
-        expect(() => {
-            model.fromObject("a" as any)
-        }).toThrow();
-    });
-
-    it("will convert to JSON", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker, data);
-
-        let result = JSON.stringify(model);
-
-        expect(result).toEqual('{"id":"1","value":"a"}');
-    });
-
-    it("will throw an error if value is set to something other than a string", () => {
-        let model = new Variable(typeChecker);
-
-
-        expect(() => {
-            model.value = 1 as any
-        }).toThrow();
-    });
-});
+}

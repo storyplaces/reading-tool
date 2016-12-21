@@ -1,10 +1,13 @@
+import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
+import {BaseFunction} from "../../../../src/resources/models/functions/BaseFunction";
+
 /*******************************************************************
  *
  * StoryPlaces
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) 2016
+ Copyright (c) $today.year
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -32,62 +35,53 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Variable} from "../../../src/resources/models/Variable";
-import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
-describe("Variable model", () => {
+describe("BaseFunction", () => {
+
     let typeChecker = new TypeChecker;
+    
+    class TestFunction extends BaseFunction {
+        get type() { return "type"};
+        set type(value: any) {};
+        
+        toJSON() {
+        }
 
-    it("can be instantiated with no data", () => {
-        let model = new Variable(typeChecker);
+        fromObject(any) {
+        }
+        
+    }
 
-        expect(model.id).toBeUndefined();
-        expect(model.value).toBeUndefined();
+    beforeEach(() => {
+
     });
 
-    it("can be instantiated with an object", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker, data);
+    afterEach(() => {
 
-        expect(model.id).toEqual("1");
-        expect(model.value).toEqual("a");
     });
 
-    it("can have an anonymous object passed to it", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker);
-        model.fromObject(data);
+    it("can have conditions set to an array of strings", () => {
+        let testFunction = new TestFunction(typeChecker);
+        testFunction.conditions = ["a", "b", "c"];
 
-        expect(model.id).toEqual("1");
-        expect(model.value).toEqual("a");
+        expect(testFunction.conditions).toEqual(["a", "b", "c"]);
     });
 
-    it("will throw an error if something other than an object is passed to fromObject", () => {
-        let model = new Variable(typeChecker);
+    it("can have conditions set to undefined", () => {
+        let testFunction = new TestFunction(typeChecker);
+        testFunction.conditions = undefined;
 
-        expect(() => {
-            model.fromObject([] as any)
-        }).toThrow();
-        expect(() => {
-            model.fromObject("a" as any)
-        }).toThrow();
+        expect(testFunction.conditions).toEqual(undefined);
     });
 
-    it("will convert to JSON", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker, data);
-
-        let result = JSON.stringify(model);
-
-        expect(result).toEqual('{"id":"1","value":"a"}');
+    it("will throw an error if conditions is set to something other than an array of strings", () => {
+        let testFunction = new TestFunction(typeChecker);
+        expect(() => {testFunction.conditions = ["a", "b", 1] as any}).toThrow();
     });
 
-    it("will throw an error if value is set to something other than a string", () => {
-        let model = new Variable(typeChecker);
-
-
-        expect(() => {
-            model.value = 1 as any
-        }).toThrow();
+    it("will throw an error if conditions is set to something other than an array of strings", () => {
+        let testFunction = new TestFunction(typeChecker);
+        expect(() => {testFunction.conditions = 1 as any}).toThrow();
     });
+
 });

@@ -48,6 +48,12 @@ describe("CircleLocation", () => {
 
     });
 
+    it("can be created with data", () => {
+        let comparisonCondition = new CircleLocation(typeChecker, {type:"circle"});
+
+        expect(comparisonCondition instanceof CircleLocation).toBeTruthy();
+    });
+
     it("can be created with no data", () => {
         let comparisonCondition = new CircleLocation(typeChecker);
 

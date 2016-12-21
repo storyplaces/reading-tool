@@ -34,14 +34,13 @@
  */
 import {BaseCondition} from "./BaseCondition";
 import {TypeChecker} from "../../utilities/TypeChecker";
-import {Reading} from "../Reading";
 import {inject} from "aurelia-framework";
 
 @inject(TypeChecker)
 
 export class ComparisonCondition extends BaseCondition {
-    private _a: string|number|boolean;
-    private _b: string|number|boolean;
+    private _a: string;
+    private _b: string;
     private _aType: string;
     private _bType: string;
 
@@ -74,10 +73,6 @@ export class ComparisonCondition extends BaseCondition {
         };
     }
 
-    execute(reading: Reading) {
-
-    }
-
     get type(): string {
         return this._type;
     }
@@ -106,22 +101,46 @@ export class ComparisonCondition extends BaseCondition {
         this._bType = value;
     }
 
-    get a(): string|number|boolean {
+    get a(): string {
         return this._a;
     }
 
-    set a(value: string|number|boolean) {
-        this.validateValue('a', value, this.aType);
+    set a(value: string) {
+
+        if (value !== undefined && this.aType === undefined) {
+            throw TypeError("Type of a must be set before setting value");
+        }
+
+        if (this.aType === "Integer") {
+            this.validateIsANumber("a", value);
+        }
+
+        this.typeChecker.validateAsStringOrUndefined("a", value);
         this._a = value;
     }
 
-    get b(): string|number|boolean {
+    get b(): string {
         return this._b;
     }
 
-    set b(value: string|number|boolean) {
-        this.validateValue('b', value, this.bType);
+    set b(value: string) {
+        if (value !== undefined && this.bType === undefined) {
+            throw TypeError("Type of b must be set before setting value");
+        }
+
+        if (this.bType === "Integer") {
+            this.validateIsANumber("b", value);
+        }
+
+        this.typeChecker.validateAsStringOrUndefined("b", value);
         this._b = value;
+    }
+
+    private validateIsANumber(name: string, value: any) {
+        let reg = new RegExp('^[0-9]+$');
+        if (!reg.test(value)) {
+            throw TypeError("The contents of " + name + " must only be digits");
+        }
     }
 
     private validateType(typeName: string, type: any) {
@@ -132,40 +151,7 @@ export class ComparisonCondition extends BaseCondition {
         }
     }
 
-    private validateValue(valueName: string, value: any, type: string) {
-        if (value === undefined) {
-            return;
-        }
-
-        if (type === undefined) {
-            throw TypeError("Type of " + valueName + " must be set before setting value");
-        }
-
-        if (!this.isValidType(type)) {
-            throw TypeError("The type for variable '" + valueName + "' must be a valid type");
-        }
-
-        this.validateValueAgainstType(valueName, value, type);
-    }
-
-    private validateValueAgainstType(valueName: string, value: any, type: string) {
-        switch (type) {
-            case 'Integer' :
-                this.typeChecker.validateAsNumberOrUndefined(valueName, value);
-                break;
-            case 'String':
-                this.typeChecker.validateAsStringOrUndefined(valueName, value);
-                break;
-            case 'Boolean':
-                this.typeChecker.validateAsBooleanOrUndefined(valueName, value);
-                break;
-            case 'Variable' :
-                this.typeChecker.validateAsStringOrUndefined(valueName, value);
-                break;
-        }
-    }
-
     private isValidType(type) {
-        return (type == 'Integer' || type == 'String' || type == 'Boolean' || type == 'Variable');
+        return (type === undefined || type == 'Integer' || type == 'String' || type == 'Variable');
     }
 }

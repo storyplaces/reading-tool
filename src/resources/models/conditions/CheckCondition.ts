@@ -32,62 +32,56 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Variable} from "../../../src/resources/models/Variable";
-import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
+import {BaseCondition} from "./BaseCondition";
+import {TypeChecker} from "../../utilities/TypeChecker";
+import {inject} from "aurelia-framework";
 
-describe("Variable model", () => {
-    let typeChecker = new TypeChecker;
+@inject(TypeChecker)
 
-    it("can be instantiated with no data", () => {
-        let model = new Variable(typeChecker);
-
-        expect(model.id).toBeUndefined();
-        expect(model.value).toBeUndefined();
-    });
-
-    it("can be instantiated with an object", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker, data);
-
-        expect(model.id).toEqual("1");
-        expect(model.value).toEqual("a");
-    });
-
-    it("can have an anonymous object passed to it", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker);
-        model.fromObject(data);
-
-        expect(model.id).toEqual("1");
-        expect(model.value).toEqual("a");
-    });
-
-    it("will throw an error if something other than an object is passed to fromObject", () => {
-        let model = new Variable(typeChecker);
-
-        expect(() => {
-            model.fromObject([] as any)
-        }).toThrow();
-        expect(() => {
-            model.fromObject("a" as any)
-        }).toThrow();
-    });
-
-    it("will convert to JSON", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker, data);
-
-        let result = JSON.stringify(model);
-
-        expect(result).toEqual('{"id":"1","value":"a"}');
-    });
-
-    it("will throw an error if value is set to something other than a string", () => {
-        let model = new Variable(typeChecker);
+export class CheckCondition extends BaseCondition {
+    private _variable: string;
 
 
-        expect(() => {
-            model.value = 1 as any
-        }).toThrow();
-    });
-});
+    constructor(typeChecker: TypeChecker, data?: any) {
+        super(typeChecker);
+
+        if (data) {
+            this.fromObject(data);
+        }
+    }
+
+    fromObject(data = {id: undefined, type: undefined, variable: undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.type = data.type;
+        this.variable = data.variable;
+    }
+
+    toJSON() {
+        return {
+            id: this.id,
+            type: this.type,
+            variable: this.variable
+        };
+    }
+
+    get type(): string {
+        return this._type;
+    }
+
+    set type(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("Type", value);
+        this.typeChecker.validateScalarValue("Type", "check", value);
+        this._type = value;
+    }
+
+    get variable(): string {
+        return this._variable;
+    }
+
+    set variable(value: string) {
+        this.typeChecker.validateAsStringOrUndefined("a", value);
+        this._variable = value;
+    }
+
+}

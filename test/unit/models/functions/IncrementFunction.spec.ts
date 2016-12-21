@@ -1,10 +1,13 @@
+import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
+import {IncrementFunction} from "../../../../src/resources/models/functions/IncrementFunction";
+
 /*******************************************************************
  *
  * StoryPlaces
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) 2016
+ Copyright (c) $today.year
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -32,62 +35,68 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Variable} from "../../../src/resources/models/Variable";
-import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 
-describe("Variable model", () => {
+describe("IncrementFunction", () => {
+
     let typeChecker = new TypeChecker;
 
-    it("can be instantiated with no data", () => {
-        let model = new Variable(typeChecker);
+    beforeEach(() => {
 
-        expect(model.id).toBeUndefined();
-        expect(model.value).toBeUndefined();
     });
 
-    it("can be instantiated with an object", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker, data);
+    afterEach(() => {
 
-        expect(model.id).toEqual("1");
-        expect(model.value).toEqual("a");
     });
 
-    it("can have an anonymous object passed to it", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker);
-        model.fromObject(data);
+    it("can be created with data", () => {
+        let testFunction = new IncrementFunction(typeChecker, {type:"increment"});
 
-        expect(model.id).toEqual("1");
-        expect(model.value).toEqual("a");
+        expect(testFunction instanceof IncrementFunction).toBeTruthy();
     });
+
+    it("can be created with no data", () => {
+        let testFunction = new IncrementFunction(typeChecker);
+
+        expect(testFunction instanceof IncrementFunction).toBeTruthy();
+    });
+
 
     it("will throw an error if something other than an object is passed to fromObject", () => {
-        let model = new Variable(typeChecker);
+        let model = new IncrementFunction(typeChecker);
 
         expect(() => {
             model.fromObject([] as any)
         }).toThrow();
+
         expect(() => {
             model.fromObject("a" as any)
         }).toThrow();
     });
 
-    it("will convert to JSON", () => {
-        let data = {id: "1", value: "a"};
-        let model = new Variable(typeChecker, data);
+    it("can have its type set to set", () => {
+        let testFunction = new IncrementFunction(typeChecker);
+        testFunction.type = "increment";
 
-        let result = JSON.stringify(model);
-
-        expect(result).toEqual('{"id":"1","value":"a"}');
+        expect(testFunction.type).toEqual("increment");
     });
 
-    it("will throw an error if value is set to something other than a string", () => {
-        let model = new Variable(typeChecker);
-
-
+    it("will throw an error if its type is set to something other than comparison", () => {
+        let testFunction = new IncrementFunction(typeChecker);
         expect(() => {
-            model.value = 1 as any
+            testFunction.type = "somethingRandom"
         }).toThrow();
+    });
+
+    it("can have its value set to a string", () => {
+        let testFunction = new IncrementFunction(typeChecker);
+        testFunction.value = "abc";
+
+        expect(testFunction.value).toEqual("abc");
+    });
+
+    it("throw if its value set to something other than a string", () => {
+        let testFunction = new IncrementFunction(typeChecker);
+
+        expect(() => {testFunction.value = 123 as any;}).toThrow();
     });
 });
