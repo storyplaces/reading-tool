@@ -32,17 +32,58 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {StageComponent} from "aurelia-testing";
+import {bootstrap} from "aurelia-bootstrapper";
+import {Container} from "aurelia-framework";
 
-export class Config {
+describe('ReadingSummary', () => {
+    let component;
 
-    private _config = {
-        server: "https://localhost:8080",
-        server_auth_password: "thisisadefaultpass"
-    };
+    let testId = "test-id";
+    let testName = "test-reading-name";
+    let testStoryId = "test-story-id";
+    let testUserId = "test-user";
 
-    read(key: string) {
-        return this._config[key];
+    let reading;
+
+    let container: Container;
+
+    function resolve(object: Function, data?: any) {
+        return container.invoke(object, [data]);
     }
 
-}
- 
+    beforeEach(() => {
+        container = new Container().makeGlobal();
+        reading = {id: testId, name: testName, storyId: testStoryId, userId: testUserId, variables: {}};
+
+        component = StageComponent
+            .withResources('components/reading/reading-summary')
+            .inView('<reading-summary reading.bind="reading"></reading-summary>')
+            .boundTo({reading: reading});
+    });
+
+    //TODO: Work out how to test the URL - looks like the router isn't initialised yet so its not calculating it.
+
+    // it('should link to the correct path with the passed id', done => {
+    //     component.create(bootstrap).then(() => {
+    //         const contentsElement = document.querySelector("a");
+    //         console.log(contentsElement);
+    //         expect(contentsElement.getAttribute('href')).toContain("#/story/" + testStoryId + "/" + testId);
+    //         done();
+    //     });
+    // });
+
+    it('sets the name correctly', done => {
+        component.create(bootstrap).then(() => {
+            const titleElement = document.querySelector("h4");
+            expect(titleElement.innerHTML).toEqual("test-reading-name");
+            done();
+        });
+    });
+
+    afterEach(() => {
+        component.dispose();
+        reading = undefined;
+        container = undefined;
+    });
+});

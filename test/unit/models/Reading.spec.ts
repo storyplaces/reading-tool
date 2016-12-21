@@ -57,16 +57,16 @@ describe("Reading model", () => {
         let model = new Reading(factory, typeChecker);
 
         expect(model.id).toBeUndefined();
-        expect(model.readingId).toBeUndefined();
+        expect(model.storyId).toBeUndefined();
         expect(model.userId).toBeUndefined();
         expect(factoryCalledWith).toBeUndefined();
     });
 
     it("can be instantiated with data", () => {
-        let model = new Reading(factory, typeChecker, {id: "1", readingId: "reading", userId: "user", variables: [{id: "2"}]});
+        let model = new Reading(factory, typeChecker, {id: "1", storyId: "story", userId: "user", variables: [{id: "2"}]});
 
         expect(model.id).toEqual("1");
-        expect(model.readingId).toEqual("reading");
+        expect(model.storyId).toEqual("story");
         expect(model.userId).toEqual("user");
         expect(factoryCalledWith).toEqual([{id: "2"}]);
     });
@@ -74,14 +74,13 @@ describe("Reading model", () => {
     it("can have an anonymous object passed to it", () => {
         let model = new Reading(factory, typeChecker);
 
-        model.fromObject({id: "1", readingId: "reading", userId: "user", variables: [{id: "2"}]});
+        model.fromObject({id: "1", storyId: "story", userId: "user", variables: [{id: "2"}]});
 
         expect(model.id).toEqual("1");
-        expect(model.readingId).toEqual("reading");
+        expect(model.storyId).toEqual("story");
         expect(model.userId).toEqual("user");
         expect(factoryCalledWith).toEqual([{id: "2"}]);
     });
-
 
     it("will throw an error if something other than an object is passed to fromObject", () => {
         let model = new Reading(factory, typeChecker);
@@ -99,9 +98,13 @@ describe("Reading model", () => {
     it("will throw an error when readingId is set to something other than a string or undefined", () => {
         let model = new Reading(factory, typeChecker);
 
+<<<<<<< HEAD
+        expect(() => {model.storyId = 1 as any}).toThrow();
+=======
         expect(() => {
             model.readingId = 1 as any
         }).toThrow();
+>>>>>>> a8f1422e075730168784ff7760e33f4943c3c59a
     });
 
     it("will throw an error when userId is set to something other than a string or undefined", () => {
@@ -122,11 +125,11 @@ describe("Reading model", () => {
     });
 
     it("can be cast to JSON", () => {
-        let model = new Reading(factory, typeChecker, {id: "1", readingId: "reading", userId: "user", variables: [{id: "2"}]});
+        let model = new Reading(factory, typeChecker, {id: "1", storyId: "reading", userId: "user", variables: [{id: "2"}]});
 
         let result = JSON.stringify(model);
 
         //TODO: Make this a better test as variables is missed off
-        expect(result).toEqual('{"id":"1","readingId":"reading","userId":"user"}');
+        expect(result).toEqual('{"id":"1","storyId":"reading","userId":"user"}');
     });
 });

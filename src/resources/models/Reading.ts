@@ -42,37 +42,49 @@ export class Reading extends BaseModel {
 
     private _variables: VariableCollection;
     private _userId: string;
-    private _readingId: string;
+    private _storyId: string;
+    private _name: string;
 
     constructor(private variableCollectionFactory: (any?) => VariableCollection, typeChecker: TypeChecker, data?: any) {
         super(typeChecker);
         this.fromObject(data);
     }
 
-    fromObject(data: any = {id: undefined, readingId: undefined, userId: undefined, variables: undefined}) {
+    fromObject(data: any = {id: undefined, readingId: undefined, userId: undefined, variables: undefined, name:undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.readingId = data.readingId;
+        this.storyId = data.storyId;
         this.userId = data.userId;
+        this.name = data.name;
         this.variables = this.variableCollectionFactory(data.variables);
     }
 
     toJSON() {
         return {
             id: this.id,
-            readingId: this.readingId,
+            name: this.name,
+            storyId: this.storyId,
             userId: this.userId,
             variables: this.variables,
         }
     }
 
-    get readingId(): string {
-        return this._readingId;
+    get name(): string {
+        return this._name;
     }
 
-    set readingId(value: string) {
-        this.typeChecker.validateAsStringOrUndefined('ReadingId', value);
-        this._readingId = value;
+    set name(value: string) {
+        this.typeChecker.validateAsStringOrUndefined('Name', value);
+        this._name = value;
+    }
+
+    get storyId(): string {
+        return this._storyId;
+    }
+
+    set storyId(value: string) {
+        this.typeChecker.validateAsStringOrUndefined('StoryId', value);
+        this._storyId = value;
     }
 
     get userId(): string {

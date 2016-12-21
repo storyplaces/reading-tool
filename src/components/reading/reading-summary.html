@@ -33,20 +33,7 @@
   -->
 
 <template>
-    <require from="../components/story/story-overview-list"></require>
-    <require from="../components/elements/collapsible-panel"></require>
-    <require from="../components/reading/reading-overview-list"></require>
-
-    <div class="content">
-        <div class="text-center content-top-padding">
-            <h2>${story.name}<br>
-                <small>${story.author}</small>
-            </h2>
-
-            <collapsible-panel title="Description" id="description-collapse">${story.description}</collapsible-panel>
-
-            <reading-overview-list story-id.bind="storyId" class="content-top-padding reading-overview-list"></reading-overview-list>
-
-        </div>
-    </div>
+    <a route-href="route: story-reading; params.bind: { storyId: reading.storyId, readingId: reading.id}" class="list-group-item">
+        <h4 class="list-group-item-heading text-left">${reading.name}</h4>
+    </a>
 </template>
