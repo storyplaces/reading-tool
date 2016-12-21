@@ -32,58 +32,25 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {MapCore} from "../../../resources/mapping/MapCore";
-import {inject, Factory} from "aurelia-framework";
-import {MapMapLayer} from "../../../resources/map/layers/MapMapLayer";
-import {MapGroup} from "../../../resources/mapping/layers/MapGroup";
-import {MapLayerInterface} from "../../../resources/mapping/interfaces/MapLayerInterface";
-import {MapCircle} from "../../../resources/mapping/markers/MapCircle";
-import {MapCircleMarker} from "../../../resources/mapping/markers/MapCircleMarker";
-import {MapMarker} from "../../../resources/mapping/markers/MapMarker";
-import CircleOptions = L.CircleOptions;
-import {MapIcon} from "../../../resources/mapping/icons/MapIcon";
-import {RedIcon} from "../../../resources/map/icons/RedIcon";
-import MarkerOptions = L.MarkerOptions;
-import {StatusMarker} from "../../../resources/map/markers/StatusMarker";
+import {MapManager} from "../../../resources/map/MapManager";
+import {inject} from "aurelia-framework";
 
-
-@inject(MapCore,
-    MapMapLayer,
-    Factory.of(StatusMarker),
-    Factory.of(MapCircle),
-    Factory.of(MapCircleMarker),
-    Factory.of(MapGroup),
-    Factory.of(RedIcon)
+@inject(
+    MapManager
 )
 export class MapCustomElement {
+
     mapElement: HTMLElement;
 
-    constructor(private map: MapCore,
-                private baseLayer: MapMapLayer,
-                private markerFactory: (lat: number, lng: number, options?: MarkerOptions) => StatusMarker,
-                private circleFactory: (lat: number, lng: number, radius: number, options?: CircleOptions) => MapCircle,
-                private circleMarkerFactory: (lat: number, lng: number, radius: number, options?: CircleOptions) => MapCircleMarker,
-                private mapGroupFactory: (layers?: Array<MapLayerInterface>) => MapGroup,
-                private mapIconFactory: (settings?: any) => MapIcon) {
+    constructor(private mapManager: MapManager) {
     }
 
     attached() {
-        this.map.attachTo(this.mapElement);
-        this.map.addItem(this.baseLayer);
-
-        let circle = this.circleFactory(50.935659, -1.396098, 50);
-        let circleMarker = this.circleMarkerFactory(50.935659, -1.396098, 50);
-        let marker = this.markerFactory(50.935659, -1.396098);
-        let group = this.mapGroupFactory([marker, circle, circleMarker]);
-
-        this.map.addItem(group);
-        //circle.radius = 20;
-        circle.fillColour = '#ff0000';
-
-        marker.state = false;
+        this.mapManager.attachToDom(this.mapElement)
     }
 
     detached() {
-        this.map.detach();
+        this.mapManager.detachFromDom()
     }
+
 }

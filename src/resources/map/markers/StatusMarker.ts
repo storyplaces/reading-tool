@@ -47,7 +47,7 @@ export class StatusMarker extends MapMarker {
     private greenIcon: MapIcon;
 
     constructor(markerDefaults: MapMarkerDefaults, redIcon: RedIcon, greenIcon: GreenIcon, latitude: number, longitude: number) {
-        super(markerDefaults, latitude, longitude, redIcon);
+        super(markerDefaults, latitude, longitude, {icon: redIcon.leafletIcon});
         this.redIcon = redIcon;
         this.greenIcon = greenIcon;
     }

@@ -32,56 +32,19 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {autoinject, BindingEngine} from "aurelia-framework";
-import {Gps, GpsState} from "./Gps";
 
-export enum LocationSource {
-    GPS = 1,
-    Map = 2
-}
+import {MapCircleMarker} from "../../mapping/markers/MapCircleMarker";
+import {LocationInformation} from "../../gps/LocationWithHeading";
 
-@autoinject()
-export class Location {
 
-    ok: boolean = false;
-    gpsPermissionDenied: boolean = false;
-    gpsUnavailable: boolean = false;
-    gpsUnsupported: boolean = false;
+export class CurrentLocationMarker extends MapCircleMarker{
 
-    latitude: number;
-    longitude: number;
-    heading: number;
-
-    private _source: LocationSource = LocationSource.GPS;
-
-    constructor(private gps: Gps, private bindingEngine: BindingEngine) {
-        this.updateStateFromGps(gps.state);
-
-        this.bindingEngine.propertyObserver(this.gps, 'state')
-            .subscribe((newState: GpsState) => {
-                this.updateStateFromGps(newState);
-            });
-
-        this.bindingEngine.propertyObserver(this.gps, 'position')
-            .subscribe((newPosition: Position) => {
-                this.updatePositionFromGps(newPosition)
-            });
+    constructor() {
+        super(0, 0, 6, {fillOpacity: 1, fillColor: '#5555ff', color:'#ffffff', weight: 2});
     }
 
-    private updateStateFromGps(newState: GpsState) {
-        if (this._source == LocationSource.GPS) {
-            this.ok = (newState == GpsState.INITIALISING || newState == GpsState.OK);
-            this.gpsPermissionDenied = (newState == GpsState.PERMISSION_DENIED);
-            this.gpsUnavailable = (newState == GpsState.ERROR);
-            this.gpsUnsupported = (newState == GpsState.POSITION_UNSUPPORTED);
-        }
-    }
-
-    private updatePositionFromGps(newPosition: Position) {
-        if (this._source == LocationSource.GPS && this.ok) {
-            this.latitude = newPosition.coords.latitude;
-            this.longitude = newPosition.coords.longitude;
-            this.heading = newPosition.coords.heading;
-        }
+    set location(location: LocationInformation) {
+        this.latitude = location.latitude;
+        this.longitude = location.longitude;
     }
 }

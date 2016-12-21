@@ -32,31 +32,32 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {MapLayerInterface} from "./interfaces/MapLayerInterface";
 import {MapDefaults} from "./settings/MapDefaults";
+import {inject} from "aurelia-framework";
+import {EventAggregator} from "aurelia-event-aggregator";
+import {MapControlInterface} from "./interfaces/MapControlInterface";
 
 import Map = L.Map;
 
-import {inject} from "aurelia-framework";
+import LatLngLiteral = L.LatLngLiteral;
+import LatLng = L.LatLng;
+import EventHandlerFn = L.EventHandlerFn;
 
-@inject(MapDefaults)
+@inject(MapDefaults, EventAggregator)
 
 export class MapCore {
 
-    mapElement: HTMLElement;
     mapReady: Promise<Map>;
 
-    constructor(private mapDefaults: MapDefaults) {
+    constructor(private mapDefaults: MapDefaults, private eventAggregator: EventAggregator) {
+
     }
 
     attachTo(mapElement: HTMLElement) {
-        this.mapElement = mapElement
-        let newMap = L.map(this.mapElement, this.mapDefaults);
-
         this.mapReady = new Promise<any>(
             (resolve) => {
-                newMap.whenReady(resolve);
+                L.map(mapElement, this.mapDefaults).whenReady(resolve);
             }
         ).then(map => map.target);
     }
@@ -75,7 +76,7 @@ export class MapCore {
             map => {
                 map.addLayer(layer.leafletLayer);
             }
-        )
+        );
     }
 
     removeItem(layer: MapLayerInterface) {
@@ -83,6 +84,53 @@ export class MapCore {
             map => {
                 map.removeLayer(layer.leafletLayer);
             }
-        )
+        );
     }
+
+    setLocation(latLng: LatLngLiteral) {
+        this.mapReady.then(
+            map => {
+                map.setView(latLng, map.getZoom());
+            }
+        );
+    }
+
+    panTo(latLng: LatLngLiteral) {
+        this.mapReady.then(
+            map => {
+                map.panTo(latLng, map.getZoom());
+            }
+        );
+    }
+
+    getLocation(): Promise<LatLng> {
+        return this.mapReady.then(map => {
+            return map.getCenter()
+        });
+    }
+
+    addEvent(eventName: string, callback: EventHandlerFn): Promise<void> {
+        return this.mapReady.then(map => {
+            map.on(eventName, callback);
+        });
+    }
+
+    removeEvent(eventName: string): Promise<void> {
+        return this.mapReady.then(map => {
+            map.off(eventName)
+        });
+    }
+
+    addControl(control: MapControlInterface): Promise<void> {
+        return this.mapReady.then(map => {
+            map.addControl(control.leafletControl);
+        });
+    }
+
+    removeControl(control: MapControlInterface): Promise<void> {
+        return this.mapReady.then(map => {
+            map.removeControl(control.leafletControl);
+        });
+    }
+
 }

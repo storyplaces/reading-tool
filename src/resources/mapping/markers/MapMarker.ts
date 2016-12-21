@@ -33,7 +33,6 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {MapLayerInterface} from "../interfaces/MapLayerInterface";
-import {MapIcon} from "../icons/MapIcon";
 
 import MarkerOptions = L.MarkerOptions;
 import Marker = L.Marker;
@@ -41,16 +40,15 @@ import LatLngLiteral = L.LatLngLiteral;
 import {MapMarkerDefaults} from "../settings/MapMarkerDefaults";
 
 import {inject} from "aurelia-framework";
+import {MapIconInterface} from "../interfaces/MapIconInterface";
 
 @inject(MapMarkerDefaults)
+
 export class MapMarker implements MapLayerInterface {
     private marker: Marker;
 
-    constructor(markerDefaults: MapMarkerDefaults, latitude: number, longitude: number, icon?: MapIcon, options: MarkerOptions = {}) {
+    constructor(markerDefaults: MapMarkerDefaults, latitude: number, longitude: number, options: MarkerOptions = {}) {
 
-        if (icon) {
-            options.icon = icon.leafletIcon;
-        }
 
         this.marker = L.marker({lat: latitude, lng:longitude}, Object.assign(markerDefaults, options));
     }
@@ -75,7 +73,7 @@ export class MapMarker implements MapLayerInterface {
         this.marker.setLatLng({lat: this.latitude, lng: longitude});
     }
 
-    set icon(icon: MapIcon) {
+    set icon(icon: MapIconInterface) {
         this.marker.setIcon(icon.leafletIcon);
     }
 }

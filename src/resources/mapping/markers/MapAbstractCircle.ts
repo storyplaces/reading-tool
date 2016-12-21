@@ -33,17 +33,15 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {MapLayerInterface} from "../interfaces/MapLayerInterface";
-import CircleOptions = L.CircleOptions;
 import Circle = L.Circle;
-import LatLng = L.LatLng;
-import LatLngLiteral = L.LatLngLiteral;
 import CircleMarker = L.CircleMarker;
+import Layer = L.Layer;
 
 export abstract class MapAbstractCircle implements MapLayerInterface {
 
     protected marker: Circle | CircleMarker;
 
-    get leafletLayer(): L.Layer {
+    get leafletLayer(): Layer {
         return this.marker;
     };
 

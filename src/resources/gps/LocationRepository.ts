@@ -32,23 +32,58 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import Marker = L.Marker;
-import Icon = L.Icon;
-import IconOptions = L.IconOptions;
-import {MapIconDefaults} from "../settings/MapIconDefaults";
+import {autoinject, BindingEngine} from "aurelia-framework";
+import {Gps, GpsState} from "./Gps";
+import {LocationInformation} from "./LocationWithHeading";
 
-import {inject} from "aurelia-framework";
-import {MapIconInterface} from "../interfaces/MapIconInterface";
+export enum LocationSource {
+    GPS = 1,
+    Map = 2
+}
 
-@inject(MapIconDefaults)
-export class MapIcon implements MapIconInterface{
-    private marker: Icon;
 
-    constructor(defaults: MapIconDefaults, options: IconOptions) {
-        this.marker = L.icon(Object.assign(defaults, options));
+@autoinject()
+export class LocationRepository {
+
+    ok: boolean = false;
+    gpsPermissionDenied: boolean = false;
+    gpsUnavailable: boolean = false;
+    gpsUnsupported: boolean = false;
+
+    location: LocationInformation ={latitude: 0, longitude:0, heading:0, accuracy:0};
+    source: LocationSource = LocationSource.GPS;
+
+    constructor(private gps: Gps, private bindingEngine: BindingEngine) {
+        this.updateStateFromGps(gps.state);
+
+        this.bindingEngine.propertyObserver(this.gps, 'state')
+            .subscribe((newState: GpsState) => {
+                this.updateStateFromGps(newState);
+            });
+
+        this.bindingEngine.propertyObserver(this.gps, 'position')
+            .subscribe((newPosition: Position) => {
+                this.updatePositionFromGps(newPosition)
+            });
     }
 
-    get leafletIcon(): L.Icon {
-        return this.marker;
-    };
+    private updateStateFromGps(newState: GpsState) {
+        if (this.source == LocationSource.GPS) {
+            this.ok = (newState == GpsState.INITIALISING || newState == GpsState.OK);
+            this.gpsPermissionDenied = (newState == GpsState.PERMISSION_DENIED);
+            this.gpsUnavailable = (newState == GpsState.ERROR);
+            this.gpsUnsupported = (newState == GpsState.POSITION_UNSUPPORTED);
+        }
+    }
+
+    private updatePositionFromGps(newPosition: Position) {
+        if (this.source == LocationSource.GPS && this.ok) {
+            this.location = {
+                latitude: newPosition.coords.latitude,
+                longitude: newPosition.coords.longitude,
+                heading: newPosition.coords.heading,
+                accuracy: newPosition.coords.accuracy
+            };
+        }
+    }
 }

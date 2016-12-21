@@ -36,7 +36,7 @@ import CircleMarkerOptions = L.CircleMarkerOptions;
  */
 
 export class MapCircleMarker extends MapAbstractCircle{
-    constructor(latitude: number, longitude: number, radius: number, passedOptions: CircleMarkerOptions = {}) {
+    constructor(latitude: number = 0, longitude: number = 0, radius: number = 0, passedOptions: CircleMarkerOptions = {}) {
         super();
         let options = Object.assign({radius: radius}, passedOptions);
         this.marker = L.circleMarker({lat: latitude, lng: longitude}, options);
