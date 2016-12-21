@@ -55,14 +55,14 @@ describe("PageCollection", () => {
     it("can be instantiated with no data", () => {
         let collection = resolve(PageCollection);
 
-        expect(collection.all.length).toEqual(0);
+        expect(collection.all().length).toEqual(0);
     });
 
     it("creates a set of Page objects when created with an array of plain objects", () => {
         let collection = resolve(PageCollection, [{id: "1"}, {id:"2"}]);
 
-        expect(collection.all[0] instanceof Page).toBeTruthy();
-        expect(collection.all[0].id).toEqual("1");
+        expect(collection.all()[0] instanceof Page).toBeTruthy();
+        expect(collection.all()[0].id).toEqual("1");
     });
 
     it("maintains an array of Page objects when created with an array of Page objects", () => {
@@ -71,10 +71,10 @@ describe("PageCollection", () => {
 
         let collection = resolve(PageCollection, [model1, model2]);
 
-        expect(collection.all[0] instanceof Page).toBeTruthy();
-        expect(collection.all[0]).toBe(model1);
-        expect(collection.all[1] instanceof Page).toBeTruthy();
-        expect(collection.all[1]).toBe(model2);
+        expect(collection.all()[0] instanceof Page).toBeTruthy();
+        expect(collection.all()[0]).toBe(model1);
+        expect(collection.all()[1] instanceof Page).toBeTruthy();
+        expect(collection.all()[1]).toBe(model2);
     });
     
     
@@ -82,8 +82,8 @@ describe("PageCollection", () => {
         let collection = resolve(PageCollection);
         collection.save({id:"1"});
 
-        expect(collection.all[0] instanceof Page).toBeTruthy();
-        expect(collection.all[0].id).toEqual("1");
+        expect(collection.all()[0] instanceof Page).toBeTruthy();
+        expect(collection.all()[0].id).toEqual("1");
     });
 
     it("maintains a Page object when saving a Page object", () => {
@@ -92,16 +92,16 @@ describe("PageCollection", () => {
         let collection = container.invoke(PageCollection);
         collection.save(model);
 
-        expect(collection.all[0] instanceof Page).toBeTruthy();
-        expect(collection.all[0]).toBe(model);
+        expect(collection.all()[0] instanceof Page).toBeTruthy();
+        expect(collection.all()[0]).toBe(model);
     });
 
     it("creates a set of Page objects when saving an array of plain objects", () => {
         let collection = resolve(PageCollection);
         collection.saveMany([{id: "1"}, {id:"2"}]);
 
-        expect(collection.all[0] instanceof Page).toBeTruthy();
-        expect(collection.all[0].id).toEqual("1");
+        expect(collection.all()[0] instanceof Page).toBeTruthy();
+        expect(collection.all()[0].id).toEqual("1");
     });
 
     it("maintains an array of Page objects when saving an array of Page objects", () => {
@@ -111,9 +111,9 @@ describe("PageCollection", () => {
         let collection = resolve(PageCollection);
         collection.saveMany([model1, model2]);
 
-        expect(collection.all[0] instanceof Page).toBeTruthy();
-        expect(collection.all[0]).toBe(model1);
-        expect(collection.all[1] instanceof Page).toBeTruthy();
-        expect(collection.all[1]).toBe(model2);
+        expect(collection.all()[0] instanceof Page).toBeTruthy();
+        expect(collection.all()[0]).toBe(model1);
+        expect(collection.all()[1] instanceof Page).toBeTruthy();
+        expect(collection.all()[1]).toBe(model2);
     });
 });

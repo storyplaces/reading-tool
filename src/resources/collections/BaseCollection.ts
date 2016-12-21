@@ -39,11 +39,11 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
 
     private _data: Array<DATA_TYPE> = [];
 
-    get length(): number {
+    public length(): number {
         return this._data.length;
     }
 
-    get all(): Array<DATA_TYPE> {
+    public all(): Array<DATA_TYPE> {
         return this._data;
     }
 

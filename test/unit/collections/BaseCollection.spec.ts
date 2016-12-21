@@ -50,7 +50,7 @@ describe("Base collection", () => {
     it("can be instantiated with no data", () => {
         let collection = new TestCollection();
 
-        expect(collection.all.length).toEqual(0);
+        expect(collection.all().length).toEqual(0);
     });
 
     it("can have single objects added to it", () => {
@@ -92,11 +92,11 @@ describe("Base collection", () => {
         let collection = new TestCollection;
         collection.saveMany([{id: "1", data: "data1"}, {id: "2", data: "data2"}]);
 
-        expect(collection.all.length).toEqual(2);
-        expect(collection.all.findIndex(item => item.id == "1")).not.toEqual(-1);
-        expect(collection.all.findIndex(item => item.id == "2")).not.toEqual(-1);
-        expect(collection.all.find(item => item.id == "1").data).toEqual("data1");
-        expect(collection.all.find(item => item.id == "2").data).toEqual("data2");
+        expect(collection.all().length).toEqual(2);
+        expect(collection.all().findIndex(item => item.id == "1")).not.toEqual(-1);
+        expect(collection.all().findIndex(item => item.id == "2")).not.toEqual(-1);
+        expect(collection.all().find(item => item.id == "1").data).toEqual("data1");
+        expect(collection.all().find(item => item.id == "2").data).toEqual("data2");
     });
 
     it("will return and object via get", () => {
@@ -117,9 +117,9 @@ describe("Base collection", () => {
 
         collection.remove("1");
 
-        expect(collection.all.length).toEqual(1);
-        expect(collection.all.findIndex(item => item.id == "1")).toEqual(-1);
-        expect(collection.all.findIndex(item => item.id == "2")).not.toEqual(-1);
+        expect(collection.all().length).toEqual(1);
+        expect(collection.all().findIndex(item => item.id == "1")).toEqual(-1);
+        expect(collection.all().findIndex(item => item.id == "2")).not.toEqual(-1);
     });
 
     it("will return null when get is called with an invalid id", () => {
@@ -140,7 +140,7 @@ describe("Base collection", () => {
 
         collection.save(model1Alternative);
 
-        expect(collection.all.length).toEqual(2);
+        expect(collection.all().length).toEqual(2);
         expect(collection.get("1").id).toEqual("1");
         expect(collection.get("1").data).toEqual("data1Alternative");
         expect(collection.get("2").id).toEqual("2");
@@ -148,7 +148,7 @@ describe("Base collection", () => {
 
         collection.save(model2Alternative);
 
-        expect(collection.all.length).toEqual(2);
+        expect(collection.all().length).toEqual(2);
         expect(collection.get("1").id).toEqual("1");
         expect(collection.get("1").data).toEqual("data1Alternative");
         expect(collection.get("2").id).toEqual("2");

@@ -84,13 +84,13 @@ describe("LocationCollection", () => {
 
     it("can be instantiated with no data", () => {
         let collection = new LocationCollection(locationFactory);
-        expect(collection.all.length).toEqual(0);
+        expect(collection.all().length).toEqual(0);
         expect(locationFactoryCalledWith).toEqual("notYetCalled");
     });
 
     it("creates a set of Location objects when created with an array of plain objects", () => {
         let collection = new LocationCollection(locationFactory, [{id: "1"}, {id: "2"}]);
-        expect(collection.all.length).toEqual(2);
+        expect(collection.all().length).toEqual(2);
         expect(locationFactoryCalledWith).not.toEqual("notYetCalled");
     });
 
@@ -102,10 +102,10 @@ describe("LocationCollection", () => {
 
         let collection = new LocationCollection(locationFactory, [model1, model2]);
 
-        expect(collection.all[0] instanceof Location).toBeTruthy();
-        expect(collection.all[0]).toBe(model1);
-        expect(collection.all[1] instanceof Location).toBeTruthy();
-        expect(collection.all[1]).toBe(model2);
+        expect(collection.all()[0] instanceof Location).toBeTruthy();
+        expect(collection.all()[0]).toBe(model1);
+        expect(collection.all()[1] instanceof Location).toBeTruthy();
+        expect(collection.all()[1]).toBe(model2);
         expect(locationFactoryCalledWith).toEqual("notYetCalled");
     });
 
@@ -114,7 +114,7 @@ describe("LocationCollection", () => {
         let collection = new LocationCollection(locationFactory);
         collection.save({id: "1"});
 
-        expect(collection.all[0] instanceof Location).toBeTruthy();
+        expect(collection.all()[0] instanceof Location).toBeTruthy();
         expect(locationFactoryCalledWith).not.toEqual("notYetCalled");
     });
 
@@ -125,8 +125,8 @@ describe("LocationCollection", () => {
         let collection = new LocationCollection(locationFactory);
         collection.save(model);
 
-        expect(collection.all[0] instanceof Location).toBeTruthy();
-        expect(collection.all[0]).toBe(model);
+        expect(collection.all()[0] instanceof Location).toBeTruthy();
+        expect(collection.all()[0]).toBe(model);
         expect(locationFactoryCalledWith).toEqual("notYetCalled");
     });
 
@@ -134,8 +134,8 @@ describe("LocationCollection", () => {
         let collection = new LocationCollection(locationFactory);
         collection.saveMany([{id: "1"}, {id: "2"}]);
 
-        expect(collection.all[0] instanceof Location).toBeTruthy();
-        expect(collection.all[1] instanceof Location).toBeTruthy();
+        expect(collection.all()[0] instanceof Location).toBeTruthy();
+        expect(collection.all()[1] instanceof Location).toBeTruthy();
         expect(locationFactoryCalledWith).not.toEqual("notYetCalled");
     });
 
@@ -148,10 +148,10 @@ describe("LocationCollection", () => {
         let collection = new LocationCollection(locationFactory);
         collection.saveMany([model1, model2]);
 
-        expect(collection.all[0] instanceof Location).toBeTruthy();
-        expect(collection.all[0]).toBe(model1);
-        expect(collection.all[1] instanceof Location).toBeTruthy();
-        expect(collection.all[1]).toBe(model2);
+        expect(collection.all()[0] instanceof Location).toBeTruthy();
+        expect(collection.all()[0]).toBe(model1);
+        expect(collection.all()[1] instanceof Location).toBeTruthy();
+        expect(collection.all()[1]).toBe(model2);
         expect(locationFactoryCalledWith).toEqual("notYetCalled");
     });
 
