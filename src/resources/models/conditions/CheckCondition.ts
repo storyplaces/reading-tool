@@ -80,7 +80,7 @@ export class CheckCondition extends BaseCondition {
     }
 
     set variable(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("a", value);
+        this.typeChecker.validateAsStringOrUndefined("variable", value);
         this._variable = value;
     }
 
