@@ -40,7 +40,7 @@ describe("ReadingConnector", () => {
 
     });
 
-    it("returns readingCollection.all when all is called", () => {
+    it("returns readingCollection.all() when all is called", () => {
         let readingCollection = resolve(ReadingCollection);
         let storyPlacesAPI = resolve(StoryPlacesAPI);
         spyOn(readingCollection, "all").and.returnValue([]);
@@ -125,5 +125,39 @@ describe("ReadingConnector", () => {
         });
     })
 
+    it("calls readingCollection.all and only returns items with the correct storyId when byStoryId is called", () => {
+        let reading1 = resolve(Reading);
+        reading1.id = '123';
+        reading1.storyId = "test-story-id-1";
 
+        let reading2 = resolve(Reading);
+        reading2.id = '124';
+        reading2.storyId = "test-story-id-2";
+
+        let readingCollection = resolve(ReadingCollection);
+        let storyPlacesAPI = resolve(StoryPlacesAPI);
+        spyOn(readingCollection, "all").and.returnValue([reading1, reading2]);
+
+        let readingConnector = new ReadingConnector(readingCollection, storyPlacesAPI);
+        let result = readingConnector.byStoryId("test-story-id-1");
+        expect(result).toEqual([reading1]);
+    })
+
+    it("calls readingCollection.all and returns empty array when there are no matching readings", () => {
+        let reading1 = resolve(Reading);
+        reading1.id = '123';
+        reading1.storyId = "test-story-id-1";
+
+        let reading2 = resolve(Reading);
+        reading2.id = '124';
+        reading2.storyId = "test-story-id-2";
+
+        let readingCollection = resolve(ReadingCollection);
+        let storyPlacesAPI = resolve(StoryPlacesAPI);
+        spyOn(readingCollection, "all").and.returnValue([reading1, reading2]);
+
+        let readingConnector = new ReadingConnector(readingCollection, storyPlacesAPI);
+        let result = readingConnector.byStoryId("test-story-id-3");
+        expect(result).toEqual([]);
+    })
 });

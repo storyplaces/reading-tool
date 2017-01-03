@@ -18,7 +18,7 @@ export class StoryConnector extends AbstractConnector<Story> {
     }
 
     get all(): Array<Story> {
-        return this.storyCollection.all;
+        return this.storyCollection.all();
     }
 
     byId(id: string): Story {

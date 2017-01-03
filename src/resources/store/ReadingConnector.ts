@@ -16,7 +16,7 @@ export class ReadingConnector extends AbstractConnector<Reading> {
     }
 
     get all(): Array<Reading> {
-        return this.readingCollection.all;
+        return this.readingCollection.all();
     }
 
     byId(id: string): Reading {
@@ -54,8 +54,9 @@ export class ReadingConnector extends AbstractConnector<Reading> {
     }
 
     byStoryId(storyId: string): Array<Reading> {
-        //TODO: Make this return based on storyId.
-        return this.readingCollection.all;
-        
+        let readings = this.readingCollection.all();
+        return readings.filter((reading) => {
+            return (reading.storyId == storyId);
+        });
     }
 }
