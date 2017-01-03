@@ -1,5 +1,5 @@
 import {GpsState, Gps} from "../../../src/resources/gps/Gps";
-import {Location} from "../../../src/resources/gps/Location";
+import {LocationRepository} from "../../../src/resources/gps/LocationRepository";
 import {Container, BindingEngine} from "aurelia-framework";
 
 /*******************************************************************
@@ -37,7 +37,7 @@ import {Container, BindingEngine} from "aurelia-framework";
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-describe("Location", () => {
+describe("LocationRepository", () => {
 
     class MockGps {
         public state: GpsState = GpsState.INITIALISING;
@@ -62,7 +62,7 @@ describe("Location", () => {
     });
 
     it("will return OK when the GPS is OK", (done) => {
-        let location = new Location(mockGps as Gps, bindingEngine);
+        let location = new LocationRepository(mockGps as Gps, bindingEngine);
 
         mockGps.state = GpsState.OK;
 
@@ -76,7 +76,7 @@ describe("Location", () => {
     });
 
     it("will return OK when the GPS is Initialising", (done) => {
-        let location = new Location(mockGps as Gps, bindingEngine);
+        let location = new LocationRepository(mockGps as Gps, bindingEngine);
 
         mockGps.state = GpsState.INITIALISING;
 
@@ -90,7 +90,7 @@ describe("Location", () => {
     });
 
     it("will return Permission Denied when GPS has Permission Denied", (done) => {
-        let location = new Location(mockGps as Gps, bindingEngine);
+        let location = new LocationRepository(mockGps as Gps, bindingEngine);
 
         mockGps.state = GpsState.PERMISSION_DENIED;
 
@@ -105,7 +105,7 @@ describe("Location", () => {
 
 
     it("will return Unavailable when the GPS is Unavailable", (done) => {
-        let location = new Location(mockGps as Gps, bindingEngine);
+        let location = new LocationRepository(mockGps as Gps, bindingEngine);
 
         mockGps.state = GpsState.ERROR;
 
@@ -120,7 +120,7 @@ describe("Location", () => {
 
 
     it("will return Unavailable when the GPS is Unavailable", (done) => {
-        let location = new Location(mockGps as Gps, bindingEngine);
+        let location = new LocationRepository(mockGps as Gps, bindingEngine);
 
         mockGps.state = GpsState.POSITION_UNSUPPORTED;
 
@@ -134,15 +134,17 @@ describe("Location", () => {
     });
 
     it("will show changes in location from GPS", (done) => {
-        let location = new Location(mockGps as Gps, bindingEngine);
+        let location = new LocationRepository(mockGps as Gps, bindingEngine);
 
         mockGps.state = GpsState.OK;
-        mockGps.position = { coords: {longitude: 123, latitude: 456, heading:789}} as Position;
+        mockGps.position = { coords: {longitude: 123, latitude: 456, heading:789, accuracy: 321}} as Position;
 
         window.setTimeout(() => {
-            expect(location.longitude).toEqual(123);
-            expect(location.latitude).toEqual(456);
-            expect(location.heading).toEqual(789);
+            expect(location.location.longitude).toEqual(123);
+            expect(location.location.latitude).toEqual(456);
+            expect(location.location.heading).toEqual(789);
+            expect(location.location.accuracy).toEqual(321);
+
             done();
         }, 1);
     });
