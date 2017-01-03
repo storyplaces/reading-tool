@@ -32,56 +32,16 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {autoinject, BindingEngine} from "aurelia-framework";
-import {Gps, GpsState} from "./Gps";
+import {MapIcon} from "../../mapping/icons/MapIcon";
+import {inject} from "aurelia-framework";
+import {MapIconDefaults} from "../../mapping/settings/MapIconDefaults";
 
-export enum LocationSource {
-    GPS = 1,
-    Map = 2
-}
-
-@autoinject()
-export class Location {
-
-    ok: boolean = false;
-    gpsPermissionDenied: boolean = false;
-    gpsUnavailable: boolean = false;
-    gpsUnsupported: boolean = false;
-
-    latitude: number;
-    longitude: number;
-    heading: number;
-
-    private _source: LocationSource = LocationSource.GPS;
-
-    constructor(private gps: Gps, private bindingEngine: BindingEngine) {
-        this.updateStateFromGps(gps.state);
-
-        this.bindingEngine.propertyObserver(this.gps, 'state')
-            .subscribe((newState: GpsState) => {
-                this.updateStateFromGps(newState);
-            });
-
-        this.bindingEngine.propertyObserver(this.gps, 'position')
-            .subscribe((newPosition: Position) => {
-                this.updatePositionFromGps(newPosition)
-            });
-    }
-
-    private updateStateFromGps(newState: GpsState) {
-        if (this._source == LocationSource.GPS) {
-            this.ok = (newState == GpsState.INITIALISING || newState == GpsState.OK);
-            this.gpsPermissionDenied = (newState == GpsState.PERMISSION_DENIED);
-            this.gpsUnavailable = (newState == GpsState.ERROR);
-            this.gpsUnsupported = (newState == GpsState.POSITION_UNSUPPORTED);
-        }
-    }
-
-    private updatePositionFromGps(newPosition: Position) {
-        if (this._source == LocationSource.GPS && this.ok) {
-            this.latitude = newPosition.coords.latitude;
-            this.longitude = newPosition.coords.longitude;
-            this.heading = newPosition.coords.heading;
-        }
+@inject(MapIconDefaults)
+export class BlueIcon extends MapIcon {
+    constructor(defaults: MapIconDefaults) {
+        super(defaults, {
+            iconUrl: '/images/icons/marker-icon-blue.png',
+            iconRetinaUrl: '/images/icons/marker-icon-blue-2x.png'
+        });
     }
 }

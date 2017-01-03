@@ -1,10 +1,10 @@
-/*!*****************************************************************
+/*******************************************************************
  *
  * StoryPlaces
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) 2016
+ Copyright (c) $today.year
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -32,27 +32,23 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Router, RouterConfiguration} from "aurelia-router";
-import {autoinject} from "aurelia-framework";
-import {LocationRepository} from "./resources/gps/LocationRepository";
+import Marker = L.Marker;
+import Icon = L.Icon;
+import IconOptions = L.IconOptions;
+import {MapIconDefaults} from "../settings/MapIconDefaults";
 
-@autoinject()
-export class App {
-    router: Router;
+import {inject} from "aurelia-framework";
+import {MapIconInterface} from "../interfaces/MapIconInterface";
 
-    constructor(private location: LocationRepository) {
+@inject(MapIconDefaults)
+export class MapIcon implements MapIconInterface{
+    private marker: Icon;
+
+    constructor(defaults: MapIconDefaults, options: IconOptions) {
+        this.marker = L.icon(Object.assign(defaults, options));
     }
 
-    configureRouter(config: RouterConfiguration, router: Router) {
-        config.title = 'StoryPlaces';
-
-        config.map([
-            {route: '', name: 'home', moduleId: 'pages/story-overview-page', title: 'Story List'},
-            {route: '/story/:storyId', moduleId: 'pages/story-detail-page', title: 'Story', name: 'story-detail'},
-            {route: '/story/:storyId/:readingId', moduleId: 'pages/story-reading-page', title: 'Story', name: 'story-reading'}
-        ]);
-
-        this.router = router;
-    }
-
+    get leafletIcon(): L.Icon {
+        return this.marker;
+    };
 }

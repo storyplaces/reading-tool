@@ -1,10 +1,12 @@
-/*!*****************************************************************
+import {MapAbstractCircle} from "./MapAbstractCircle";
+import CircleMarkerOptions = L.CircleMarkerOptions;
+/*******************************************************************
  *
  * StoryPlaces
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) 2016
+ Copyright (c) $today.year
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -32,27 +34,12 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Router, RouterConfiguration} from "aurelia-router";
-import {autoinject} from "aurelia-framework";
-import {LocationRepository} from "./resources/gps/LocationRepository";
 
-@autoinject()
-export class App {
-    router: Router;
-
-    constructor(private location: LocationRepository) {
+export class MapCircleMarker extends MapAbstractCircle{
+    constructor(latitude: number = 0, longitude: number = 0, radius: number = 0, passedOptions: CircleMarkerOptions = {}) {
+        super();
+        let options = Object.assign({radius: radius}, passedOptions);
+        this.marker = L.circleMarker({lat: latitude, lng: longitude}, options);
     }
-
-    configureRouter(config: RouterConfiguration, router: Router) {
-        config.title = 'StoryPlaces';
-
-        config.map([
-            {route: '', name: 'home', moduleId: 'pages/story-overview-page', title: 'Story List'},
-            {route: '/story/:storyId', moduleId: 'pages/story-detail-page', title: 'Story', name: 'story-detail'},
-            {route: '/story/:storyId/:readingId', moduleId: 'pages/story-reading-page', title: 'Story', name: 'story-reading'}
-        ]);
-
-        this.router = router;
-    }
-
 }
+ 

@@ -1,10 +1,10 @@
-/*!*****************************************************************
+/*******************************************************************
  *
  * StoryPlaces
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) 2016
+ Copyright (c) $today.year
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -32,27 +32,34 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {Router, RouterConfiguration} from "aurelia-router";
-import {autoinject} from "aurelia-framework";
-import {LocationRepository} from "./resources/gps/LocationRepository";
+import {MapLayerInterface} from "../interfaces/MapLayerInterface";
+import Marker = L.Marker;
+import LayerGroup = L.LayerGroup;
 
-@autoinject()
-export class App {
-    router: Router;
+export class MapGroup implements MapLayerInterface {
 
-    constructor(private location: LocationRepository) {
+    private marker: LayerGroup;
+
+    constructor(items: Array<MapLayerInterface>) {
+        this.marker = L.layerGroup([]);
+        this.addItems(items);
     }
 
-    configureRouter(config: RouterConfiguration, router: Router) {
-        config.title = 'StoryPlaces';
-
-        config.map([
-            {route: '', name: 'home', moduleId: 'pages/story-overview-page', title: 'Story List'},
-            {route: '/story/:storyId', moduleId: 'pages/story-detail-page', title: 'Story', name: 'story-detail'},
-            {route: '/story/:storyId/:readingId', moduleId: 'pages/story-reading-page', title: 'Story', name: 'story-reading'}
-        ]);
-
-        this.router = router;
+    addItems(items: Array<MapLayerInterface>) {
+        items.forEach(item => {
+            this.addItem(item);
+        });
     }
 
+    addItem(item: MapLayerInterface) {
+        this.marker.addLayer(item.leafletLayer);
+    }
+
+    removeItem(item: MapLayerInterface) {
+        this.marker.removeLayer(item.leafletLayer);
+    }
+
+    get leafletLayer(): L.Layer {
+        return this.marker;
+    };
 }
