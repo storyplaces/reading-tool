@@ -89,4 +89,17 @@ export class TypeChecker {
 
         this.isArrayOf(fieldName, value, itemType)
     }
+
+    isTimePatternString(fieldName: string, value:any) {
+        if (value === undefined) {
+            return;
+        }
+
+        this.validateAsStringOrUndefined(fieldName, value);
+
+        let reg = new RegExp('^[0-9]{1,2}:[0-9]{2}$');
+        if (!reg.test(value)) {
+            throw TypeError("The contents of " + fieldName + " must be in the format HH:MM");
+        }
+    }
 }

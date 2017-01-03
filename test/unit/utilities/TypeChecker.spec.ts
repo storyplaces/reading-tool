@@ -286,5 +286,32 @@ describe("TypeChecker", () => {
             expect(typeChecker.isArrayOf).toHaveBeenCalledWith("field", ["a", "b", "c"], "string");
         });
     });
+
+    describe("method isTimePatternString", () => {
+        it("will not throw an error if passed a time pattern string", () => {
+            let typeChecker = new TypeChecker();
+
+            expect(() => {
+                typeChecker.isTimePatternString("field", "12:12");
+            }).not.toThrow();
+        });
+
+        it("will throw an error if passed a non time pattern string", () => {
+            let typeChecker = new TypeChecker();
+
+            expect(() => {
+                typeChecker.isTimePatternString("field", "abc");
+            }).toThrow();
+        });
+
+        it("will throw an error if passed something other than a string", () => {
+            let typeChecker = new TypeChecker();
+
+            expect(() => {
+                typeChecker.isTimePatternString("field", 123);
+            }).toThrow();
+        });
+
+    });
 });
  
