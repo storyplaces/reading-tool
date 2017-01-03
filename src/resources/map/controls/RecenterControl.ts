@@ -64,23 +64,15 @@ export class RecenterControl implements MapControlInterface {
                 this.link.title = "Recenter";
 
                 L.DomEvent
-                    .on(this.link, 'click', L.DomEvent.stopPropagation)
-                    .on(this.link, 'click', L.DomEvent.preventDefault)
-                    .on(this.link, 'dblclick', L.DomEvent.stopPropagation)
-                    .on(this.link, 'dblclick', L.DomEvent.preventDefault)
+                    .on(this.link, 'click dblclick', (e) => {L.DomEvent.stopPropagation(e); L.DomEvent.preventDefault(e);})
                     .on(this.link, 'click', this.onClick, this);
-
-                map.fireEvent('recenter-control-click')
 
                 return container;
             },
 
             onRemove: function (map) {
                 L.DomEvent
-                    .off(this.link, 'click', L.DomEvent.stopPropagation)
-                    .off(this.link, 'click', L.DomEvent.preventDefault)
-                    .off(this.link, 'dblclick', L.DomEvent.stopPropagation)
-                    .off(this.link, 'dblclick', L.DomEvent.preventDefault)
+                    .off(this.link, 'click dblclick', (e) => {L.DomEvent.stopPropagation(e); L.DomEvent.preventDefault(e);})
                     .off(this.link, 'click', this.onClick, this);
             },
 
