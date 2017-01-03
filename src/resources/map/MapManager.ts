@@ -68,7 +68,9 @@ export class MapManager {
         this.mapCore.attachTo(this.mapElement);
         this.mapCore.addItem(this.baseLayer);
         this.mapCore.addItem(this.currentLocationMarker);
-        this.mapCore.addControl(this.recenterControl).then(() => {this.recenterControl.disable();});
+        this.mapCore.addControl(this.recenterControl).then(() => {
+            this.recenterControl.disable();
+        });
 
         this.addEvents();
 
@@ -91,22 +93,30 @@ export class MapManager {
     }
 
     private addEvents() {
-        this.mapCore.addEvent('dragstart', () => {
-            if (this.panningWithLocation) {
-                this.panningWithLocation = false;
-                this.recenterControl.enable();
-            }
-        });
+        this.mapCore.addEvent('dblclick', () => this.enableRecenterControl());
+        this.mapCore.addEvent('dragstart', () => this.enableRecenterControl());
+        this.mapCore.addEvent('zoomstart', () => this.enableRecenterControl());
 
-        this.mapCore.addEvent('recenter-control-click', () => {
-            this.panningWithLocation = true;
-            this.locationChanged(this.location.location);
-            this.recenterControl.disable();
-        });
+        this.mapCore.addEvent('recenter-control-click', () => this.disableRecenterControl());
+    }
+
+    private disableRecenterControl() {
+        this.panningWithLocation = true;
+        this.locationChanged(this.location.location);
+        this.recenterControl.disable();
+    }
+
+    private enableRecenterControl() {
+        if (this.panningWithLocation) {
+            this.panningWithLocation = false;
+            this.recenterControl.enable();
+        }
     }
 
     private removeEvents() {
+        this.mapCore.removeEvent('dblclick');
         this.mapCore.removeEvent('dragstart');
+        this.mapCore.removeEvent('zoomstart');
         this.mapCore.removeEvent('recenter-control-click');
     }
 

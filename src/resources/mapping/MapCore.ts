@@ -35,7 +35,6 @@
 import {MapLayerInterface} from "./interfaces/MapLayerInterface";
 import {MapDefaults} from "./settings/MapDefaults";
 import {inject} from "aurelia-framework";
-import {EventAggregator} from "aurelia-event-aggregator";
 import {MapControlInterface} from "./interfaces/MapControlInterface";
 
 import Map = L.Map;
@@ -44,13 +43,13 @@ import LatLngLiteral = L.LatLngLiteral;
 import LatLng = L.LatLng;
 import EventHandlerFn = L.EventHandlerFn;
 
-@inject(MapDefaults, EventAggregator)
+@inject(MapDefaults)
 
 export class MapCore {
 
-    mapReady: Promise<Map>;
+    private mapReady: Promise<Map>;
 
-    constructor(private mapDefaults: MapDefaults, private eventAggregator: EventAggregator) {
+    constructor(private mapDefaults: MapDefaults) {
 
     }
 

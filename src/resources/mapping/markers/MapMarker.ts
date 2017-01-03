@@ -48,8 +48,6 @@ export class MapMarker implements MapLayerInterface {
     private marker: Marker;
 
     constructor(markerDefaults: MapMarkerDefaults, latitude: number, longitude: number, options: MarkerOptions = {}) {
-
-
         this.marker = L.marker({lat: latitude, lng:longitude}, Object.assign(markerDefaults, options));
     }
 

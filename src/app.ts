@@ -34,12 +34,13 @@
  */
 import {Router, RouterConfiguration} from "aurelia-router";
 import {autoinject} from "aurelia-framework";
+import {LocationRepository} from "./resources/gps/LocationRepository";
 
 @autoinject()
 export class App {
     router: Router;
 
-    constructor() {
+    constructor(private location: LocationRepository) {
     }
 
     configureRouter(config: RouterConfiguration, router: Router) {
