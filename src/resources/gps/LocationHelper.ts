@@ -38,12 +38,12 @@ import {CircleLocation} from "../models/locations/CircleLocation";
 
 export class LocationHelper {
 
-    pointIsInLocationRadius(userLocation: LocationInformation, pointLocation: CircleLocation) {
+    pointIsInLocationRadius(userLocation: LocationInformation, pointLocation: CircleLocation): boolean {
         let distance = this.distanceInMetersBetweenTwoPoints(userLocation.latitude, userLocation.longitude, pointLocation.lat, pointLocation.lon);
         return distance <= pointLocation.radius
     }
 
-    distanceInMetersBetweenTwoPoints(latitude1, longitude1, latitude2, longitude2) {
+    distanceInMetersBetweenTwoPoints(latitude1: number, longitude1: number, latitude2: number, longitude2: number): number {
         let R = 12742000; // Radius of the earth in km * 1000 * 2
         let dLat = this.deg2rad(latitude2 - latitude1);  // deg2rad below
         let dLon = this.deg2rad(longitude2 - longitude1);
@@ -59,7 +59,7 @@ export class LocationHelper {
     }
 
 
-    private deg2rad(deg) {
+    private deg2rad(deg): number {
         return deg * 0.01745329251994329576923690768489; // PI/180
     }
 }
