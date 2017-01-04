@@ -1,3 +1,10 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 /*******************************************************************
  *
  * StoryPlaces
@@ -32,79 +39,33 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-import {Identifiable} from '../interfaces/Identifiable';
-import {computedFrom} from 'aurelia-framework';
-
-export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
-
-
-    private _data: Array<DATA_TYPE> = [];
-
-    public length(): number {
-        return this._data.length;
+var aurelia_framework_1 = require("aurelia-framework");
+var TypeFactory = (function () {
+    function TypeFactory(config) {
+        this._config = config;
     }
-
-    get all(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public get(id: string): DATA_TYPE {
-        return this._data.find(item => item.id == id)
-    }
-
-    public save(passedItem: any): void {
-        let item = this.itemFromObject(passedItem);
-
-        if (item.id == undefined) {
-            throw Error("Unable to save object as it has no id set");
-        }
-
-        let foundIndex = this.findIndex(item);
-
-        if (foundIndex !== undefined) {
-            this._data[foundIndex] = item;
-            return;
-        }
-
-        this._data.push(item);
-    }
-
-    private findIndex(item: DATA_TYPE): number|null {
-        return this.findIndexById(item.id);
-    }
-
-    private findIndexById(itemId: string): number|null {
-        let foundIndex = this._data.findIndex(found => found.id == itemId);
-        return foundIndex != -1 ? foundIndex : undefined;
-    }
-
-    public saveMany(items: Array<any>): void {
-        items.forEach(item => {
-            this.save(item)
-        });
-    }
-
-    public remove(id: string): void {
-        let foundIndex = this.findIndexById(id);
-        if (foundIndex != null) {
-            this._data.splice(foundIndex, 1);
-        }
-    }
-
-    public toArray(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public toJSON(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public forEach(callback, thisArg = null) {
-        this._data.forEach(callback, thisArg);
-    }
-
-    protected itemFromObject(item: any): DATA_TYPE {
-        return item as DATA_TYPE;
-    }
-}
+    TypeFactory.prototype.get = function (container) {
+        var _this = this;
+        return function (data) {
+            if ((typeof data.type != 'string') || !_this._config[data.type]) {
+                throw new TypeError("Unknown object type " + data.type);
+            }
+            var requestedObject = _this._config[data.type];
+            if (!(requestedObject instanceof Function)) {
+                throw new TypeError("Unknown class to instantiate");
+            }
+            if (data instanceof requestedObject) {
+                return data;
+            }
+            return container.invoke(requestedObject, [data]);
+        };
+    };
+    TypeFactory.withMapping = function (config) {
+        return new TypeFactory(config);
+    };
+    TypeFactory = __decorate([
+        aurelia_framework_1.resolver()
+    ], TypeFactory);
+    return TypeFactory;
+}());
+exports.TypeFactory = TypeFactory;

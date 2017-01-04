@@ -40,7 +40,7 @@ describe("ReadingConnector", () => {
 
     });
 
-    it("returns readingCollection.all() when all is called", () => {
+    it("returns readingCollection.all when all is called", () => {
         let readingCollection = resolve(ReadingCollection);
         let storyPlacesAPI = resolve(StoryPlacesAPI);
         spyOn(readingCollection, "all").and.returnValue([]);
@@ -135,8 +135,8 @@ describe("ReadingConnector", () => {
         reading2.storyId = "test-story-id-2";
 
         let readingCollection = resolve(ReadingCollection);
+        Object.defineProperty(readingCollection, 'all', { value: [reading1, reading2]});
         let storyPlacesAPI = resolve(StoryPlacesAPI);
-        spyOn(readingCollection, "all").and.returnValue([reading1, reading2]);
 
         let readingConnector = new ReadingConnector(readingCollection, storyPlacesAPI);
         let result = readingConnector.byStoryId("test-story-id-1");

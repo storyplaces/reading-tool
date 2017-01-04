@@ -55,14 +55,14 @@ describe("VariableCollection", () => {
     it("can be instantiated with no data", () => {
         let collection = resolve(VariableCollection);
 
-        expect(collection.all().length).toEqual(0);
+        expect(collection.all.length).toEqual(0);
     });
 
     it("creates a set of Variable objects when created with an array of plain objects", () => {
         let collection = resolve(VariableCollection, [{id: "1"}, {id:"2"}]);
 
-        expect(collection.all()[0] instanceof Variable).toBeTruthy();
-        expect(collection.all()[0].id).toEqual("1");
+        expect(collection.all[0] instanceof Variable).toBeTruthy();
+        expect(collection.all[0].id).toEqual("1");
     });
 
     it("maintains an array of Variable objects when created with an array of Variable objects", () => {
@@ -71,10 +71,10 @@ describe("VariableCollection", () => {
 
         let collection = resolve(VariableCollection, [model1, model2]);
 
-        expect(collection.all()[0] instanceof Variable).toBeTruthy();
-        expect(collection.all()[0]).toBe(model1);
-        expect(collection.all()[1] instanceof Variable).toBeTruthy();
-        expect(collection.all()[1]).toBe(model2);
+        expect(collection.all[0] instanceof Variable).toBeTruthy();
+        expect(collection.all[0]).toBe(model1);
+        expect(collection.all[1] instanceof Variable).toBeTruthy();
+        expect(collection.all[1]).toBe(model2);
     });
     
     
@@ -82,8 +82,8 @@ describe("VariableCollection", () => {
         let collection = resolve(VariableCollection);
         collection.save({id:"1"});
 
-        expect(collection.all()[0] instanceof Variable).toBeTruthy();
-        expect(collection.all()[0].id).toEqual("1");
+        expect(collection.all[0] instanceof Variable).toBeTruthy();
+        expect(collection.all[0].id).toEqual("1");
     });
 
     it("maintains a Variable object when saving a Variable object", () => {
@@ -92,16 +92,16 @@ describe("VariableCollection", () => {
         let collection = container.invoke(VariableCollection);
         collection.save(model);
 
-        expect(collection.all()[0] instanceof Variable).toBeTruthy();
-        expect(collection.all()[0]).toBe(model);
+        expect(collection.all[0] instanceof Variable).toBeTruthy();
+        expect(collection.all[0]).toBe(model);
     });
 
     it("creates a set of Variable objects when saving an array of plain objects", () => {
         let collection = resolve(VariableCollection);
         collection.saveMany([{id: "1"}, {id:"2"}]);
 
-        expect(collection.all()[0] instanceof Variable).toBeTruthy();
-        expect(collection.all()[0].id).toEqual("1");
+        expect(collection.all[0] instanceof Variable).toBeTruthy();
+        expect(collection.all[0].id).toEqual("1");
     });
 
     it("maintains an array of Variable objects when saving an array of Variable objects", () => {
@@ -111,9 +111,9 @@ describe("VariableCollection", () => {
         let collection = resolve(VariableCollection);
         collection.saveMany([model1, model2]);
 
-        expect(collection.all()[0] instanceof Variable).toBeTruthy();
-        expect(collection.all()[0]).toBe(model1);
-        expect(collection.all()[1] instanceof Variable).toBeTruthy();
-        expect(collection.all()[1]).toBe(model2);
+        expect(collection.all[0] instanceof Variable).toBeTruthy();
+        expect(collection.all[0]).toBe(model1);
+        expect(collection.all[1] instanceof Variable).toBeTruthy();
+        expect(collection.all[1]).toBe(model2);
     });
 });

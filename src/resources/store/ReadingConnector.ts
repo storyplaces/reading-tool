@@ -1,5 +1,5 @@
 import {AbstractConnector} from "./AbstractConnector";
-import {inject, NewInstance} from 'aurelia-framework';
+import {inject, NewInstance, computedFrom} from 'aurelia-framework';
 import {Reading} from "../models/Reading";
 import {StoryPlacesAPI} from "./StoryplacesAPI";
 import {ReadingCollection} from "../collections/ReadingCollection";
@@ -16,7 +16,7 @@ export class ReadingConnector extends AbstractConnector<Reading> {
     }
 
     get all(): Array<Reading> {
-        return this.readingCollection.all();
+        return this.readingCollection.all;
     }
 
     byId(id: string): Reading {
@@ -54,9 +54,6 @@ export class ReadingConnector extends AbstractConnector<Reading> {
     }
 
     byStoryId(storyId: string): Array<Reading> {
-        let readings = this.readingCollection.all();
-        return readings.filter((reading) => {
-            return (reading.storyId == storyId);
-        });
+        return this.all.filter(reading => reading.storyId == storyId);
     }
 }

@@ -32,79 +32,68 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-import {Identifiable} from '../interfaces/Identifiable';
-import {computedFrom} from 'aurelia-framework';
-
-export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
-
-
-    private _data: Array<DATA_TYPE> = [];
-
-    public length(): number {
+"use strict";
+var BaseCollection = (function () {
+    function BaseCollection() {
+        this._data = [];
+    }
+    BaseCollection.prototype.length = function () {
         return this._data.length;
-    }
-
-    get all(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public get(id: string): DATA_TYPE {
-        return this._data.find(item => item.id == id)
-    }
-
-    public save(passedItem: any): void {
-        let item = this.itemFromObject(passedItem);
-
+    };
+    Object.defineProperty(BaseCollection.prototype, "all", {
+        get: function () {
+            return this._data;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    BaseCollection.prototype.get = function (id) {
+        return this._data.find(function (item) { return item.id == id; });
+    };
+    BaseCollection.prototype.save = function (passedItem) {
+        var item = this.itemFromObject(passedItem);
         if (item.id == undefined) {
             throw Error("Unable to save object as it has no id set");
         }
-
-        let foundIndex = this.findIndex(item);
-
+        var foundIndex = this.findIndex(item);
         if (foundIndex !== undefined) {
             this._data[foundIndex] = item;
             return;
         }
-
         this._data.push(item);
-    }
-
-    private findIndex(item: DATA_TYPE): number|null {
+    };
+    BaseCollection.prototype.findIndex = function (item) {
         return this.findIndexById(item.id);
-    }
-
-    private findIndexById(itemId: string): number|null {
-        let foundIndex = this._data.findIndex(found => found.id == itemId);
+    };
+    BaseCollection.prototype.findIndexById = function (itemId) {
+        var foundIndex = this._data.findIndex(function (found) { return found.id == itemId; });
         return foundIndex != -1 ? foundIndex : undefined;
-    }
-
-    public saveMany(items: Array<any>): void {
-        items.forEach(item => {
-            this.save(item)
+    };
+    BaseCollection.prototype.saveMany = function (items) {
+        var _this = this;
+        items.forEach(function (item) {
+            _this.save(item);
         });
-    }
-
-    public remove(id: string): void {
-        let foundIndex = this.findIndexById(id);
+    };
+    BaseCollection.prototype.remove = function (id) {
+        var foundIndex = this.findIndexById(id);
         if (foundIndex != null) {
             this._data.splice(foundIndex, 1);
         }
-    }
-
-    public toArray(): Array<DATA_TYPE> {
+    };
+    BaseCollection.prototype.toArray = function () {
         return this._data;
-    }
-
-    public toJSON(): Array<DATA_TYPE> {
+    };
+    BaseCollection.prototype.toJSON = function () {
         return this._data;
-    }
-
-    public forEach(callback, thisArg = null) {
+    };
+    BaseCollection.prototype.forEach = function (callback, thisArg) {
+        if (thisArg === void 0) { thisArg = null; }
         this._data.forEach(callback, thisArg);
-    }
-
-    protected itemFromObject(item: any): DATA_TYPE {
-        return item as DATA_TYPE;
-    }
-}
+    };
+    BaseCollection.prototype.itemFromObject = function (item) {
+        return item;
+    };
+    return BaseCollection;
+}());
+exports.BaseCollection = BaseCollection;

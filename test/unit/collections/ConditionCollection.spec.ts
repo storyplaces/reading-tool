@@ -88,13 +88,13 @@ describe("ConditionCollection", () => {
 
     it("can be instantiated with no data", () => {
         let collection = new ConditionCollection(conditionFactory);
-        expect(collection.all().length).toEqual(0);
+        expect(collection.all.length).toEqual(0);
         expect(conditionFactoryCalledWith).toEqual("notYetCalled");
     });
 
     it("creates a set of Condition objects when created with an array of plain objects", () => {
         let collection = new ConditionCollection(conditionFactory, [{id: "1"}, {id:"2"}]);
-        expect(collection.all().length).toEqual(2);
+        expect(collection.all.length).toEqual(2);
         expect(conditionFactoryCalledWith).not.toEqual("notYetCalled");
     });
 
@@ -106,10 +106,10 @@ describe("ConditionCollection", () => {
 
         let collection = new ConditionCollection(conditionFactory, [model1, model2]);
 
-        expect(collection.all()[0] instanceof Condition).toBeTruthy();
-        expect(collection.all()[0]).toBe(model1);
-        expect(collection.all()[1] instanceof Condition).toBeTruthy();
-        expect(collection.all()[1]).toBe(model2);
+        expect(collection.all[0] instanceof Condition).toBeTruthy();
+        expect(collection.all[0]).toBe(model1);
+        expect(collection.all[1] instanceof Condition).toBeTruthy();
+        expect(collection.all[1]).toBe(model2);
         expect(conditionFactoryCalledWith).toEqual("notYetCalled");
     });
     
@@ -118,7 +118,7 @@ describe("ConditionCollection", () => {
         let collection = new ConditionCollection(conditionFactory);
         collection.save({id:"1"});
 
-        expect(collection.all()[0] instanceof Condition).toBeTruthy();
+        expect(collection.all[0] instanceof Condition).toBeTruthy();
         expect(conditionFactoryCalledWith).not.toEqual("notYetCalled");
     });
 
@@ -129,8 +129,8 @@ describe("ConditionCollection", () => {
         let collection = new ConditionCollection(conditionFactory);
         collection.save(model);
 
-        expect(collection.all()[0] instanceof Condition).toBeTruthy();
-        expect(collection.all()[0]).toBe(model);
+        expect(collection.all[0] instanceof Condition).toBeTruthy();
+        expect(collection.all[0]).toBe(model);
         expect(conditionFactoryCalledWith).toEqual("notYetCalled");
     });
 
@@ -138,8 +138,8 @@ describe("ConditionCollection", () => {
         let collection = new ConditionCollection(conditionFactory);
         collection.saveMany([{id: "1"}, {id:"2"}]);
 
-        expect(collection.all()[0] instanceof Condition).toBeTruthy();
-        expect(collection.all()[1] instanceof Condition).toBeTruthy();
+        expect(collection.all[0] instanceof Condition).toBeTruthy();
+        expect(collection.all[1] instanceof Condition).toBeTruthy();
         expect(conditionFactoryCalledWith).not.toEqual("notYetCalled");
     });
 
@@ -152,10 +152,10 @@ describe("ConditionCollection", () => {
         let collection = new ConditionCollection(conditionFactory);
         collection.saveMany([model1, model2]);
 
-        expect(collection.all()[0] instanceof Condition).toBeTruthy();
-        expect(collection.all()[0]).toBe(model1);
-        expect(collection.all()[1] instanceof Condition).toBeTruthy();
-        expect(collection.all()[1]).toBe(model2);
+        expect(collection.all[0] instanceof Condition).toBeTruthy();
+        expect(collection.all[0]).toBe(model1);
+        expect(collection.all[1] instanceof Condition).toBeTruthy();
+        expect(collection.all[1]).toBe(model2);
         expect(conditionFactoryCalledWith).toEqual("notYetCalled");
     });
 

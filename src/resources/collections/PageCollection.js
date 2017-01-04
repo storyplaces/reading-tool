@@ -32,79 +32,39 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-import {Identifiable} from '../interfaces/Identifiable';
-import {computedFrom} from 'aurelia-framework';
-
-export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
-
-
-    private _data: Array<DATA_TYPE> = [];
-
-    public length(): number {
-        return this._data.length;
-    }
-
-    get all(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public get(id: string): DATA_TYPE {
-        return this._data.find(item => item.id == id)
-    }
-
-    public save(passedItem: any): void {
-        let item = this.itemFromObject(passedItem);
-
-        if (item.id == undefined) {
-            throw Error("Unable to save object as it has no id set");
-        }
-
-        let foundIndex = this.findIndex(item);
-
-        if (foundIndex !== undefined) {
-            this._data[foundIndex] = item;
-            return;
-        }
-
-        this._data.push(item);
-    }
-
-    private findIndex(item: DATA_TYPE): number|null {
-        return this.findIndexById(item.id);
-    }
-
-    private findIndexById(itemId: string): number|null {
-        let foundIndex = this._data.findIndex(found => found.id == itemId);
-        return foundIndex != -1 ? foundIndex : undefined;
-    }
-
-    public saveMany(items: Array<any>): void {
-        items.forEach(item => {
-            this.save(item)
-        });
-    }
-
-    public remove(id: string): void {
-        let foundIndex = this.findIndexById(id);
-        if (foundIndex != null) {
-            this._data.splice(foundIndex, 1);
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var BaseCollection_1 = require("./BaseCollection");
+var Page_1 = require("../models/Page");
+var aurelia_framework_1 = require("aurelia-framework");
+var PageCollection = (function (_super) {
+    __extends(PageCollection, _super);
+    function PageCollection(factory, data) {
+        _super.call(this);
+        this.factory = factory;
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
         }
     }
-
-    public toArray(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public toJSON(): Array<DATA_TYPE> {
-        return this._data;
-    }
-
-    public forEach(callback, thisArg = null) {
-        this._data.forEach(callback, thisArg);
-    }
-
-    protected itemFromObject(item: any): DATA_TYPE {
-        return item as DATA_TYPE;
-    }
-}
+    PageCollection.prototype.itemFromObject = function (item) {
+        if (item instanceof Page_1.Page) {
+            return item;
+        }
+        return this.factory(item);
+    };
+    PageCollection = __decorate([
+        aurelia_framework_1.inject(aurelia_framework_1.Factory.of(Page_1.Page))
+    ], PageCollection);
+    return PageCollection;
+}(BaseCollection_1.BaseCollection));
+exports.PageCollection = PageCollection;
