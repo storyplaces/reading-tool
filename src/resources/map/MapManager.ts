@@ -37,7 +37,7 @@ import {CurrentLocationMarker} from "./markers/CurrentLocationMarker";
 import {MapMapLayer} from "./layers/MapMapLayer";
 import {MapCore} from "../mapping/MapCore";
 import {LocationSource, LocationRepository} from "../gps/LocationRepository";
-import {LocationInformation} from "../gps/LocationWithHeading";
+import {LocationInformation} from "../gps/LocationInformation";
 import {RecenterControl} from "./controls/RecenterControl";
 
 @inject(

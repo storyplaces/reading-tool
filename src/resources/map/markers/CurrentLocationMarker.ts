@@ -34,7 +34,7 @@
  */
 
 import {MapCircleMarker} from "../../mapping/markers/MapCircleMarker";
-import {LocationInformation} from "../../gps/LocationWithHeading";
+import {LocationInformation} from "../../gps/LocationInformation";
 
 
 export class CurrentLocationMarker extends MapCircleMarker{

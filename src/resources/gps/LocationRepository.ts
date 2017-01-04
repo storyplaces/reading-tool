@@ -34,7 +34,7 @@
  */
 import {autoinject, BindingEngine} from "aurelia-framework";
 import {Gps, GpsState} from "./Gps";
-import {LocationInformation} from "./LocationWithHeading";
+import {LocationInformation} from "./LocationInformation";
 
 export enum LocationSource {
     GPS = 1,
