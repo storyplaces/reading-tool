@@ -9,9 +9,9 @@ import {Config} from "../../config/Config";
 
 @autoinject()
 export class StoryPlacesAPI {
-    private _path;
+    protected _path;
 
-    constructor(private client: HttpClient, private config: Config) {
+    constructor(protected client: HttpClient, protected config: Config) {
         let headers = {};
 
         headers['X-Auth-Token'] = this.config.read('server_auth_password');

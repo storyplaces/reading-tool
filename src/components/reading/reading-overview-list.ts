@@ -1,6 +1,7 @@
 import {Reading} from "../../resources/models/Reading";
 import {bindable, computedFrom, inject, Factory, BindingEngine, Disposable} from "aurelia-framework";
 import {ReadingConnector} from "../../resources/store/ReadingConnector";
+import {Authenticator} from "../../resources/auth/Authenticator";
 /**
  * Created by andy on 28/11/16.
  */
@@ -8,13 +9,15 @@ import {ReadingConnector} from "../../resources/store/ReadingConnector";
 @inject(
     ReadingConnector,
     Factory.of(Reading),
-    BindingEngine
+    BindingEngine,
+    Authenticator
 )
 export class ReadingOverviewListCustomElement {
 
     constructor(private readingConnector: ReadingConnector,
                 private readingFactory: (any?) => Reading,
-                private bindingEngine: BindingEngine) {
+                private bindingEngine: BindingEngine,
+                private auth: Authenticator) {
 
     }
 
@@ -25,9 +28,10 @@ export class ReadingOverviewListCustomElement {
     subscription : Disposable;
 
     attached() {
+        this.readings = this.readingConnector.byStoryId(this.storyId);
         this.subscription = this.bindingEngine
             .collectionObserver(this.readingConnector.all)
-            .subscribe((newValue: Array<Reading>) => {
+            .subscribe(() => {
                     this.readings = this.readingConnector.byStoryId(this.storyId);
                 }
             );
@@ -40,13 +44,13 @@ export class ReadingOverviewListCustomElement {
 
     newReading() {
         var readingName = "Reading " + (this.readings.length + 1);
-        var reading = this.readingFactory({storyId: this.storyId, userId: "placeholder", name: readingName});
+        var reading = this.readingFactory({storyId: this.storyId, userId: this.auth.userId, name: readingName});
         this.readingConnector.save(reading);
         this.refresh();
     }
 
     refresh() {
-        this.readingConnector.fetchAll();
+        this.readingConnector.fetchForUserAndStory(this.auth.userId, this.storyId);
     }
 
 
