@@ -35,14 +35,18 @@
 import {BaseCondition} from "./BaseCondition";
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
+import {VariableCollection} from "../../collections/VariableCollection";
+import {ConditionCollection} from "../../collections/ConditionCollection";
+import {LocationInformation} from "../../gps/LocationInformation";
+import {LocationCollection} from "../../collections/LocationCollection";
 
 @inject(TypeChecker)
-
 export class ComparisonCondition extends BaseCondition {
     private _a: string;
     private _b: string;
     private _aType: string;
     private _bType: string;
+    private _operand: string;
 
     constructor(typeChecker: TypeChecker, data?: any) {
         super(typeChecker);
@@ -52,7 +56,7 @@ export class ComparisonCondition extends BaseCondition {
         }
     }
 
-    fromObject(data = {id: undefined, type: undefined, a: undefined, b: undefined, aType: undefined, bType: undefined}) {
+    fromObject(data = {id: undefined, type: undefined, a: undefined, b: undefined, aType: undefined, bType: undefined, operand: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.type = data.type;
@@ -60,6 +64,7 @@ export class ComparisonCondition extends BaseCondition {
         this.bType = data.bType;
         this.a = data.a;
         this.b = data.b;
+        this.operand = data.operand;
     }
 
     toJSON() {
@@ -69,7 +74,8 @@ export class ComparisonCondition extends BaseCondition {
             a: this.a,
             b: this.b,
             aType: this.aType,
-            bType: this.bType
+            bType: this.bType,
+            operand: this.operand
         };
     }
 
@@ -136,10 +142,28 @@ export class ComparisonCondition extends BaseCondition {
         this._b = value;
     }
 
+    get operand(): string {
+        return this._operand;
+    }
+
+    set operand(value: string) {
+        this.validateOperand(value);
+        this._operand = value;
+    }
+
     private validateIsANumber(name: string, value: any) {
         let reg = new RegExp('^[0-9]+$');
         if (!reg.test(value)) {
             throw TypeError("The contents of " + name + " must only be digits");
+        }
+    }
+
+
+    private validateOperand(value: any) {
+        this.typeChecker.validateAsStringOrUndefined("Operand", value);
+
+        if (!this.isValidOperand(value)) {
+            throw TypeError("Operand is not a valid operand");
         }
     }
 
@@ -153,5 +177,48 @@ export class ComparisonCondition extends BaseCondition {
 
     private isValidType(type) {
         return (type === undefined || type == 'Integer' || type == 'String' || type == 'Variable');
+    }
+
+    private isValidOperand(operand) {
+        return (operand === undefined || operand == '==' || operand == '!=' || operand == '<' || operand == '>' || operand == '<=' || operand == '>=');
+    }
+
+    execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
+        let a = this.getValue(this.a, this.aType, variables);
+        let b = this.getValue(this.b, this.bType, variables);
+
+        switch (this.operand) {
+            case "==":
+                return a == b;
+            case "!=":
+                return a != b;
+            case "<":
+                return a < b;
+            case ">":
+                return a > b;
+            case "<=":
+                return a <= b;
+            case ">=":
+                return a >= b;
+        }
+        return false;
+    }
+
+    private getValue(value: string, type: string, variables: VariableCollection): string | number {
+        if (type == "Variable") {
+            let variableValue = variables.get(value).value;
+
+            if (!variableValue) {
+                throw Error("Variable id " + value + " not found");
+            }
+
+            return variableValue;
+        }
+
+        if (type == "Integer") {
+            return parseInt(value);
+        }
+
+        return value;
     }
 }

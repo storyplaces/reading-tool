@@ -34,8 +34,10 @@
  */
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {BaseModel} from "../BaseModel";
+import {WithinBounds} from "../../interfaces/WithinBounds";
+import {LocationInformation} from "../../gps/LocationInformation";
 
-export abstract class BaseLocation extends BaseModel {
+export abstract class BaseLocation extends BaseModel implements WithinBounds{
     constructor(typeChecker: TypeChecker) {
         super(typeChecker);
     }
@@ -44,4 +46,6 @@ export abstract class BaseLocation extends BaseModel {
     abstract set type(value: any);
 
     protected _type: string;
+
+    abstract withinBounds(location: LocationInformation): boolean;
 }

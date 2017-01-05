@@ -35,10 +35,15 @@
 import {BaseCondition} from "./BaseCondition";
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
+import {ExecutableCondition} from "../../interfaces/ExecutableCondition";
+import {VariableCollection} from "../../collections/VariableCollection";
+import {ConditionCollection} from "../../collections/ConditionCollection";
+import {LocationInformation} from "../../gps/LocationInformation";
+import {LocationCollection} from "../../collections/LocationCollection";
 
 @inject(TypeChecker)
+export class LocationCondition extends BaseCondition implements ExecutableCondition{
 
-export class CheckCondition extends BaseCondition {
     private _bool: string;
     private _location: string;
 
@@ -73,7 +78,7 @@ export class CheckCondition extends BaseCondition {
 
     set type(value: string) {
         this.typeChecker.validateAsStringOrUndefined("Type", value);
-        this.typeChecker.validateScalarValue("Type", "check", value);
+        this.typeChecker.validateScalarValue("Type", "location", value);
         this._type = value;
     }
 
@@ -95,4 +100,17 @@ export class CheckCondition extends BaseCondition {
         this._location = value;
     }
 
+    execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
+        if (locations == undefined || userLocation == undefined) {
+            return true;
+        }
+
+        let location = locations.get(this.location);
+
+        if (!location) {
+            throw Error("Location id " + this.location + " not found");
+        }
+
+        return this.bool == "true" && location.withinBounds(userLocation);
+    }
 }

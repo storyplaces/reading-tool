@@ -35,10 +35,15 @@
 import {BaseCondition} from "./BaseCondition";
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
+import {VariableCollection} from "../../collections/VariableCollection";
+import {ConditionCollection} from "../../collections/ConditionCollection";
+import {LocationCollection} from "../../collections/LocationCollection";
+import {LocationInformation} from "../../gps/LocationInformation";
 
 @inject(TypeChecker)
 
 export class LogicalCondition extends BaseCondition {
+
     private _operand: string;
     private _conditions: Array<string>;
 
@@ -88,6 +93,7 @@ export class LogicalCondition extends BaseCondition {
         }
         this._operand = value;
     }
+
     get conditions(): Array<string> {
         return this._conditions;
     }
@@ -95,5 +101,23 @@ export class LogicalCondition extends BaseCondition {
     set conditions(value: Array<string>) {
         this.typeChecker.isArrayOf("Conditions", value, 'string');
         this._conditions = value;
+    }
+
+    execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
+        if (this.operand == "AND") {
+            return this.conditions.every(conditionIdToExecute => this.lookupAndTestCondition(conditionIdToExecute, variables, conditions, locations, userLocation));
+        }
+
+        return this.conditions.some(conditionIdToExecute => this.lookupAndTestCondition(conditionIdToExecute, variables, conditions, locations, userLocation));
+    }
+
+    private lookupAndTestCondition(conditionIdToExecute, variables: VariableCollection, conditions: ConditionCollection, locations: LocationCollection, userLocation: LocationInformation){
+        let conditionToExecute = conditions.get(conditionIdToExecute);
+
+        if (!conditionToExecute) {
+            throw Error("Condition id " + conditionIdToExecute + " was not found");
+        }
+
+        return conditionToExecute.execute(variables, conditions, locations, userLocation)
     }
 }

@@ -35,6 +35,10 @@
 import {BaseCondition} from "./BaseCondition";
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
+import {VariableCollection} from "../../collections/VariableCollection";
+import {ConditionCollection} from "../../collections/ConditionCollection";
+import {LocationCollection} from "../../collections/LocationCollection";
+import {LocationInformation} from "../../gps/LocationInformation";
 
 @inject(TypeChecker)
 
@@ -106,5 +110,9 @@ export class TimeRangeCondition extends BaseCondition {
     set start(value: string) {
         this.typeChecker.isTimePatternString("start", value);
         this._start = value;
+    }
+
+    execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
+        return undefined;
     }
 }

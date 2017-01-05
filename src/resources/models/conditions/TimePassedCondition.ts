@@ -35,10 +35,14 @@
 import {BaseCondition} from "./BaseCondition";
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
+import {VariableCollection} from "../../collections/VariableCollection";
+import {ConditionCollection} from "../../collections/ConditionCollection";
+import {LocationCollection} from "../../collections/LocationCollection";
+import {LocationInformation} from "../../gps/LocationInformation";
 
 @inject(TypeChecker)
-
 export class TimePassedCondition extends BaseCondition {
+
     private _variable: string;
     private _minutes: number;
 
@@ -93,5 +97,9 @@ export class TimePassedCondition extends BaseCondition {
     set minutes(value: number) {
         this.typeChecker.validateAsNumberOrUndefined("minutes", value);
         this._minutes = value;
+    }
+
+    execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
+        return undefined;
     }
 }

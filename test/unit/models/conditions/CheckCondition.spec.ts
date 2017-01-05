@@ -1,5 +1,11 @@
 import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
 import {CheckCondition} from "../../../../src/resources/models/conditions/CheckCondition";
+import {VariableCollection} from "../../../../src/resources/collections/VariableCollection";
+import {Container} from "aurelia-framework";
+import {ConditionCollection} from "../../../../src/resources/collections/ConditionCollection";
+import {LocationInformation} from "../../../../src/resources/gps/LocationInformation";
+import {LocationCollection} from "../../../../src/resources/collections/LocationCollection";
+
 /*******************************************************************
  *
  * StoryPlaces
@@ -48,15 +54,15 @@ describe("CheckCondition", () => {
     });
 
     it("can be created with no data", () => {
-        let comparisonCondition = new CheckCondition(typeChecker);
+        let checkCondition = new CheckCondition(typeChecker);
 
-        expect(comparisonCondition instanceof CheckCondition).toBeTruthy();
+        expect(checkCondition instanceof CheckCondition).toBeTruthy();
     });
 
     it("can be created with data", () => {
-        let comparisonCondition = new CheckCondition(typeChecker, {type: "check"});
+        let checkCondition = new CheckCondition(typeChecker, {type: "check"});
 
-        expect(comparisonCondition instanceof CheckCondition).toBeTruthy();
+        expect(checkCondition instanceof CheckCondition).toBeTruthy();
     });
 
 
@@ -73,33 +79,50 @@ describe("CheckCondition", () => {
     });
 
     it("can have its type set to comparison", () => {
-        let comparisonCondition = new CheckCondition(typeChecker);
-        comparisonCondition.type = "check";
+        let checkCondition = new CheckCondition(typeChecker);
+        checkCondition.type = "check";
 
-        expect(comparisonCondition.type).toEqual("check");
+        expect(checkCondition.type).toEqual("check");
     });
 
     it("will throw an error if its type is set to something other than check", () => {
-        let comparisonCondition = new CheckCondition(typeChecker);
+        let checkCondition = new CheckCondition(typeChecker);
         expect(() => {
-            comparisonCondition.type = "somethingRandom"
+            checkCondition.type = "somethingRandom"
         }).toThrow();
     });
 
-     //region variable
+    //region variable
 
     it("can have variable set as a string", () => {
-        let comparisonCondition = new CheckCondition(typeChecker);
-                comparisonCondition.variable = "value";
+        let checkCondition = new CheckCondition(typeChecker);
+        checkCondition.variable = "value";
 
-        expect(comparisonCondition.variable).toEqual("value");
+        expect(checkCondition.variable).toEqual("value");
     });
 
     it("will throw an error if the a variable is not a string", () => {
-        let comparisonCondition = new CheckCondition(typeChecker);
+        let checkCondition = new CheckCondition(typeChecker);
         expect(() => {
-            comparisonCondition.variable = 1 as any;
+            checkCondition.variable = 1 as any;
         }).toThrow();
     });
     //region
+
+    describe("method execute", () => {
+        let container: Container = new Container().makeGlobal();
+        let variables = container.invoke(VariableCollection, [[{id: "TestVariable", value:"something"}, {id: "NotTheTestVariable", value:"something"}]]);
+
+        it("returns true if the variable exists", () => {
+            let checkCondition = new CheckCondition(typeChecker, {id: "test", type: "check", variable: "TestVariable"});
+            let result = checkCondition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
+            expect(result).toBeTruthy();
+        });
+
+        it("returns false if the variable doesn't exist", () => {
+            let checkCondition = new CheckCondition(typeChecker, {id: "test", type: "check", variable: "SomethingElse"});
+            let result = checkCondition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
+            expect(result).toBeFalsy();
+        });
+    });
 });

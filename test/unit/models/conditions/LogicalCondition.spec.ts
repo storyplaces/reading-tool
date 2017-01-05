@@ -1,5 +1,3 @@
-import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
-import {LogicalCondition} from "../../../../src/resources/models/conditions/LogicalCondition";
 /*******************************************************************
  *
  * StoryPlaces
@@ -35,6 +33,16 @@ import {LogicalCondition} from "../../../../src/resources/models/conditions/Logi
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
+import {LogicalCondition} from "../../../../src/resources/models/conditions/LogicalCondition";
+import {Container} from "aurelia-framework";
+import {ConditionCollection} from "../../../../src/resources/collections/ConditionCollection";
+import {VariableCollection} from "../../../../src/resources/collections/VariableCollection";
+import {LocationCollection} from "../../../../src/resources/collections/LocationCollection";
+import {LocationInformation} from "../../../../src/resources/gps/LocationInformation";
+import {TrueCondition} from "../../../../src/resources/models/conditions/boolean/TrueCondition";
+import {FalseCondition} from "../../../../src/resources/models/conditions/boolean/FalseCondition";
+
 describe("LogicalCondition", () => {
 
     let typeChecker = new TypeChecker;
@@ -48,18 +56,18 @@ describe("LogicalCondition", () => {
     });
 
     it("can be created with no data", () => {
-        let comparisonCondition = new LogicalCondition(typeChecker);
+        let logicalCondition = new LogicalCondition(typeChecker);
 
-        expect(comparisonCondition instanceof LogicalCondition).toBeTruthy();
+        expect(logicalCondition instanceof LogicalCondition).toBeTruthy();
     });
 
     it("can be created with data", () => {
-        let comparisonCondition = new LogicalCondition(typeChecker, {type: "logical", operand: "AND", conditions: ["abc", "def"]});
+        let logicalCondition = new LogicalCondition(typeChecker, {type: "logical", operand: "AND", conditions: ["abc", "def"]});
 
-        expect(comparisonCondition instanceof LogicalCondition).toBeTruthy();
+        expect(logicalCondition instanceof LogicalCondition).toBeTruthy();
 
-        expect(comparisonCondition.operand).toEqual("AND");
-        expect(comparisonCondition.conditions).toEqual(["abc", "def"])
+        expect(logicalCondition.operand).toEqual("AND");
+        expect(logicalCondition.conditions).toEqual(["abc", "def"])
     });
 
 
@@ -77,67 +85,100 @@ describe("LogicalCondition", () => {
 
     describe("type", () => {
         it("can be set to logical", () => {
-            let comparisonCondition = new LogicalCondition(typeChecker);
-            comparisonCondition.type = "logical";
+            let logicalCondition = new LogicalCondition(typeChecker);
+            logicalCondition.type = "logical";
 
-            expect(comparisonCondition.type).toEqual("logical");
+            expect(logicalCondition.type).toEqual("logical");
         });
 
         it("will throw an error if set to something other than check", () => {
-            let comparisonCondition = new LogicalCondition(typeChecker);
+            let logicalCondition = new LogicalCondition(typeChecker);
             expect(() => {
-                comparisonCondition.type = "somethingRandom"
+                logicalCondition.type = "somethingRandom"
             }).toThrow();
         });
     });
 
     describe("operand variable", () => {
         it("can be set as AND", () => {
-            let comparisonCondition = new LogicalCondition(typeChecker);
-            comparisonCondition.operand = "AND";
+            let logicalCondition = new LogicalCondition(typeChecker);
+            logicalCondition.operand = "AND";
 
-            expect(comparisonCondition.operand).toEqual("AND");
+            expect(logicalCondition.operand).toEqual("AND");
         });
 
         it("can be set as OR", () => {
-            let comparisonCondition = new LogicalCondition(typeChecker);
-            comparisonCondition.operand = "OR";
+            let logicalCondition = new LogicalCondition(typeChecker);
+            logicalCondition.operand = "OR";
 
-            expect(comparisonCondition.operand).toEqual("OR");
+            expect(logicalCondition.operand).toEqual("OR");
         });
 
         it("will throw an error if set to not AND or OR", () => {
-            let comparisonCondition = new LogicalCondition(typeChecker);
+            let logicalCondition = new LogicalCondition(typeChecker);
             expect(() => {
-                comparisonCondition.operand = "Maybe" as any;
+                logicalCondition.operand = "Maybe" as any;
             }).toThrow();
         });
 
         it("will throw an error if set to not a string", () => {
-            let comparisonCondition = new LogicalCondition(typeChecker);
+            let logicalCondition = new LogicalCondition(typeChecker);
             expect(() => {
-                comparisonCondition.operand = 1 as any;
+                logicalCondition.operand = 1 as any;
             }).toThrow();
         });
     });
 
     describe("conditions variable", () => {
         it("can be set as an array of strings", () => {
-            let comparisonCondition = new LogicalCondition(typeChecker);
-            comparisonCondition.conditions = ["123", "456"];
+            let logicalCondition = new LogicalCondition(typeChecker);
+            logicalCondition.conditions = ["123", "456"];
 
-            expect(comparisonCondition.conditions).toEqual(["123", "456"]);
+            expect(logicalCondition.conditions).toEqual(["123", "456"]);
         });
 
         it("will throw an error if set to not an array of string", () => {
-            let comparisonCondition = new LogicalCondition(typeChecker);
+            let logicalCondition = new LogicalCondition(typeChecker);
             expect(() => {
-                comparisonCondition.conditions = [1, 2] as any;
+                logicalCondition.conditions = [1, 2] as any;
             }).toThrow();
 
             expect(() => {
-                comparisonCondition.conditions = 1 as any;
+                logicalCondition.conditions = 1 as any;
             }).toThrow();
+        });
+    });
+
+    describe("method execute", () => {
+        let container: Container = new Container().makeGlobal();
+
+        let true1 = new TrueCondition(typeChecker, {id: "true1", type: "true"});
+        let true2 = new TrueCondition(typeChecker, {id: "true2", type: "true"});
+        let true3 = new TrueCondition(typeChecker, {id: "true3", type: "true"});
+        let false1 = new FalseCondition(typeChecker, {id: "false1", type: "false"});
+        let false2 = new FalseCondition(typeChecker, {id: "false2", type: "false"});
+        let false3 = new FalseCondition(typeChecker, {id: "false3", type: "false"});
+
+        let conditions = container.invoke(ConditionCollection, [[true1, true2, true3, false1, false2, false3]]);
+        
+        it("returns true if in AND mode and all conditions are true", () => {
+            let logicalCondition = new LogicalCondition(typeChecker, {id: "test", type: "logical", operand: "AND", conditions: ["true1", "true2", "true3"]});
+            let result = logicalCondition.execute({} as VariableCollection, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(result).toEqual(true);
+        });
+
+        it("returns false if in AND mode and one conditions is false", () => {
+            let logicalCondition = new LogicalCondition(typeChecker, {id: "test", type: "logical", operand: "AND", conditions: ["true1", "false1", "true3"]});
+            let result = logicalCondition.execute({} as VariableCollection, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(result).toEqual(false);
+        });
+        
+        it("throws if the condition doesn't exist", () => {
+            let logicalCondition = new LogicalCondition(typeChecker, {id: "test", type: "logical", conditions: ["somethingOther"]});
+            expect(() => {
+                logicalCondition.execute({} as VariableCollection, conditions, {} as LocationCollection, {} as LocationInformation);
+            }).toThrow();
+
         });
     });
 });

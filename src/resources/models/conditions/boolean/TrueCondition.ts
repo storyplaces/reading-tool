@@ -32,19 +32,17 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {BaseCondition} from "./BaseCondition";
-import {TypeChecker} from "../../utilities/TypeChecker";
+import {BaseCondition} from "../BaseCondition";
+import {TypeChecker} from "../../../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
-import {ExecutableCondition} from "../../interfaces/ExecutableCondition";
-import {VariableCollection} from "../../collections/VariableCollection";
-import {ConditionCollection} from "../../collections/ConditionCollection";
-import {LocationInformation} from "../../gps/LocationInformation";
-import {LocationCollection} from "../../collections/LocationCollection";
+import {ExecutableCondition} from "../../../interfaces/ExecutableCondition";
+import {VariableCollection} from "../../../collections/VariableCollection";
+import {ConditionCollection} from "../../../collections/ConditionCollection";
+import {LocationInformation} from "../../../gps/LocationInformation";
+import {LocationCollection} from "../../../collections/LocationCollection";
 
 @inject(TypeChecker)
-export class CheckCondition extends BaseCondition{
-
-    private _variable: string;
+export class TrueCondition extends BaseCondition{
 
     constructor(typeChecker: TypeChecker, data?: any) {
         super(typeChecker);
@@ -58,14 +56,12 @@ export class CheckCondition extends BaseCondition{
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.type = data.type;
-        this.variable = data.variable;
     }
 
     toJSON() {
         return {
             id: this.id,
-            type: this.type,
-            variable: this.variable
+            type: this.type
         };
     }
 
@@ -75,20 +71,11 @@ export class CheckCondition extends BaseCondition{
 
     set type(value: string) {
         this.typeChecker.validateAsStringOrUndefined("Type", value);
-        this.typeChecker.validateScalarValue("Type", "check", value);
+        this.typeChecker.validateScalarValue("Type", "true", value);
         this._type = value;
     }
 
-    get variable(): string {
-        return this._variable;
-    }
-
-    set variable(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("variable", value);
-        this._variable = value;
-    }
-
     execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
-        return variables.get(this.variable) !== undefined;
+        return true;
     }
 }

@@ -37,8 +37,14 @@ import {BaseCondition} from "../models/conditions/BaseCondition";
 import {TypeFactory} from "../factories/TypeFactory";
 import {ComparisonCondition} from "../models/conditions/ComparisonCondition";
 import {inject} from "aurelia-framework";
+import {CheckCondition} from "../models/conditions/CheckCondition";
 
-@inject(TypeFactory.withMapping({'comparison': ComparisonCondition}))
+@inject(
+    TypeFactory.withMapping({
+        'comparison': ComparisonCondition,
+        'check': CheckCondition
+    })
+)
 export class ConditionCollection extends BaseCollection<BaseCondition> {
 
     constructor(private conditionFactory: (any?) => BaseCondition, data?: any[]) {

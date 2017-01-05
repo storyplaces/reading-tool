@@ -35,16 +35,17 @@
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
 import {BaseLocation} from "./BaseLocation";
+import {LocationHelper} from "../../gps/LocationHelper";
+import {LocationInformation} from "../../gps/LocationInformation";
 
-@inject(TypeChecker)
-
-export class CircleLocation extends BaseLocation {
+@inject(TypeChecker, LocationHelper)
+export class CircleLocation extends BaseLocation{
 
     private _lat: number;
     private _lon: number;
     private _radius: number;
 
-    constructor(typeChecker: TypeChecker, data?: any) {
+    constructor(typeChecker: TypeChecker, private locationHelper: LocationHelper, data?: any) {
         super(typeChecker);
 
         if (data) {
@@ -106,5 +107,9 @@ export class CircleLocation extends BaseLocation {
     set lat(value: number) {
         this.typeChecker.validateAsNumberOrUndefined("Lat", value);
         this._lat = value;
+    }
+
+    withinBounds(location: LocationInformation): boolean {
+        return this.locationHelper.pointIsInLocationRadius(location.latitude, location.longitude, this.lat, this.lon, this.radius);
     }
 }

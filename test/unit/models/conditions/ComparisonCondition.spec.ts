@@ -1,5 +1,3 @@
-import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
-import {ComparisonCondition} from "../../../../src/resources/models/conditions/ComparisonCondition";
 /*******************************************************************
  *
  * StoryPlaces
@@ -34,6 +32,13 @@ import {ComparisonCondition} from "../../../../src/resources/models/conditions/C
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
+import {ComparisonCondition} from "../../../../src/resources/models/conditions/ComparisonCondition";
+import {Container} from "aurelia-framework";
+import {LocationCollection} from "../../../../src/resources/collections/LocationCollection";
+import {VariableCollection} from "../../../../src/resources/collections/VariableCollection";
+import {ConditionCollection} from "../../../../src/resources/collections/ConditionCollection";
+import {LocationInformation} from "../../../../src/resources/gps/LocationInformation";
 
 describe("ComparisonCondition", () => {
 
@@ -269,5 +274,717 @@ describe("ComparisonCondition", () => {
 
     //region
 
+    describe("parameter operand", () => {
+        it("can be set to a valid value", () => {
+            let comparisonCondition = new ComparisonCondition(typeChecker);
 
+            comparisonCondition.operand = "==";
+            expect(comparisonCondition.operand).toEqual("==");
+
+            comparisonCondition.operand = "!=";
+            expect(comparisonCondition.operand).toEqual("!=");
+
+            comparisonCondition.operand = ">";
+            expect(comparisonCondition.operand).toEqual(">");
+
+            comparisonCondition.operand = "<";
+            expect(comparisonCondition.operand).toEqual("<");
+
+            comparisonCondition.operand = ">=";
+            expect(comparisonCondition.operand).toEqual(">=");
+
+            comparisonCondition.operand = "<=";
+            expect(comparisonCondition.operand).toEqual("<=");
+        });
+
+        it("will throw when set to something other than a valid operand string", () => {
+            let comparisonCondition = new ComparisonCondition(typeChecker);
+
+            expect(() => {
+                comparisonCondition.operand = "abc";
+            }).toThrow();
+        });
+
+        it("will throw when set to something other than a string", () => {
+            let comparisonCondition = new ComparisonCondition(typeChecker);
+
+            expect(() => {
+                comparisonCondition.operand = 1 as any;
+            }).toThrow();
+        });
+    });
+
+    describe("method execute", () => {
+        let container: Container = new Container().makeGlobal();
+        let variables = container.invoke(VariableCollection, [[
+            {id: "variable1", value: "1"},
+            {id: "variable2", value: "2"},
+            {id: "variable100", value: "100"},
+            {id: "variablea", value: "a"},
+            {id: "variableb", value: "b"},
+            {id: "variablebb", value: "bb"}
+        ]]);
+        let condition: ComparisonCondition;
+
+        describe("compares two numbers", () => {
+            it("are equal", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Integer", b: "1", operand: "=="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Integer", b: "2", operand: "=="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("not equal", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Integer", b: "2", operand: "!="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Integer", b: "1", operand: "!="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is greater than the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "2", bType: "Integer", b: "1", operand: ">"});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "2", bType: "Integer", b: "100", operand: ">"});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Integer", b: "1", operand: ">"});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one  is less than the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Integer", b: "2", operand: "<"});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "100", bType: "Integer", b: "2", operand: "<"});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Integer", b: "1", operand: "<"});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is greater than or equal to the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Integer", b: "1", operand: ">="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "2", bType: "Integer", b: "1", operand: ">="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "2", bType: "Integer", b: "100", operand: ">="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Integer", b: "2", operand: ">="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is less than or equal to the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Integer", b: "1", operand: "<="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Integer", b: "2", operand: "<="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "100", bType: "Integer", b: "2", operand: "<="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "2", bType: "Integer", b: "1", operand: "<="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+        });
+
+        describe("compares a number and a numeric variable", () => {
+            it("are equal", () => {
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "1",
+                    bType: "Variable",
+                    b: "variable1",
+                    operand: "=="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "1",
+                    bType: "Variable",
+                    b: "variable2",
+                    operand: "=="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("not equal", () => {
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "1",
+                    bType: "Variable",
+                    b: "variable2",
+                    operand: "!="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "1",
+                    bType: "Variable",
+                    b: "variable1",
+                    operand: "!="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is greater than the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "2", bType: "Variable", b: "variable1", operand: ">"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "2",
+                    bType: "Variable",
+                    b: "variable100",
+                    operand: ">"
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Variable", b: "variable1", operand: ">"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one  is less than the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Variable", b: "variable2", operand: "<"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "100",
+                    bType: "Variable",
+                    b: "variable2",
+                    operand: "<"
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Integer", a: "1", bType: "Variable", b: "variable1", operand: "<"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is greater than or equal to the other", () => {
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "1",
+                    bType: "Variable",
+                    b: "variable1",
+                    operand: ">="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "2",
+                    bType: "Variable",
+                    b: "variable1",
+                    operand: ">="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "2",
+                    bType: "Variable",
+                    b: "variable100",
+                    operand: ">="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "1",
+                    bType: "Variable",
+                    b: "variable2",
+                    operand: ">="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is less than or equal to the other", () => {
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "1",
+                    bType: "Variable",
+                    b: "variable1",
+                    operand: "<="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "1",
+                    bType: "Variable",
+                    b: "variable2",
+                    operand: "<="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "100",
+                    bType: "Variable",
+                    b: "variable2",
+                    operand: "<="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "2",
+                    bType: "Variable",
+                    b: "variable1",
+                    operand: "<="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+        });
+
+        describe("compares a numeric variable and a number", () => {
+            it("are equal", () => {
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    bType: "Integer",
+                    b: "1",
+                    aType: "Variable",
+                    a: "variable1",
+                    operand: "=="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    bType: "Integer",
+                    b: "1",
+                    aType: "Variable",
+                    a: "variable2",
+                    operand: "=="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("not equal", () => {
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    bType: "Integer",
+                    b: "1",
+                    aType: "Variable",
+                    a: "variable2",
+                    operand: "!="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    bType: "Integer",
+                    b: "1",
+                    aType: "Variable",
+                    a: "variable1",
+                    operand: "!="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is greater than the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variable2", bType: "Integer", b: "1", operand: ">"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "variable2",
+                    bType: "Integer",
+                    b: "100",
+                    operand: ">"
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variable1", bType: "Integer", b: "1", operand: ">"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is less than the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variable1", bType: "Integer", b: "2", operand: "<"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "variable100",
+                    bType: "Integer",
+                    b: "2",
+                    operand: "<"
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variable1", bType: "Integer", b: "1", operand: "<"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is greater than or equal to the other", () => {
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "variable1",
+                    bType: "Integer",
+                    b: "1",
+                    operand: ">="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "variable2",
+                    bType: "Integer",
+                    b: "1",
+                    operand: ">="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "variable2",
+                    bType: "Integer",
+                    b: "100",
+                    operand: ">="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "variable1",
+                    bType: "Integer",
+                    b: "2",
+                    operand: ">="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is less than or equal to the other", () => {
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "variable1",
+                    bType: "Integer",
+                    b: "1",
+                    operand: "<="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "variable1",
+                    bType: "Integer",
+                    b: "2",
+                    operand: "<="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "variable100",
+                    bType: "Integer",
+                    b: "2",
+                    operand: "<="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "variable2",
+                    bType: "Integer",
+                    b: "1",
+                    operand: "<="
+                });
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+        });
+
+        describe("compares two strings", () => {
+            it("are equal", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "String", b: "a", operand: "=="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "String", b: "b", operand: "=="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("not equal", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "String", b: "b", operand: "!="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "String", b: "a", operand: "!="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is greater than the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "b", bType: "String", b: "a", operand: ">"});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "b", bType: "String", b: "bb", operand: ">"});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "String", b: "b", operand: ">"});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is less than the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "String", b: "b", operand: "<"});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "bb", bType: "String", b: "b", operand: "<"});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "b", bType: "String", b: "a", operand: "<"});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is greater than or equal to the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "String", b: "a", operand: ">="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "b", bType: "String", b: "a", operand: ">="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "b", bType: "String", b: "bb", operand: ">="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "String", b: "b", operand: ">="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is less than or equal to the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "String", b: "b", operand: "<="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "String", b: "a", operand: "<="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "bb", bType: "String", b: "b", operand: "<="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "b", bType: "String", b: "a", operand: "<="});
+                expect(condition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+        });
+
+        describe("compares a string and a string variable", () => {
+            it("are equal", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "Variable", b: "variablea", operand: "=="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "Variable", b: "variableb", operand: "=="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("not equal", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "Variable", b: "variableb", operand: "!="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "Variable", b: "variablea", operand: "!="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is greater than the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "b", bType: "Variable", b: "variablea", operand: ">"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "b", bType: "Variable", b: "variablebb", operand: ">"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "Variable", b: "variableb", operand: ">"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is less than the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "Variable", b: "variableb", operand: "<"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "bb", bType: "Variable", b: "variableb", operand: "<"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "b", bType: "Variable", b: "variablea", operand: "<"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is greater than or equal to the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "Variable", b: "variablea", operand: ">="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "b", bType: "Variable", b: "variablea", operand: ">="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "b", bType: "Variable", b: "variablebb", operand: ">="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "Variable", b: "variableb", operand: ">="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is less than or equal to the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "Variable", b: "variableb", operand: "<="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "a", bType: "Variable", b: "variablea", operand: "<="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "bb", bType: "Variable", b: "variableb", operand: "<="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "String", a: "b", bType: "Variable", b: "variablea", operand: "<="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+        });
+
+        describe("compares a string variable and a string", () => {
+            it("are equal", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variablea", bType: "String", b: "a", operand: "=="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variablea", bType: "String", b: "b", operand: "=="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("not equal", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variablea", bType: "String", b: "b", operand: "!="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variablea", bType: "String", b: "a", operand: "!="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is greater than the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variableb", bType: "String", b: "a", operand: ">"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variableb", bType: "String", b: "bb", operand: ">"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variablea", bType: "String", b: "b", operand: ">"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is less than the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variablea", bType: "String", b: "b", operand: "<"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variablebb", bType: "String", b: "b", operand: "<"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variableb", bType: "String", b: "a", operand: "<"});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is greater than or equal to the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variablea", bType: "String", b: "a", operand: ">="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variableb", bType: "String", b: "a", operand: ">="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variableb", bType: "String", b: "bb", operand: ">="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variablea", bType: "String", b: "b", operand: ">="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+
+            it("where one is less than or equal to the other", () => {
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variablea", bType: "String", b: "b", operand: "<="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variablea", bType: "String", b: "a", operand: "<="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variablebb", bType: "String", b: "b", operand: "<="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "variableb", bType: "String", b: "a", operand: "<="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
+            });
+        });
+
+        describe("throws an error when", () => {
+            it("can't find a variable in a", () => {
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "doesNotExist",
+                    bType: "Integer",
+                    b: "1",
+                    operand: "=="
+                });
+                expect(() => {condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)}).toThrow();
+            });
+
+            it("can't find a variable in b", () => {
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Integer",
+                    a: "1",
+                    bType: "Variable",
+                    b: "doesNotExist",
+                    operand: "=="
+                });
+                expect(() => {condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)}).toThrow();
+            });
+        });
+
+    });
 });

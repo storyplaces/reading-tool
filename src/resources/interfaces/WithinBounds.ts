@@ -4,7 +4,7 @@
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) 2016
+ Copyright (c) $today.year
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -32,24 +32,11 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {TypeChecker} from "../../utilities/TypeChecker";
-import {BaseModel} from "../BaseModel";
-import {ExecutableCondition} from "../../interfaces/ExecutableCondition";
-import {VariableCollection} from "../../collections/VariableCollection";
-import {ConditionCollection} from "../../collections/ConditionCollection";
-import {LocationCollection} from "../../collections/LocationCollection";
-import {LocationInformation} from "../../gps/LocationInformation";
 
-export abstract class BaseCondition extends BaseModel implements ExecutableCondition {
-    constructor(typeChecker: TypeChecker) {
-        super(typeChecker);
-    }
+import {VariableCollection} from "../collections/VariableCollection";
+import {ConditionCollection} from "../collections/ConditionCollection";
+import {LocationInformation} from "../gps/LocationInformation";
 
-    abstract get type();
-    abstract set type(value: any);
-
-    protected _type: string;
-
-    abstract execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean;
-
+export interface WithinBounds {
+    withinBounds(location: LocationInformation): boolean;
 }
