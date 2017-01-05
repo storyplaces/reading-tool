@@ -1,7 +1,4 @@
 import {LocationHelper} from "../../src/resources/gps/LocationHelper";
-import {LocationInformation} from "../../src/resources/gps/LocationInformation";
-import {CircleLocation} from "../../src/resources/models/locations/CircleLocation";
-import {TypeChecker} from "../../src/resources/utilities/TypeChecker";
 
 /*******************************************************************
  *
@@ -66,15 +63,11 @@ describe("LocationHelpers", () => {
 
     describe("method pointIsInLocationRadius", () => {
         it("will return true if location is within range", () => {
-            let user: LocationInformation = {latitude: 50.9361435, longitude: -1.3961910, heading: undefined, accuracy: undefined};
-            let location: CircleLocation = new CircleLocation(new TypeChecker, {lat: 50.9360987, lon: -1.3961843, radius: 6, type: "circle"});
-            expect(helper.pointIsInLocationRadius(user, location)).toBeTruthy();
+            expect(helper.pointIsInLocationRadius(50.9361435, -1.3961910, 50.9360987, -1.3961843, 6)).toBeTruthy();
         });
 
-        it("will return false if location is not  within range", () => {
-            let user: LocationInformation = {latitude: 50.9362792, longitude: -1.3962106, heading: undefined, accuracy: undefined};
-            let location: CircleLocation = new CircleLocation(new TypeChecker, {lat: 50.9360987, lon: -1.3961843, radius: 6, type: "circle"});
-            expect(helper.pointIsInLocationRadius(user, location)).toBeFalsy();
+        it("will return false if location is not within range", () => {
+            expect(helper.pointIsInLocationRadius(50.9362792, -1.3962106, 50.9360987, -1.3961843, 6)).toBeFalsy();
         });
     });
 

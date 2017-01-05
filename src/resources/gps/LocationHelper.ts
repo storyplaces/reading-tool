@@ -38,9 +38,9 @@ import {CircleLocation} from "../models/locations/CircleLocation";
 
 export class LocationHelper {
 
-    pointIsInLocationRadius(userLocation: LocationInformation, pointLocation: CircleLocation): boolean {
-        let distance = this.distanceInMetersBetweenTwoPoints(userLocation.latitude, userLocation.longitude, pointLocation.lat, pointLocation.lon);
-        return distance <= pointLocation.radius
+    pointIsInLocationRadius(pointLat: number, pointLong: number, locationLat:number, locationLong: number, radius:number): boolean {
+        let distance = this.distanceInMetersBetweenTwoPoints(pointLat, pointLong, locationLat, locationLong);
+        return distance <= radius
     }
 
     distanceInMetersBetweenTwoPoints(latitude1: number, longitude1: number, latitude2: number, longitude2: number): number {
