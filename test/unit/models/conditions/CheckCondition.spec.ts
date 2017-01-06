@@ -1,11 +1,3 @@
-import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
-import {CheckCondition} from "../../../../src/resources/models/conditions/CheckCondition";
-import {VariableCollection} from "../../../../src/resources/collections/VariableCollection";
-import {Container} from "aurelia-framework";
-import {ConditionCollection} from "../../../../src/resources/collections/ConditionCollection";
-import {LocationInformation} from "../../../../src/resources/gps/LocationInformation";
-import {LocationCollection} from "../../../../src/resources/collections/LocationCollection";
-
 /*******************************************************************
  *
  * StoryPlaces
@@ -40,6 +32,14 @@ import {LocationCollection} from "../../../../src/resources/collections/Location
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
+import {CheckCondition} from "../../../../src/resources/models/conditions/CheckCondition";
+import {VariableCollection} from "../../../../src/resources/collections/VariableCollection";
+import {Container} from "aurelia-framework";
+import {ConditionCollection} from "../../../../src/resources/collections/ConditionCollection";
+import {LocationInformation} from "../../../../src/resources/gps/LocationInformation";
+import {LocationCollection} from "../../../../src/resources/collections/LocationCollection";
 
 describe("CheckCondition", () => {
 

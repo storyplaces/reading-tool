@@ -35,14 +35,13 @@
 import {BaseCondition} from "./BaseCondition";
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
-import {ExecutableCondition} from "../../interfaces/ExecutableCondition";
 import {VariableCollection} from "../../collections/VariableCollection";
 import {ConditionCollection} from "../../collections/ConditionCollection";
 import {LocationInformation} from "../../gps/LocationInformation";
 import {LocationCollection} from "../../collections/LocationCollection";
 
 @inject(TypeChecker)
-export class LocationCondition extends BaseCondition implements ExecutableCondition {
+export class LocationCondition extends BaseCondition {
 
     private _bool: string;
     private _location: string;

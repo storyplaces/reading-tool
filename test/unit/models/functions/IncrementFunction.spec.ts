@@ -1,6 +1,3 @@
-import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
-import {IncrementFunction} from "../../../../src/resources/models/functions/IncrementFunction";
-
 /*******************************************************************
  *
  * StoryPlaces
@@ -35,6 +32,15 @@ import {IncrementFunction} from "../../../../src/resources/models/functions/Incr
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
+import {IncrementFunction} from "../../../../src/resources/models/functions/IncrementFunction";
+import {Container} from "aurelia-framework";
+import {ConditionCollection} from "../../../../src/resources/collections/ConditionCollection";
+import {LocationInformation} from "../../../../src/resources/gps/LocationInformation";
+import {LocationCollection} from "../../../../src/resources/collections/LocationCollection";
+import {VariableCollection} from "../../../../src/resources/collections/VariableCollection";
+import {FalseCondition} from "../../../../src/resources/models/conditions/boolean/FalseCondition";
+import {TrueCondition} from "../../../../src/resources/models/conditions/boolean/TrueCondition";
 
 describe("IncrementFunction", () => {
 
@@ -49,7 +55,7 @@ describe("IncrementFunction", () => {
     });
 
     it("can be created with data", () => {
-        let testFunction = new IncrementFunction(typeChecker, {type:"increment"});
+        let testFunction = new IncrementFunction(typeChecker, {type: "increment"});
 
         expect(testFunction instanceof IncrementFunction).toBeTruthy();
     });
@@ -97,6 +103,79 @@ describe("IncrementFunction", () => {
     it("throw if its value set to something other than a string", () => {
         let testFunction = new IncrementFunction(typeChecker);
 
-        expect(() => {testFunction.value = 123 as any;}).toThrow();
+        expect(() => {
+            testFunction.value = 123 as any;
+        }).toThrow();
+    });
+
+    describe("method execute", () => {
+        let container: Container = new Container().makeGlobal();
+
+        let variables: VariableCollection;
+        let trueCondition : TrueCondition
+        let falseCondition :FalseCondition;
+        let conditions :ConditionCollection;
+
+        beforeEach(() => {
+            variables = container.invoke(VariableCollection, [[{id: "existing", value: "1"}]]);
+            trueCondition = container.invoke(TrueCondition, [{id: "true", type: "true"}]);
+            falseCondition = container.invoke(FalseCondition, [{id: "false", type: "false"}]);
+            conditions = container.invoke(ConditionCollection, [[trueCondition, falseCondition]]);
+        });
+
+        afterEach(() => {
+            variables = undefined;
+            trueCondition = undefined;
+            falseCondition = undefined;
+            conditions = undefined;
+        });
+
+        it("increments a existing variable by the passed value with no conditions set", () => {
+            let testFunction = new IncrementFunction(typeChecker, {id: "test", type: "increment", variable: "existing", value: "2", conditions: []});
+
+            expect(variables.get("existing").value).toEqual("1");
+            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(variables.get("existing").value).toEqual("3");
+        });
+
+        it("creates a new variable and sets it to the passed value with no conditions set", () => {
+            let testFunction = new IncrementFunction(typeChecker, {id: "test", type: "increment", variable: "doesNotExist", value: "2", conditions: []});
+
+            expect(variables.get("doesNotExist")).toBeUndefined();
+            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(variables.get("doesNotExist").value).toEqual("2");
+        });
+
+        it("increments a existing variable by the passed value with true conditions set", () => {
+            let testFunction = new IncrementFunction(typeChecker, {id: "test", type: "increment", variable: "existing", value: "2", conditions: ["true", "true"]});
+
+            expect(variables.get("existing").value).toEqual("1");
+            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(variables.get("existing").value).toEqual("3");
+        });
+
+        it("creates a new variable and sets it to the passed value with true conditions set", () => {
+            let testFunction = new IncrementFunction(typeChecker, {id: "test", type: "increment", variable: "doesNotExist", value: "2", conditions: ["true", "true"]});
+
+            expect(variables.get("doesNotExist")).toBeUndefined();
+            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(variables.get("doesNotExist").value).toEqual("2");
+        });
+
+        it("does not increments a existing variable by the passed value if conditions fail", () => {
+            let testFunction = new IncrementFunction(typeChecker, {id: "test", type: "increment", variable: "existing", value: "2", conditions: ["false"]});
+
+            expect(variables.get("existing").value).toEqual("1");
+            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(variables.get("existing").value).toEqual("1");
+        });
+
+        it("does not create a new variable if conditions fail", () => {
+            let testFunction = new IncrementFunction(typeChecker, {id: "test", type: "increment", variable: "doesNotExist", value: "2", conditions: ["false"]});
+
+            expect(variables.get("doesNotExist")).toBeUndefined();
+            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(variables.get("doesNotExist")).toBeUndefined();
+        });
     });
 });

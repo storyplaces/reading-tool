@@ -4,7 +4,7 @@
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) 2016
+ Copyright (c) $today.year
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -32,49 +32,12 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {BaseCondition} from "../BaseCondition";
-import {TypeChecker} from "../../../utilities/TypeChecker";
-import {inject} from "aurelia-framework";
-import {VariableCollection} from "../../../collections/VariableCollection";
-import {ConditionCollection} from "../../../collections/ConditionCollection";
-import {LocationInformation} from "../../../gps/LocationInformation";
-import {LocationCollection} from "../../../collections/LocationCollection";
 
-@inject(TypeChecker)
-export class FalseCondition extends BaseCondition {
+import {VariableCollection} from "../collections/VariableCollection";
+import {ConditionCollection} from "../collections/ConditionCollection";
+import {LocationInformation} from "../gps/LocationInformation";
+import {LocationCollection} from "../collections/LocationCollection";
 
-    constructor(typeChecker: TypeChecker, data?: any) {
-        super(typeChecker);
-
-        if (data) {
-            this.fromObject(data);
-        }
-    }
-
-    fromObject(data = {id: undefined, type: undefined, variable: undefined}) {
-        this.typeChecker.validateAsObjectAndNotArray("Data", data);
-        this.id = data.id;
-        this.type = data.type;
-    }
-
-    toJSON() {
-        return {
-            id: this.id,
-            type: this.type
-        };
-    }
-
-    get type(): string {
-        return this._type;
-    }
-
-    set type(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Type", value);
-        this.typeChecker.validateScalarValue("Type", "false", value);
-        this._type = value;
-    }
-
-    execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
-        return false;
-    }
+export interface ExecutableFunction {
+    execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): null;
 }

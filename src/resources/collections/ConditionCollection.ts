@@ -38,11 +38,19 @@ import {TypeFactory} from "../factories/TypeFactory";
 import {ComparisonCondition} from "../models/conditions/ComparisonCondition";
 import {inject} from "aurelia-framework";
 import {CheckCondition} from "../models/conditions/CheckCondition";
+import {LocationCondition} from "../models/conditions/LocationCondition";
+import {LogicalCondition} from "../models/conditions/LogicalCondition";
+import {TimePassedCondition} from "../models/conditions/TimePassedCondition";
+import {TimeRangeCondition} from "../models/conditions/TimeRangeCondition";
 
 @inject(
     TypeFactory.withMapping({
         'comparison': ComparisonCondition,
-        'check': CheckCondition
+        'check': CheckCondition,
+        'location': LocationCondition,
+        'logical': LogicalCondition,
+        'timepassed': TimePassedCondition,
+        'timerange': TimeRangeCondition
     })
 )
 export class ConditionCollection extends BaseCollection<BaseCondition> {
