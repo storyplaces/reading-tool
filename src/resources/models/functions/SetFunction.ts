@@ -35,6 +35,10 @@
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
 import {BaseFunction} from "./BaseFunction";
+import {VariableCollection} from "../../collections/VariableCollection";
+import {ConditionCollection} from "../../collections/ConditionCollection";
+import {LocationCollection} from "../../collections/LocationCollection";
+import {LocationInformation} from "../../gps/LocationInformation";
 
 @inject(TypeChecker)
 
@@ -96,5 +100,16 @@ export class SetFunction extends BaseFunction {
     set variable(value: string) {
         this.typeChecker.validateAsStringOrUndefined("Value", value);
         this._variable = value;
+    }
+
+    execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
+        if (!this.allConditionsPass(variables, conditions, locations, userLocation)) {
+            return;
+        }
+
+        let variable = variables.get(this.variable) || {id: this.variable, value: undefined};
+
+        variable.value = this.value;
+        variables.save(variable);
     }
 }

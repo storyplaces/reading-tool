@@ -35,6 +35,10 @@
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
 import {BaseFunction} from "./BaseFunction";
+import {VariableCollection} from "../../collections/VariableCollection";
+import {ConditionCollection} from "../../collections/ConditionCollection";
+import {LocationCollection} from "../../collections/LocationCollection";
+import {LocationInformation} from "../../gps/LocationInformation";
 
 @inject(TypeChecker)
 
@@ -98,5 +102,18 @@ export class IncrementFunction extends BaseFunction {
         this._variable = value;
     }
 
+    execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
+        if (!this.allConditionsPass(variables, conditions, locations, userLocation)) {
+            return;
+        }
+
+        let variable = variables.get(this.variable) || {id: this.variable, value: "0"};
+
+        let currentValue = parseInt(variable.value);
+        let newValue = currentValue + parseInt(this.value);
+
+        variable.value = newValue.toString();
+        variables.save(variable);
+    }
 
 }

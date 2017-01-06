@@ -34,10 +34,13 @@
  */
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {BaseModel} from "../BaseModel";
-import {Executable} from "../../interfaces/Executable";
+import {VariableCollection} from "../../collections/VariableCollection";
+import {ConditionCollection} from "../../collections/ConditionCollection";
+import {LocationCollection} from "../../collections/LocationCollection";
+import {LocationInformation} from "../../gps/LocationInformation";
+import {ExecutableFunction} from "../../interfaces/ExecutableFunction";
 
-export abstract class BaseFunction extends BaseModel implements Executable{
-
+export abstract class BaseFunction extends BaseModel implements ExecutableFunction {
     private _conditions: Array<string>;
 
     constructor(typeChecker: TypeChecker) {
@@ -54,8 +57,21 @@ export abstract class BaseFunction extends BaseModel implements Executable{
     }
 
     set conditions(value: Array<string>) {
-        this.typeChecker.isUndefinedOrArrayOf("conditions",value,"string");
+        this.typeChecker.isUndefinedOrArrayOf("conditions", value, "string");
         this._conditions = value;
     }
 
+    abstract execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation);
+
+    protected allConditionsPass(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
+        return this.conditions.every((conditionId) => {
+            let condition = conditions.get(conditionId);
+
+            if (!condition) {
+                throw Error("Condition " + condition + " not found");
+            }
+
+            return condition.execute(variables, conditions, locations, userLocation)
+        })
+    };
 }

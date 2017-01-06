@@ -1,6 +1,3 @@
-import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
-import {SetTimeStampFunction} from "../../../../src/resources/models/functions/SetTimeStampFunction";
-
 /*******************************************************************
  *
  * StoryPlaces
@@ -35,6 +32,17 @@ import {SetTimeStampFunction} from "../../../../src/resources/models/functions/S
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
+import {SetTimeStampFunction} from "../../../../src/resources/models/functions/SetTimeStampFunction";
+import {Container} from "aurelia-framework";
+import {ConditionCollection} from "../../../../src/resources/collections/ConditionCollection";
+import {LocationInformation} from "../../../../src/resources/gps/LocationInformation";
+import {LocationCollection} from "../../../../src/resources/collections/LocationCollection";
+import {VariableCollection} from "../../../../src/resources/collections/VariableCollection";
+import {FalseCondition} from "../../../../src/resources/models/conditions/boolean/FalseCondition";
+import {TrueCondition} from "../../../../src/resources/models/conditions/boolean/TrueCondition";
+import moment = require('moment');
 
 describe("SetTimeStampFunction", () => {
 
@@ -85,5 +93,76 @@ describe("SetTimeStampFunction", () => {
         expect(() => {
             testFunction.type = "somethingRandom"
         }).toThrow();
+    });
+
+    describe("method execute", () => {
+        let container: Container = new Container().makeGlobal();
+
+        let variables: VariableCollection;
+        let trueCondition : TrueCondition
+        let falseCondition :FalseCondition;
+        let conditions :ConditionCollection;
+
+        beforeEach(() => {
+            variables = container.invoke(VariableCollection, [[{id: "existing", value: "1"}]]);
+            trueCondition = container.invoke(TrueCondition, [{id: "true", type: "true"}]);
+            falseCondition = container.invoke(FalseCondition, [{id: "false", type: "false"}]);
+            conditions = container.invoke(ConditionCollection, [[trueCondition, falseCondition]]);
+        });
+
+        afterEach(() => {
+            variables = undefined;
+            trueCondition = undefined;
+            falseCondition = undefined;
+            conditions = undefined;
+        });
+
+        it("sets a existing variable to the current timestamp with no conditions set", () => {
+            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test", type: "settimestamp", variable: "existing", conditions: []});
+
+            expect(variables.get("existing").value).toEqual("1");
+            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(variables.get("existing").value).toEqual(moment().unix().toString());
+        });
+
+        it("creates a new variable and sets it to the current timestamp with no conditions set", () => {
+            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test", type: "settimestamp", variable: "doesNotExist", conditions: []});
+
+            expect(variables.get("doesNotExist")).toBeUndefined();
+            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(variables.get("doesNotExist").value).toEqual(moment().unix().toString());
+        });
+
+        it("sets a existing variable to the current timestamp with true conditions set", () => {
+            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test", type: "settimestamp", variable: "existing", conditions: ["true", "true"]});
+
+            expect(variables.get("existing").value).toEqual("1");
+            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(variables.get("existing").value).toEqual(moment().unix().toString());
+        });
+
+        it("creates a new variable and sets it to the current timestamp with true conditions set", () => {
+            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test", type: "settimestamp", variable: "doesNotExist", conditions: ["true", "true"]});
+
+            expect(variables.get("doesNotExist")).toBeUndefined();
+            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(variables.get("doesNotExist").value).toEqual(moment().unix().toString());
+        });
+
+        it("does not set a existing variable to the current timestamp if conditions fail", () => {
+            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test", type: "settimestamp", variable: "existing", conditions: ["false"]});
+
+            expect(variables.get("existing").value).toEqual("1");
+            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(variables.get("existing").value).toEqual("1");
+        });
+
+        it("does not create a new variable if conditions fail", () => {
+            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test", type: "settimestamp", variable: "doesNotExist", conditions: ["false"]});
+
+            expect(variables.get("doesNotExist")).toBeUndefined();
+            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            expect(variables.get("doesNotExist")).toBeUndefined();
+        });
     });
 });
