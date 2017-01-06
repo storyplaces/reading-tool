@@ -42,7 +42,7 @@ import {LocationInformation} from "../../gps/LocationInformation";
 import {LocationCollection} from "../../collections/LocationCollection";
 
 @inject(TypeChecker)
-export class LocationCondition extends BaseCondition implements ExecutableCondition{
+export class LocationCondition extends BaseCondition implements ExecutableCondition {
 
     private _bool: string;
     private _location: string;
@@ -101,6 +101,7 @@ export class LocationCondition extends BaseCondition implements ExecutableCondit
     }
 
     execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
+        // If the conditions are executed with locations or userLocation as undefined it is assumed the conditions are being run not taking location into account so we just return true.
         if (locations == undefined || userLocation == undefined) {
             return true;
         }
