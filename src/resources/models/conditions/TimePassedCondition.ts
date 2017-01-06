@@ -101,14 +101,14 @@ export class TimePassedCondition extends BaseCondition {
     }
 
     execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
-        let variableTimeStamp = variables.get(this.variable).value;
+        let timeStamp = variables.get(this.variable);
 
-        if (!variableTimeStamp) {
+        if (!timeStamp) {
             throw Error("Variable " + this.variable + " was not found");
         }
 
         let now = moment();
-        let timestamp = moment.unix(parseInt(variableTimeStamp));
+        let timestamp = moment.unix(parseInt(timeStamp.value));
         let earliest = timestamp.add(this.minutes, 'm'); // find at which point in time this would be true
 
         return earliest.isBefore(now);

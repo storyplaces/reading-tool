@@ -206,13 +206,13 @@ export class ComparisonCondition extends BaseCondition {
 
     private getValue(value: string, type: string, variables: VariableCollection): string | number {
         if (type == "Variable") {
-            let variableValue = variables.get(value).value;
+            let variable = variables.get(value);
 
-            if (!variableValue) {
+            if (!variable) {
                 throw Error("Variable id " + value + " not found");
             }
 
-            return variableValue;
+            return variable.value;
         }
 
         if (type == "Integer") {
