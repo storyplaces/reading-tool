@@ -1,5 +1,3 @@
-import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
-import {TimePassedCondition} from "../../../../src/resources/models/conditions/TimePassedCondition";
 /*******************************************************************
  *
  * StoryPlaces
@@ -35,6 +33,17 @@ import {TimePassedCondition} from "../../../../src/resources/models/conditions/T
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
+import {TimePassedCondition} from "../../../../src/resources/models/conditions/TimePassedCondition";
+import {Container} from "aurelia-framework";
+import {ConditionCollection} from "../../../../src/resources/collections/ConditionCollection";
+import {VariableCollection} from "../../../../src/resources/collections/VariableCollection";
+import {LocationCollection} from "../../../../src/resources/collections/LocationCollection";
+import {LocationInformation} from "../../../../src/resources/gps/LocationInformation";
+
+import moment = require('moment');
+
+
 describe("TimePassedCondition", () => {
 
     let typeChecker = new TypeChecker;
@@ -48,18 +57,18 @@ describe("TimePassedCondition", () => {
     });
 
     it("can be created with no data", () => {
-        let comparisonCondition = new TimePassedCondition(typeChecker);
+        let timePassedCondition = new TimePassedCondition(typeChecker);
 
-        expect(comparisonCondition instanceof TimePassedCondition).toBeTruthy();
+        expect(timePassedCondition instanceof TimePassedCondition).toBeTruthy();
     });
 
     it("can be created with data", () => {
-        let comparisonCondition = new TimePassedCondition(typeChecker, {type: "timepassed", minutes: 1, variable: "abc"});
+        let timePassedCondition = new TimePassedCondition(typeChecker, {type: "timepassed", minutes: 1, variable: "abc"});
 
-        expect(comparisonCondition instanceof TimePassedCondition).toBeTruthy();
+        expect(timePassedCondition instanceof TimePassedCondition).toBeTruthy();
 
-        expect(comparisonCondition.minutes).toEqual(1);
-        expect(comparisonCondition.variable).toEqual("abc")
+        expect(timePassedCondition.minutes).toEqual(1);
+        expect(timePassedCondition.variable).toEqual("abc")
     });
 
 
@@ -77,48 +86,75 @@ describe("TimePassedCondition", () => {
 
     describe("type", () => {
         it("can be set to comparison", () => {
-            let comparisonCondition = new TimePassedCondition(typeChecker);
-            comparisonCondition.type = "timepassed";
+            let timePassedCondition = new TimePassedCondition(typeChecker);
+            timePassedCondition.type = "timepassed";
 
-            expect(comparisonCondition.type).toEqual("timepassed");
+            expect(timePassedCondition.type).toEqual("timepassed");
         });
 
         it("will throw an error if set to something other than check", () => {
-            let comparisonCondition = new TimePassedCondition(typeChecker);
+            let timePassedCondition = new TimePassedCondition(typeChecker);
             expect(() => {
-                comparisonCondition.type = "somethingRandom"
+                timePassedCondition.type = "somethingRandom"
             }).toThrow();
         });
     });
 
     describe("region variable", () => {
         it("can be set as a string", () => {
-            let comparisonCondition = new TimePassedCondition(typeChecker);
-            comparisonCondition.variable = "value";
+            let timePassedCondition = new TimePassedCondition(typeChecker);
+            timePassedCondition.variable = "value";
 
-            expect(comparisonCondition.variable).toEqual("value");
+            expect(timePassedCondition.variable).toEqual("value");
         });
 
         it("will throw an error if set to not a string", () => {
-            let comparisonCondition = new TimePassedCondition(typeChecker);
+            let timePassedCondition = new TimePassedCondition(typeChecker);
             expect(() => {
-                comparisonCondition.variable = 1 as any;
+                timePassedCondition.variable = 1 as any;
             }).toThrow();
         });
     });
 
     describe("minutes passed variable", () => {
         it("can be set as a number", () => {
-            let comparisonCondition = new TimePassedCondition(typeChecker);
-            comparisonCondition.minutes = 123;
+            let timePassedCondition = new TimePassedCondition(typeChecker);
+            timePassedCondition.minutes = 123;
 
-            expect(comparisonCondition.minutes).toEqual(123);
+            expect(timePassedCondition.minutes).toEqual(123);
         });
 
         it("will throw an error if set to not a number", () => {
-            let comparisonCondition = new TimePassedCondition(typeChecker);
+            let timePassedCondition = new TimePassedCondition(typeChecker);
             expect(() => {
-                comparisonCondition.minutes = "aa" as any;
+                timePassedCondition.minutes = "aa" as any;
+            }).toThrow();
+        });
+    });
+
+    describe("method execute", () => {
+        let container: Container = new Container().makeGlobal();
+
+        let fiveMinutesAgo = moment().subtract(5, 'm').unix();
+
+        let variables = container.invoke(VariableCollection, [[{id: "timestamp1", value:fiveMinutesAgo.toString()}]]);
+
+        it("returns true if more than the number of minutes have passed since the time in the variable", () => {
+            let timePassedCondition = new TimePassedCondition(typeChecker, {id: "test", type: "timepassed", minutes: 4, variable: "timestamp1"});
+            let result = timePassedCondition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
+            expect(result).toEqual(true);
+        });
+
+        it("returns false if less than the number of minutes have passed since the time in the variable", () => {
+            let timePassedCondition = new TimePassedCondition(typeChecker, {id: "test", type: "timepassed", minutes: 6, variable: "timestamp1"});
+            let result = timePassedCondition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
+            expect(result).toEqual(false);
+        });
+
+        it("throws if the condition doesn't exist", () => {
+            let timePassedCondition = new TimePassedCondition(typeChecker, {id: "test", type: "timepassed", minutes: 6, variable: "somethingElse"});
+            expect(() => {
+                timePassedCondition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
             }).toThrow();
         });
     });

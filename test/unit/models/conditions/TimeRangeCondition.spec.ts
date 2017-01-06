@@ -1,5 +1,3 @@
-import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
-import {TimeRangeCondition} from "../../../../src/resources/models/conditions/TimeRangeCondition";
 /*******************************************************************
  *
  * StoryPlaces
@@ -35,6 +33,16 @@ import {TimeRangeCondition} from "../../../../src/resources/models/conditions/Ti
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
+import {TimeRangeCondition} from "../../../../src/resources/models/conditions/TimeRangeCondition";
+import {Container} from "aurelia-framework";
+import {ConditionCollection} from "../../../../src/resources/collections/ConditionCollection";
+import {VariableCollection} from "../../../../src/resources/collections/VariableCollection";
+import {LocationCollection} from "../../../../src/resources/collections/LocationCollection";
+import {LocationInformation} from "../../../../src/resources/gps/LocationInformation";
+
+import moment = require('moment');
+
 describe("TimeRangeCondition", () => {
 
     let typeChecker = new TypeChecker;
@@ -48,19 +56,19 @@ describe("TimeRangeCondition", () => {
     });
 
     it("can be created with no data", () => {
-        let comparisonCondition = new TimeRangeCondition(typeChecker);
+        let timeRangeCondition = new TimeRangeCondition(typeChecker);
 
-        expect(comparisonCondition instanceof TimeRangeCondition).toBeTruthy();
+        expect(timeRangeCondition instanceof TimeRangeCondition).toBeTruthy();
     });
 
     it("can be created with data", () => {
-        let comparisonCondition = new TimeRangeCondition(typeChecker, {type: "timerange", variable:"abc", start: "12:23", end: "13:45"});
+        let timeRangeCondition = new TimeRangeCondition(typeChecker, {type: "timerange", variable:"abc", start: "12:23", end: "13:45"});
 
-        expect(comparisonCondition instanceof TimeRangeCondition).toBeTruthy();
+        expect(timeRangeCondition instanceof TimeRangeCondition).toBeTruthy();
 
-        expect(comparisonCondition.variable).toEqual("abc");
-        expect(comparisonCondition.start).toEqual("12:23");
-        expect(comparisonCondition.end).toEqual("13:45");
+        expect(timeRangeCondition.variable).toEqual("abc");
+        expect(timeRangeCondition.start).toEqual("12:23");
+        expect(timeRangeCondition.end).toEqual("13:45");
     });
 
 
@@ -78,79 +86,117 @@ describe("TimeRangeCondition", () => {
 
     describe("type", () => {
         it("can be set to comparison", () => {
-            let comparisonCondition = new TimeRangeCondition(typeChecker);
-            comparisonCondition.type = "timerange";
+            let timeRangeCondition = new TimeRangeCondition(typeChecker);
+            timeRangeCondition.type = "timerange";
 
-            expect(comparisonCondition.type).toEqual("timerange");
+            expect(timeRangeCondition.type).toEqual("timerange");
         });
 
         it("will throw an error if set to something other than check", () => {
-            let comparisonCondition = new TimeRangeCondition(typeChecker);
+            let timeRangeCondition = new TimeRangeCondition(typeChecker);
             expect(() => {
-                comparisonCondition.type = "somethingRandom"
+                timeRangeCondition.type = "somethingRandom"
             }).toThrow();
         });
     });
 
     describe("region variable", () => {
         it("can be set as a string", () => {
-            let comparisonCondition = new TimeRangeCondition(typeChecker);
-            comparisonCondition.variable = "value";
+            let timeRangeCondition = new TimeRangeCondition(typeChecker);
+            timeRangeCondition.variable = "value";
 
-            expect(comparisonCondition.variable).toEqual("value");
+            expect(timeRangeCondition.variable).toEqual("value");
         });
 
         it("will throw an error if set to not a string", () => {
-            let comparisonCondition = new TimeRangeCondition(typeChecker);
+            let timeRangeCondition = new TimeRangeCondition(typeChecker);
             expect(() => {
-                comparisonCondition.variable = 1 as any;
+                timeRangeCondition.variable = 1 as any;
             }).toThrow();
         });
     });
 
     describe("start variable", () => {
         it("can be set as a time string", () => {
-            let comparisonCondition = new TimeRangeCondition(typeChecker);
-            comparisonCondition.start = "12:12";
+            let timeRangeCondition = new TimeRangeCondition(typeChecker);
+            timeRangeCondition.start = "12:12";
 
-            expect(comparisonCondition.start).toEqual("12:12");
+            expect(timeRangeCondition.start).toEqual("12:12");
         });
 
         it("will throw an error if set to not a time string", () => {
-            let comparisonCondition = new TimeRangeCondition(typeChecker);
+            let timeRangeCondition = new TimeRangeCondition(typeChecker);
             expect(() => {
-                comparisonCondition.start = "abc" as any;
+                timeRangeCondition.start = "abc" as any;
             }).toThrow();
         });
 
         it("will throw an error if set to not a string", () => {
-            let comparisonCondition = new TimeRangeCondition(typeChecker);
+            let timeRangeCondition = new TimeRangeCondition(typeChecker);
             expect(() => {
-                comparisonCondition.start = 123 as any;
+                timeRangeCondition.start = 123 as any;
             }).toThrow();
         });
     });
     
     describe("end variable", () => {
         it("can be set as a time string", () => {
-            let comparisonCondition = new TimeRangeCondition(typeChecker);
-            comparisonCondition.end = "12:12";
+            let timeRangeCondition = new TimeRangeCondition(typeChecker);
+            timeRangeCondition.end = "12:12";
 
-            expect(comparisonCondition.end).toEqual("12:12");
+            expect(timeRangeCondition.end).toEqual("12:12");
         });
 
         it("will throw an error if set to not a time string", () => {
-            let comparisonCondition = new TimeRangeCondition(typeChecker);
+            let timeRangeCondition = new TimeRangeCondition(typeChecker);
             expect(() => {
-                comparisonCondition.end = "abc" as any;
+                timeRangeCondition.end = "abc" as any;
             }).toThrow();
         });
 
         it("will throw an error if set to not a string", () => {
-            let comparisonCondition = new TimeRangeCondition(typeChecker);
+            let timeRangeCondition = new TimeRangeCondition(typeChecker);
             expect(() => {
-                comparisonCondition.end = 123 as any;
+                timeRangeCondition.end = 123 as any;
             }).toThrow();
+        });
+    });
+
+    describe("method execute", () => {
+        it("returns true if  the current time is between the two values", () => {
+            let start = moment().subtract(2, 'm').format("HH:mm");
+            let end = moment().add(2, 'm').format("HH:mm");
+
+            let timeRangeCondition = new TimeRangeCondition(typeChecker, {id: "test", type: "timerange", start:start, end:end});
+            let result = timeRangeCondition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
+            expect(result).toEqual(true);
+        });
+
+        it("returns true if the current time is between the two values, assuming they are on differing days", () => {
+            let start = moment().subtract(2, 'm').format("HH:mm");
+            let end = moment().subtract(4, 'm').format("HH:mm");
+
+            let timeRangeCondition = new TimeRangeCondition(typeChecker, {id: "test", type: "timerange", start:start, end:end});
+            let result = timeRangeCondition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
+            expect(result).toEqual(true);
+        });
+
+        it("returns false if the current time is not between the two values", () => {
+            let start = moment().add(2, 'm').format("HH:mm");
+            let end = moment().add(3, 'm').format("HH:mm");
+
+            let timeRangeCondition = new TimeRangeCondition(typeChecker, {id: "test", type: "timerange", start:start, end:end});
+            let result = timeRangeCondition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
+            expect(result).toEqual(false);
+        });
+
+        it("returns false if the current time is not between the two values, assuming they are on differing days", () => {
+            let start = moment().add(2, 'm').format("HH:mm");
+            let end = moment().subtract(2, 'm').format("HH:mm");
+
+            let timeRangeCondition = new TimeRangeCondition(typeChecker, {id: "test", type: "timerange", start:start, end:end});
+            let result = timeRangeCondition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
+            expect(result).toEqual(false);
         });
     });
 });

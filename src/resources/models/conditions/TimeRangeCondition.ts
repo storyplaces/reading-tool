@@ -39,9 +39,10 @@ import {VariableCollection} from "../../collections/VariableCollection";
 import {ConditionCollection} from "../../collections/ConditionCollection";
 import {LocationCollection} from "../../collections/LocationCollection";
 import {LocationInformation} from "../../gps/LocationInformation";
+import moment = require('moment');
+
 
 @inject(TypeChecker)
-
 export class TimeRangeCondition extends BaseCondition {
 
     private _variable: string;
@@ -113,6 +114,19 @@ export class TimeRangeCondition extends BaseCondition {
     }
 
     execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
-        return undefined;
+        let start = this.textualTimeToMoment(this.start);
+        let end = this.textualTimeToMoment(this.end);
+
+        // Allow for times over midnight
+        if (start.isAfter(end)) {
+            end = end.add(1, 'd');
+        }
+
+        return moment().isBetween(start, end);
+    }
+
+    private textualTimeToMoment(time: string) {
+        let raw = time.split(":"); // split the HH:MM format into an array to pass it to moment
+        return moment().hour(parseInt(raw[0])).minutes(parseInt(raw[1]));
     }
 }

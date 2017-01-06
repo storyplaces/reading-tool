@@ -39,6 +39,7 @@ import {VariableCollection} from "../../collections/VariableCollection";
 import {ConditionCollection} from "../../collections/ConditionCollection";
 import {LocationCollection} from "../../collections/LocationCollection";
 import {LocationInformation} from "../../gps/LocationInformation";
+import moment = require('moment');
 
 @inject(TypeChecker)
 export class TimePassedCondition extends BaseCondition {
@@ -100,6 +101,16 @@ export class TimePassedCondition extends BaseCondition {
     }
 
     execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
-        return undefined;
+        let variableTimeStamp = variables.get(this.variable).value;
+
+        if (!variableTimeStamp) {
+            throw Error("Variable " + this.variable + " was not found");
+        }
+
+        let now = moment();
+        let timestamp = moment.unix(parseInt(variableTimeStamp));
+        let earliest = timestamp.add(this.minutes, 'm'); // find at which point in time this would be true
+
+        return earliest.isBefore(now);
     }
 }
