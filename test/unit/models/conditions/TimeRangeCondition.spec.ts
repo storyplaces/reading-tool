@@ -162,6 +162,12 @@ describe("TimeRangeCondition", () => {
         });
     });
 
+    /**
+     * Note these tests will not work if you are within 5 minutes of midnight!!
+     */
+
+    //TODO: Fix this!
+
     describe("method execute", () => {
         it("returns true if  the current time is between the two values", () => {
             let start = moment().subtract(2, 'm').format("HH:mm");
