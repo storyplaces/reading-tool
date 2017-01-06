@@ -34,13 +34,13 @@
  */
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {BaseModel} from "../BaseModel";
-import {Executable} from "../../interfaces/Executable";
+import {ExecutableCondition} from "../../interfaces/ExecutableCondition";
 import {VariableCollection} from "../../collections/VariableCollection";
 import {ConditionCollection} from "../../collections/ConditionCollection";
 import {LocationCollection} from "../../collections/LocationCollection";
 import {LocationInformation} from "../../gps/LocationInformation";
 
-export abstract class BaseCondition extends BaseModel implements Executable {
+export abstract class BaseCondition extends BaseModel implements ExecutableCondition {
     constructor(typeChecker: TypeChecker) {
         super(typeChecker);
     }
