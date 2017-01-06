@@ -35,19 +35,27 @@
 import {BaseModel} from "./BaseModel";
 import {TypeChecker} from "../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
+import {BaseCondition} from "./conditions/BaseCondition";
+import {VariableCollection} from "../collections/VariableCollection";
+import {LocationInformation} from "../gps/LocationInformation";
+import {LocationCollection} from "../collections/LocationCollection";
+import {ConditionCollection} from "../collections/ConditionCollection";
 
 @inject(TypeChecker)
-export class Page extends BaseModel{
+export class Page extends BaseModel {
 
     private _name: string;
-    private _conditions: Array<Object>;
+    private _conditions: Array<BaseCondition>;
+
+    private _isViewable: boolean;
+    private _isReadable: boolean;
 
     constructor(typeChecker: TypeChecker, data?: any) {
         super(typeChecker);
         this.fromObject(data);
     }
 
-    public fromObject(data: any = {id:undefined, name: undefined, conditions: undefined}) {
+    public fromObject(data: any = {id: undefined, name: undefined, conditions: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.name = data.name;
@@ -62,13 +70,14 @@ export class Page extends BaseModel{
         }
     }
 
-    get conditions(): Array<Object> {
+    get conditions(): Array<BaseCondition> {
         return this._conditions;
     }
 
-    set conditions(value: Array<Object>) {
+    set conditions(value: Array<BaseCondition>) {
         this._conditions = value;
     }
+
     get name(): string {
         return this._name;
     }
@@ -76,5 +85,37 @@ export class Page extends BaseModel{
     set name(value: string) {
         this.typeChecker.validateAsStringOrUndefined("Name", value);
         this._name = value;
+    }
+
+    get isReadable(): boolean {
+        return this._isReadable;
+    }
+
+    set isReadable(value: boolean) {
+        this._isReadable = value;
+    }
+
+    get isViewable(): boolean {
+        return this._isViewable;
+    }
+
+    set isViewable(value: boolean) {
+        this._isViewable = value;
+    }
+
+    // A page is viewable if all conditions for the page are valid, not including any location conditions.
+    public updateViewable(variables: VariableCollection, conditions: ConditionCollection) {
+        this.isViewable = this.conditions.every((condition) => {
+            return condition.execute(variables, conditions)
+        })
+
+    }
+
+    // A page is readable if all conditions for the page are valid, including all location conditions.
+    public updateReadable(variables: VariableCollection, conditions: ConditionCollection, locations: LocationCollection, userLocation: LocationInformation) {
+        this.isReadable = this.conditions.every((condition) => {
+            return condition.execute(variables, conditions, locations, userLocation)
+        })
+
     }
 }
