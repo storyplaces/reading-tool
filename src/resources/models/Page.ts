@@ -106,16 +106,16 @@ export class Page extends BaseModel {
     // A page is viewable if all conditions for the page are valid, not including any location conditions.
     public updateViewable(variables: VariableCollection, conditions: ConditionCollection) {
         this.isViewable = this.conditions.every((condition) => {
-            return condition.execute(variables, conditions)
-        })
+            return condition.execute(variables, conditions);
+        });
 
     }
 
     // A page is readable if all conditions for the page are valid, including all location conditions.
     public updateReadable(variables: VariableCollection, conditions: ConditionCollection, locations: LocationCollection, userLocation: LocationInformation) {
         this.isReadable = this.conditions.every((condition) => {
-            return condition.execute(variables, conditions, locations, userLocation)
-        })
+            return condition.execute(variables, conditions, locations, userLocation);
+        });
 
     }
 }
