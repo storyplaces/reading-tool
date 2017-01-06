@@ -97,4 +97,6 @@ export class IncrementFunction extends BaseFunction {
         this.typeChecker.validateAsStringOrUndefined("Value", value);
         this._variable = value;
     }
+
+
 }

@@ -34,8 +34,9 @@
  */
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {BaseModel} from "../BaseModel";
+import {Executable} from "../../interfaces/Executable";
 
-export abstract class BaseFunction extends BaseModel {
+export abstract class BaseFunction extends BaseModel implements Executable{
 
     private _conditions: Array<string>;
 

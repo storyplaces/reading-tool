@@ -38,6 +38,6 @@ import {ConditionCollection} from "../collections/ConditionCollection";
 import {LocationInformation} from "../gps/LocationInformation";
 import {LocationCollection} from "../collections/LocationCollection";
 
-export interface ExecutableCondition {
+export interface Executable {
     execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean;
 }

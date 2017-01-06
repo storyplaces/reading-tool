@@ -35,7 +35,6 @@
 import {BaseCondition} from "./BaseCondition";
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
-import {ExecutableCondition} from "../../interfaces/ExecutableCondition";
 import {VariableCollection} from "../../collections/VariableCollection";
 import {ConditionCollection} from "../../collections/ConditionCollection";
 import {LocationInformation} from "../../gps/LocationInformation";
