@@ -38,11 +38,15 @@ import {Factory, inject} from "aurelia-framework";
 import {BaseModel} from "./BaseModel";
 import {TypeChecker} from "../utilities/TypeChecker";
 import {LocationCollection} from "../collections/LocationCollection";
+import {FunctionCollection} from "../collections/FunctionCollection";
+import {ConditionCollection} from "../collections/ConditionCollection";
 
 @inject(
     Factory.of(PageCollection),
     Factory.of(PagesMapViewSettings),
     Factory.of(LocationCollection),
+    Factory.of(FunctionCollection),
+    Factory.of(ConditionCollection),
     TypeChecker
 )
 export class Story extends BaseModel {
@@ -52,8 +56,8 @@ export class Story extends BaseModel {
     private _description: string;
     private _pages: PageCollection;
     private _cachedMediaIds: Array<number>;
-    private _conditions: any;
-    private _functions: any;
+    private _conditions: ConditionCollection;
+    private _functions: FunctionCollection;
     private _tags: Array<string>;
     private _pagesMapViewSettings: PagesMapViewSettings;
     private _audience: string;
@@ -62,6 +66,8 @@ export class Story extends BaseModel {
     constructor(private pageCollectionFactory: (any?) => PageCollection,
                 private pagesMapViewSettingsFactory: (any?) => PagesMapViewSettings,
                 private locationCollectionFactory: (any?) => LocationCollection,
+                private functionCollectionFactory: (any?) => FunctionCollection,
+                private conditionCollectionFactory: (any?) => ConditionCollection,
                 typeChecker: TypeChecker,
                 data?: any) {
         super(typeChecker);
@@ -86,9 +92,9 @@ export class Story extends BaseModel {
         this.id = data.id;
         this.author = data.author;
         this.cachedMediaIds = data.cachedMediaIds;
-        this.conditions = data.conditions;
+        this.conditions = this.conditionCollectionFactory(data.conditions);
         this.description = data.description;
-        this.functions = data.functions;
+        this.functions = this.functionCollectionFactory(data.functions);
         this.pages = this.pageCollectionFactory(data.pages);
         this.pagesMapViewSettings = this.pagesMapViewSettingsFactory(data.pagesMapViewSettings);
         this.name = data.name;
@@ -181,6 +187,7 @@ export class Story extends BaseModel {
     }
 
     set functions(value: any) {
+        this.typeChecker.validateAsObjectOrUndefined("Functions", value, "FunctionCollection", FunctionCollection);
         this._functions = value;
     }
 
@@ -189,6 +196,7 @@ export class Story extends BaseModel {
     }
 
     set conditions(value: any) {
+        this.typeChecker.validateAsObjectOrUndefined("Conditions", value, "ConditionCollection", ConditionCollection);
         this._conditions = value;
     }
 

@@ -4,7 +4,7 @@
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) $today.year
+ Copyright (c) 2016
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -32,68 +32,36 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
-import {BaseFunction} from "../../../../src/resources/models/functions/BaseFunction";
+import {BaseCollection} from "./BaseCollection";
+import {TypeFactory} from "../factories/TypeFactory";
+import {inject} from "aurelia-framework";
+import {BaseFunction} from "../models/functions/BaseFunction";
+import {SetFunction} from "../models/functions/SetFunction";
+import {SetTimeStampFunction} from "../models/functions/SetTimeStampFunction";
+import {IncrementFunction} from "../models/functions/IncrementFunction";
 
+@inject(
+    TypeFactory.withMapping({
+        'increment': IncrementFunction,
+        'set': SetFunction,
+        'settimestamp': SetTimeStampFunction
+    })
+)
+export class FunctionCollection extends BaseCollection<BaseFunction> {
 
-describe("BaseFunction", () => {
+    constructor(private conditionFactory: (any?) => BaseFunction, data?: any[]) {
+        super();
 
-    let typeChecker = new TypeChecker;
-
-    class TestFunction extends BaseFunction {
-
-        get type() {
-            return "type"
-        };
-
-        set type(value: any) {
-        };
-
-        toJSON() {
+        if (data && Array.isArray(data)) {
+            this.saveMany(data);
         }
-
-        fromObject(any) {
-        }
-
-        execute(variables: any, conditions: any, locations?: any, userLocation?: any) {
-        }
-
     }
 
-    beforeEach(() => {
+    protected itemFromObject(item: any): BaseFunction {
+        if (item instanceof BaseFunction) {
+            return item as BaseFunction;
+        }
 
-    });
-
-    afterEach(() => {
-
-    });
-
-    it("can have conditions set to an array of strings", () => {
-        let testFunction = new TestFunction(typeChecker);
-        testFunction.conditions = ["a", "b", "c"];
-
-        expect(testFunction.conditions).toEqual(["a", "b", "c"]);
-    });
-
-    it("can have conditions set to undefined", () => {
-        let testFunction = new TestFunction(typeChecker);
-        testFunction.conditions = undefined;
-
-        expect(testFunction.conditions).toEqual(undefined);
-    });
-
-    it("will throw an error if conditions is set to something other than an array of strings", () => {
-        let testFunction = new TestFunction(typeChecker);
-        expect(() => {
-            testFunction.conditions = ["a", "b", 1] as any
-        }).toThrow();
-    });
-
-    it("will throw an error if conditions is set to something other than an array of strings", () => {
-        let testFunction = new TestFunction(typeChecker);
-        expect(() => {
-            testFunction.conditions = 1 as any
-        }).toThrow();
-    });
-
-});
+        return this.conditionFactory(item);
+    }
+}
