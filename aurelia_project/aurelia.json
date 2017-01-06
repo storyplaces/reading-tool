@@ -118,6 +118,7 @@
           "aurelia-templating",
           "aurelia-templating-binding",
           "text",
+          "moment",
           {
             "name": "aurelia-templating-resources",
             "path": "../node_modules/aurelia-templating-resources/dist/amd",
