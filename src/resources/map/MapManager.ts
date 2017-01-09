@@ -39,7 +39,6 @@ import {MapCore} from "../mapping/MapCore";
 import {LocationSource, LocationManager} from "../gps/LocationManager";
 import {LocationInformation} from "../gps/LocationInformation";
 import {RecenterControl} from "./controls/RecenterControl";
-import {Story} from "../models/Story";
 
 @inject(
     BindingEngine,
@@ -70,8 +69,8 @@ export class MapManager {
         this.initMap();
 
         this.locationSub = this.bindingEngine.propertyObserver(this.location, 'location').subscribe((location) => this.locationChanged(location));
-
-
+        this.locationSub = this.bindingEngine.propertyObserver(this.location, 'source').subscribe((source) => this.sourceChanged(source));
+        this.sourceChanged(this.location.source);
         this.locationChanged(this.location.location);
     }
 
@@ -79,17 +78,30 @@ export class MapManager {
         this.mapCore.attachTo(this.mapElement);
         this.mapCore.addItem(this.baseLayer);
         this.mapCore.addItem(this.currentLocationMarker);
-        this.mapCore.addControl(this.recenterControl).then(() => {
-            this.recenterControl.disable();
-        });
 
-        this.addEvents();
+        if (this.location.source == LocationSource.GPS) {
+            this.mapCore.addControl(this.recenterControl).then(() => {
+                this.recenterControl.disable();
+            });
+        }
     }
 
     detach() {
         this.locationSub.dispose();
-        this.removeEvents()
+        this.detachGPSTools();
+        this.detachMapTools();
         this.mapCore.detach();
+    }
+
+    private sourceChanged(newSource: LocationSource) {
+        if (newSource == LocationSource.GPS) {
+            this.attachGPSTools();
+            this.detachMapTools();
+            return
+        }
+
+        this.attachMapTools();
+        this.detachGPSTools();
     }
 
     private locationChanged(newLocation: LocationInformation) {
@@ -100,12 +112,53 @@ export class MapManager {
         }
     }
 
-    private addEvents() {
+    private attachMapTools() {
+        this.mapCore.addEvent('moveend', (event) => this.setLocationFromMap(event));
+        this.mapCore.addEvent('move', (event) => this.moveCurrentLocationMarkerFromMap(event));
+    }
+
+    private detachMapTools() {
+        this.mapCore.removeEvent('moveend');
+        this.mapCore.removeEvent('move');
+    }
+
+    private moveCurrentLocationMarkerFromMap(event) {
+        let newLocation = event.target.getCenter();
+        this.currentLocationMarker.location = {
+            latitude :newLocation.lat,
+            longitude: newLocation.lng,
+            accuracy: undefined,
+            heading: undefined
+        };
+    }
+
+    private setLocationFromMap(event) {
+        let newLocation = event.target.getCenter();
+        this.location.location = {
+            latitude :newLocation.lat,
+            longitude: newLocation.lng,
+            accuracy: undefined,
+            heading: undefined
+        };
+    }
+
+    private attachGPSTools() {
+        this.mapCore.addControl(this.recenterControl).then(() => {
+            this.recenterControl.disable();
+        });
+
         this.mapCore.addEvent('dblclick', () => this.enableRecenterControl());
         this.mapCore.addEvent('dragstart', () => this.enableRecenterControl());
         this.mapCore.addEvent('zoomstart', () => this.enableRecenterControl());
 
         this.mapCore.addEvent('recenter-control-click', () => this.disableRecenterControl());
+    }
+
+    private detachGPSTools() {
+        this.mapCore.removeEvent('dblclick');
+        this.mapCore.removeEvent('dragstart');
+        this.mapCore.removeEvent('zoomstart');
+        this.mapCore.removeEvent('recenter-control-click');
     }
 
     private disableRecenterControl() {
@@ -120,12 +173,4 @@ export class MapManager {
             this.recenterControl.enable();
         }
     }
-
-    private removeEvents() {
-        this.mapCore.removeEvent('dblclick');
-        this.mapCore.removeEvent('dragstart');
-        this.mapCore.removeEvent('zoomstart');
-        this.mapCore.removeEvent('recenter-control-click');
-    }
-
 }

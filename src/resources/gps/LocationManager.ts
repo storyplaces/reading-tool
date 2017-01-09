@@ -32,9 +32,10 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {autoinject, BindingEngine} from "aurelia-framework";
+import {autoinject, BindingEngine, Disposable} from "aurelia-framework";
 import {Gps, GpsState} from "./Gps";
 import {LocationInformation} from "./LocationInformation";
+import {UserConfig} from "../store/UserConfig";
 
 export enum LocationSource {
     GPS = 1,
@@ -50,21 +51,68 @@ export class LocationManager {
     gpsUnavailable: boolean = false;
     gpsUnsupported: boolean = false;
 
-    location: LocationInformation ={latitude: 0, longitude:0, heading:0, accuracy:0};
+    gpsStateSub: Disposable;
+    gpsPositionSub: Disposable;
+
+    location: LocationInformation = {latitude: 50.935659, longitude: -1.396098, heading: 0, accuracy: 0};
     source: LocationSource = LocationSource.GPS;
 
-    constructor(private gps: Gps, private bindingEngine: BindingEngine) {
-        this.updateStateFromGps(gps.state);
+    constructor(private gps: Gps, private bindingEngine: BindingEngine, private userConfig: UserConfig) {
 
-        this.bindingEngine.propertyObserver(this.gps, 'state')
-            .subscribe((newState: GpsState) => {
-                this.updateStateFromGps(newState);
-            });
+        this.bindingEngine.propertyObserver(this.userConfig, 'locationDebug').subscribe(() => {
+            this.updateSource();
+        });
+        this.updateSource();
 
-        this.bindingEngine.propertyObserver(this.gps, 'position')
-            .subscribe((newPosition: Position) => {
-                this.updatePositionFromGps(newPosition)
-            });
+    }
+
+    private updateSource() {
+        if (this.userConfig.locationDemo) {
+            this.switchLocationSourceToMap();
+            return;
+        }
+
+        this.switchLocationSourceToGPS();
+    }
+
+    private switchLocationSourceToMap() {
+        this.source = LocationSource.Map;
+        this.ok = true;
+        this.gpsPermissionDenied = false;
+        this.gpsUnavailable = false;
+        this.gpsUnsupported = false;
+
+        this.gps.detach();
+
+        if (this.gpsStateSub) {
+            this.gpsStateSub.dispose();
+            this.gpsStateSub = undefined;
+        }
+        if (this.gpsPositionSub) {
+            this.gpsPositionSub.dispose();
+            this.gpsPositionSub = undefined;
+        }
+    }
+
+    private switchLocationSourceToGPS() {
+        this.source = LocationSource.GPS;
+        this.gps.attach();
+
+        this.updateStateFromGps(this.gps.state);
+
+        if (!this.gpsStateSub) {
+            this.gpsStateSub = this.bindingEngine.propertyObserver(this.gps, 'state')
+                .subscribe((newState: GpsState) => {
+                    this.updateStateFromGps(newState);
+                });
+        }
+
+        if (!this.gpsPositionSub) {
+            this.gpsPositionSub = this.bindingEngine.propertyObserver(this.gps, 'position')
+                .subscribe((newPosition: Position) => {
+                    this.updatePositionFromGps(newPosition)
+                });
+        }
     }
 
     private updateStateFromGps(newState: GpsState) {

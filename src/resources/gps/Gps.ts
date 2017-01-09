@@ -45,23 +45,29 @@ export class Gps {
     public state: GpsState = GpsState.INITIALISING;
     public position: Position;
 
-    constructor() {
+    private watchId: number;
+
+    attach() {
         if (!navigator.geolocation) {
             this.state = GpsState.POSITION_UNSUPPORTED;
             return;
         }
 
-        navigator.geolocation.watchPosition(
+        this.watchId = navigator.geolocation.watchPosition(
             (position: Position) => {
                 this.state = GpsState.OK;
                 this.position = position;
             },
             (failure: PositionError) => {
-                this.state = failure.code == failure.PERMISSION_DENIED ? GpsState.PERMISSION_DENIED : GpsState.ERROR;
+                this.state = (failure.code == failure.PERMISSION_DENIED) ? GpsState.PERMISSION_DENIED : GpsState.ERROR;
                 this.position = undefined;
             },
             this.GPSOptions()
         );
+    }
+
+    detach() {
+        navigator.geolocation.clearWatch(this.watchId);
     }
 
     private GPSOptions(): PositionOptions {
