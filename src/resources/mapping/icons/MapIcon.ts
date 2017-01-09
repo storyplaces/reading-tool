@@ -51,4 +51,8 @@ export class MapIcon implements MapIconInterface{
     get leafletIcon(): L.Icon {
         return this.marker;
     };
+
+    destroy() {
+        this.marker.remove();
+    }
 }
