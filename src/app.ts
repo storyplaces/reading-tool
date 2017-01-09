@@ -41,7 +41,7 @@ import {Authenticator} from "./resources/auth/Authenticator";
 export class App {
     router: Router;
 
-    constructor(private location: LocationManager, private authenticator: Authenticator) {
+    constructor(private authenticator: Authenticator) {
     }
 
     attached() {
