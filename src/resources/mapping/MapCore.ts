@@ -86,6 +86,14 @@ export class MapCore {
         );
     }
 
+    hasItem(layer: MapLayerInterface) :Promise<boolean>{
+        return this.mapReady.then(
+            map => {
+                return map.hasLayer(layer.leafletLayer);
+            }
+        )
+    }
+
     setLocation(latLng: LatLngLiteral) {
         this.mapReady.then(
             map => {

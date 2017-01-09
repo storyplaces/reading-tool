@@ -37,5 +37,6 @@ import Layer = L.Layer;
 
 export interface MapLayerInterface {
     leafletLayer : Layer;
+    destroy();
 }
  

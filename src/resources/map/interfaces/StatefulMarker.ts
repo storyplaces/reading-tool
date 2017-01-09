@@ -32,51 +32,8 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {MapLayerInterface} from "../interfaces/MapLayerInterface";
 
-import MarkerOptions = L.MarkerOptions;
-import Marker = L.Marker;
-import LatLngLiteral = L.LatLngLiteral;
-import {MapMarkerDefaults} from "../settings/MapMarkerDefaults";
-
-import {inject} from "aurelia-framework";
-import {MapIconInterface} from "../interfaces/MapIconInterface";
-
-@inject(MapMarkerDefaults)
-
-export class MapMarker implements MapLayerInterface {
-
-    private marker: Marker;
-
-    constructor(markerDefaults: MapMarkerDefaults, latitude: number, longitude: number, options: MarkerOptions = {}) {
-        this.marker = L.marker({lat: latitude, lng:longitude}, Object.assign(markerDefaults, options));
-    }
-
-    get leafletLayer(): L.Layer {
-        return this.marker;
-    };
-
-    get latitude(): number {
-        return this.marker.getLatLng().lat;
-    }
-
-    set latitude(latitude: number) {
-        this.marker.setLatLng({lat: latitude, lng: this.longitude});
-    }
-
-    get longitude(): number {
-        return this.marker.getLatLng().lng;
-    }
-
-    set longitude(longitude: number) {
-        this.marker.setLatLng({lat: this.latitude, lng: longitude});
-    }
-
-    set icon(icon: MapIconInterface) {
-        this.marker.setIcon(icon.leafletIcon);
-    }
-
-    destroy() {
-        this.marker.remove();
-    }
+export interface StatefulMarker {
+    pageId: string;
+    state: boolean;
 }

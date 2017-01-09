@@ -36,15 +36,16 @@ import {inject, BindingEngine, NewInstance, Disposable} from "aurelia-framework"
 import {CurrentLocationMarker} from "./markers/CurrentLocationMarker";
 import {MapMapLayer} from "./layers/MapMapLayer";
 import {MapCore} from "../mapping/MapCore";
-import {LocationSource, LocationRepository} from "../gps/LocationRepository";
+import {LocationSource, LocationManager} from "../gps/LocationManager";
 import {LocationInformation} from "../gps/LocationInformation";
 import {RecenterControl} from "./controls/RecenterControl";
+import {Story} from "../models/Story";
 
 @inject(
     BindingEngine,
     MapCore,
     MapMapLayer,
-    LocationRepository,
+    LocationManager,
     NewInstance.of(CurrentLocationMarker),
     NewInstance.of(RecenterControl)
 )
@@ -58,13 +59,23 @@ export class MapManager {
     constructor(private bindingEngine: BindingEngine,
                 private mapCore: MapCore,
                 private baseLayer: MapMapLayer,
-                private location: LocationRepository,
+                private location: LocationManager,
                 private currentLocationMarker: CurrentLocationMarker,
                 private recenterControl: RecenterControl) {
     }
 
-    attachToDom(mapElement: HTMLElement) {
+    attach(mapElement: HTMLElement) {
+
         this.mapElement = mapElement;
+        this.initMap();
+
+        this.locationSub = this.bindingEngine.propertyObserver(this.location, 'location').subscribe((location) => this.locationChanged(location));
+
+
+        this.locationChanged(this.location.location);
+    }
+
+    private initMap() {
         this.mapCore.attachTo(this.mapElement);
         this.mapCore.addItem(this.baseLayer);
         this.mapCore.addItem(this.currentLocationMarker);
@@ -73,12 +84,9 @@ export class MapManager {
         });
 
         this.addEvents();
-
-        this.locationSub = this.bindingEngine.propertyObserver(this.location, 'location').subscribe((location) => this.locationChanged(location));
-        this.locationChanged(this.location.location);
     }
 
-    detachFromDom() {
+    detach() {
         this.locationSub.dispose();
         this.removeEvents()
         this.mapCore.detach();
