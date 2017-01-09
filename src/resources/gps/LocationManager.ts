@@ -43,7 +43,7 @@ export enum LocationSource {
 
 
 @autoinject()
-export class LocationRepository {
+export class LocationManager {
 
     ok: boolean = false;
     gpsPermissionDenied: boolean = false;
