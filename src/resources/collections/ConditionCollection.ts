@@ -42,6 +42,8 @@ import {LocationCondition} from "../models/conditions/LocationCondition";
 import {LogicalCondition} from "../models/conditions/LogicalCondition";
 import {TimePassedCondition} from "../models/conditions/TimePassedCondition";
 import {TimeRangeCondition} from "../models/conditions/TimeRangeCondition";
+import {TrueCondition} from "../models/conditions/boolean/TrueCondition";
+import {FalseCondition} from "../models/conditions/boolean/FalseCondition";
 
 @inject(
     TypeFactory.withMapping({
@@ -50,7 +52,9 @@ import {TimeRangeCondition} from "../models/conditions/TimeRangeCondition";
         'location': LocationCondition,
         'logical': LogicalCondition,
         'timepassed': TimePassedCondition,
-        'timerange': TimeRangeCondition
+        'timerange': TimeRangeCondition,
+        'true' : TrueCondition,
+        'false': FalseCondition
     })
 )
 export class ConditionCollection extends BaseCollection<BaseCondition> {

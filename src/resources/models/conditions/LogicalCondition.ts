@@ -55,10 +55,9 @@ export class LogicalCondition extends BaseCondition {
         }
     }
 
-    fromObject(data = {id: undefined, type: undefined, operand: undefined, conditions: undefined}) {
+    fromObject(data = {id: undefined, operand: undefined, conditions: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.type = data.type;
         this.operand = data.operand;
         this.conditions = data.conditions;
     }
@@ -66,20 +65,10 @@ export class LogicalCondition extends BaseCondition {
     toJSON() {
         return {
             id: this.id,
-            type: this.type,
+            type: "logical",
             operand: this.operand,
             conditions: this.conditions
         };
-    }
-
-    get type(): string {
-        return this._type;
-    }
-
-    set type(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Type", value);
-        this.typeChecker.validateScalarValue("Type", "logical", value);
-        this._type = value;
     }
 
     get operand(): string {

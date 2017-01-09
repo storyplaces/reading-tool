@@ -56,10 +56,9 @@ export class ComparisonCondition extends BaseCondition {
         }
     }
 
-    fromObject(data = {id: undefined, type: undefined, a: undefined, b: undefined, aType: undefined, bType: undefined, operand: undefined}) {
+    fromObject(data = {id: undefined, a: undefined, b: undefined, aType: undefined, bType: undefined, operand: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.type = data.type;
         this.aType = data.aType;
         this.bType = data.bType;
         this.a = data.a;
@@ -70,23 +69,13 @@ export class ComparisonCondition extends BaseCondition {
     toJSON() {
         return {
             id: this.id,
-            type: this.type,
+            type: "comparison",
             a: this.a,
             b: this.b,
             aType: this.aType,
             bType: this.bType,
             operand: this.operand
         };
-    }
-
-    get type(): string {
-        return this._type;
-    }
-
-    set type(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Type", value);
-        this.typeChecker.validateScalarValue("Type", "comparison", value);
-        this._type = value;
     }
 
     get aType(): string {

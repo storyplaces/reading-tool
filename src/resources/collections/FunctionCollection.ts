@@ -37,6 +37,7 @@ import {TypeFactory} from "../factories/TypeFactory";
 import {inject} from "aurelia-framework";
 import {BaseFunction} from "../models/functions/BaseFunction";
 import {SetFunction} from "../models/functions/SetFunction";
+import {NullFunction} from "../models/functions/NullFunction";
 import {SetTimeStampFunction} from "../models/functions/SetTimeStampFunction";
 import {IncrementFunction} from "../models/functions/IncrementFunction";
 
@@ -44,12 +45,13 @@ import {IncrementFunction} from "../models/functions/IncrementFunction";
     TypeFactory.withMapping({
         'increment': IncrementFunction,
         'set': SetFunction,
-        'settimestamp': SetTimeStampFunction
+        'settimestamp': SetTimeStampFunction,
+        'null': NullFunction
     })
 )
 export class FunctionCollection extends BaseCollection<BaseFunction> {
 
-    constructor(private conditionFactory: (any?) => BaseFunction, data?: any[]) {
+    constructor(private functionFactory: (any?) => BaseFunction, data?: any[]) {
         super();
 
         if (data && Array.isArray(data)) {
@@ -62,6 +64,6 @@ export class FunctionCollection extends BaseCollection<BaseFunction> {
             return item as BaseFunction;
         }
 
-        return this.conditionFactory(item);
+        return this.functionFactory(item);
     }
 }

@@ -79,21 +79,7 @@ describe("SetTimeStampFunction", () => {
         expect(() => {
             model.fromObject("a" as any)
         }).toThrow();
-    });
-
-    it("can have its type set to set", () => {
-        let testFunction = new SetTimeStampFunction(typeChecker);
-        testFunction.type = "settimestamp";
-
-        expect(testFunction.type).toEqual("settimestamp");
-    });
-
-    it("will throw an error if its type is set to something other than comparison", () => {
-        let testFunction = new SetTimeStampFunction(typeChecker);
-        expect(() => {
-            testFunction.type = "somethingRandom"
-        }).toThrow();
-    });
+    })
 
     describe("method execute", () => {
         let container: Container = new Container().makeGlobal();
@@ -105,8 +91,8 @@ describe("SetTimeStampFunction", () => {
 
         beforeEach(() => {
             variables = container.invoke(VariableCollection, [[{id: "existing", value: "1"}]]);
-            trueCondition = container.invoke(TrueCondition, [{id: "true", type: "true"}]);
-            falseCondition = container.invoke(FalseCondition, [{id: "false", type: "false"}]);
+            trueCondition = container.invoke(TrueCondition, [{id: "true"}]);
+            falseCondition = container.invoke(FalseCondition, [{id: "false"}]);
             conditions = container.invoke(ConditionCollection, [[trueCondition, falseCondition]]);
         });
 
@@ -118,7 +104,7 @@ describe("SetTimeStampFunction", () => {
         });
 
         it("sets a existing variable to the current timestamp with no conditions set", () => {
-            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test", type: "settimestamp", variable: "existing", conditions: []});
+            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test", variable: "existing", conditions: []});
 
             expect(variables.get("existing").value).toEqual("1");
             testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
@@ -126,7 +112,7 @@ describe("SetTimeStampFunction", () => {
         });
 
         it("creates a new variable and sets it to the current timestamp with no conditions set", () => {
-            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test", type: "settimestamp", variable: "doesNotExist", conditions: []});
+            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test",  variable: "doesNotExist", conditions: []});
 
             expect(variables.get("doesNotExist")).toBeUndefined();
             testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
@@ -134,7 +120,7 @@ describe("SetTimeStampFunction", () => {
         });
 
         it("sets a existing variable to the current timestamp with true conditions set", () => {
-            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test", type: "settimestamp", variable: "existing", conditions: ["true", "true"]});
+            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test",  variable: "existing", conditions: ["true", "true"]});
 
             expect(variables.get("existing").value).toEqual("1");
             testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
@@ -142,7 +128,7 @@ describe("SetTimeStampFunction", () => {
         });
 
         it("creates a new variable and sets it to the current timestamp with true conditions set", () => {
-            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test", type: "settimestamp", variable: "doesNotExist", conditions: ["true", "true"]});
+            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test",  variable: "doesNotExist", conditions: ["true", "true"]});
 
             expect(variables.get("doesNotExist")).toBeUndefined();
             testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
@@ -150,7 +136,7 @@ describe("SetTimeStampFunction", () => {
         });
 
         it("does not set a existing variable to the current timestamp if conditions fail", () => {
-            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test", type: "settimestamp", variable: "existing", conditions: ["false"]});
+            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test",  variable: "existing", conditions: ["false"]});
 
             expect(variables.get("existing").value).toEqual("1");
             testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
@@ -158,7 +144,7 @@ describe("SetTimeStampFunction", () => {
         });
 
         it("does not create a new variable if conditions fail", () => {
-            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test", type: "settimestamp", variable: "doesNotExist", conditions: ["false"]});
+            let testFunction = new SetTimeStampFunction(typeChecker, {id: "test",  variable: "doesNotExist", conditions: ["false"]});
 
             expect(variables.get("doesNotExist")).toBeUndefined();
             testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);

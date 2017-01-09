@@ -47,11 +47,6 @@ export abstract class BaseFunction extends BaseModel implements ExecutableFuncti
         super(typeChecker);
     }
 
-    abstract get type();
-    abstract set type(value: any);
-
-    protected _type: string;
-
     get conditions(): Array<string> {
         return this._conditions;
     }

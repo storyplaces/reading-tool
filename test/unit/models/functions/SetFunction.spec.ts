@@ -80,20 +80,6 @@ describe("SetFunction", () => {
         }).toThrow();
     });
 
-    it("can have its type set to set", () => {
-        let testFunction = new SetFunction(typeChecker);
-        testFunction.type = "set";
-
-        expect(testFunction.type).toEqual("set");
-    });
-
-    it("will throw an error if its type is set to something other than comparison", () => {
-        let testFunction = new SetFunction(typeChecker);
-        expect(() => {
-            testFunction.type = "somethingRandom"
-        }).toThrow();
-    });
-
     it("can have its value set to a string", () => {
         let testFunction = new SetFunction(typeChecker);
         testFunction.value = "abc";
@@ -117,8 +103,8 @@ describe("SetFunction", () => {
 
         beforeEach(() => {
             variables = container.invoke(VariableCollection, [[{id: "existing", value: "1"}]]);
-            trueCondition = container.invoke(TrueCondition, [{id: "true", type: "true"}]);
-            falseCondition = container.invoke(FalseCondition, [{id: "false", type: "false"}]);
+            trueCondition = container.invoke(TrueCondition, [{id: "true"}]);
+            falseCondition = container.invoke(FalseCondition, [{id: "false"}]);
             conditions = container.invoke(ConditionCollection, [[trueCondition, falseCondition]]);
         });
 
@@ -130,7 +116,7 @@ describe("SetFunction", () => {
         });
 
         it("sets a existing variable to the passed value with no conditions set", () => {
-            let testFunction = new SetFunction(typeChecker, {id: "test", type: "set", variable: "existing", value: "fish", conditions: []});
+            let testFunction = new SetFunction(typeChecker, {id: "test", variable: "existing", value: "fish", conditions: []});
 
             expect(variables.get("existing").value).toEqual("1");
             testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
@@ -138,7 +124,7 @@ describe("SetFunction", () => {
         });
 
         it("creates a new variable and sets it to the passed value with no conditions set", () => {
-            let testFunction = new SetFunction(typeChecker, {id: "test", type: "set", variable: "doesNotExist", value: "foo", conditions: []});
+            let testFunction = new SetFunction(typeChecker, {id: "test", variable: "doesNotExist", value: "foo", conditions: []});
 
             expect(variables.get("doesNotExist")).toBeUndefined();
             testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
@@ -146,7 +132,7 @@ describe("SetFunction", () => {
         });
 
         it("sets a existing variable to the passed value with true conditions set", () => {
-            let testFunction = new SetFunction(typeChecker, {id: "test", type: "set", variable: "existing", value: "bar", conditions: ["true", "true"]});
+            let testFunction = new SetFunction(typeChecker, {id: "test", variable: "existing", value: "bar", conditions: ["true", "true"]});
 
             expect(variables.get("existing").value).toEqual("1");
             testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
@@ -154,7 +140,7 @@ describe("SetFunction", () => {
         });
 
         it("creates a new variable and sets it to the passed value with true conditions set", () => {
-            let testFunction = new SetFunction(typeChecker, {id: "test", type: "set", variable: "doesNotExist", value: "baz", conditions: ["true", "true"]});
+            let testFunction = new SetFunction(typeChecker, {id: "test", variable: "doesNotExist", value: "baz", conditions: ["true", "true"]});
 
             expect(variables.get("doesNotExist")).toBeUndefined();
             testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
@@ -162,7 +148,7 @@ describe("SetFunction", () => {
         });
 
         it("does not set a existing variable to the passed value if conditions fail", () => {
-            let testFunction = new SetFunction(typeChecker, {id: "test", type: "set", variable: "existing", value: "doesNothing", conditions: ["false"]});
+            let testFunction = new SetFunction(typeChecker, {id: "test", variable: "existing", value: "doesNothing", conditions: ["false"]});
 
             expect(variables.get("existing").value).toEqual("1");
             testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
@@ -170,7 +156,7 @@ describe("SetFunction", () => {
         });
 
         it("does not create a new variable if conditions fail", () => {
-            let testFunction = new SetFunction(typeChecker, {id: "test", type: "set", variable: "doesNotExist", value: "neverSeen", conditions: ["false"]});
+            let testFunction = new SetFunction(typeChecker, {id: "test", variable: "doesNotExist", value: "neverSeen", conditions: ["false"]});
 
             expect(variables.get("doesNotExist")).toBeUndefined();
             testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);

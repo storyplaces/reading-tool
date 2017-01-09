@@ -34,20 +34,14 @@
  */
 import {TypeChecker} from "../../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
-import {BaseFunction} from "./BaseFunction";
-import {VariableCollection} from "../../collections/VariableCollection";
-import {ConditionCollection} from "../../collections/ConditionCollection";
-import {LocationCollection} from "../../collections/LocationCollection";
+import {BaseLocation} from "./BaseLocation";
+import {LocationHelper} from "../../gps/LocationHelper";
 import {LocationInformation} from "../../gps/LocationInformation";
 
-@inject(TypeChecker)
+@inject(TypeChecker, LocationHelper)
+export class NullLocation extends BaseLocation{
 
-export class IncrementFunction extends BaseFunction {
-
-    private _variable: string;
-    private _value: string;
-
-    constructor(typeChecker: TypeChecker, data?: any) {
+    constructor(typeChecker: TypeChecker, private locationHelper: LocationHelper, data?: any) {
         super(typeChecker);
 
         if (data) {
@@ -55,54 +49,19 @@ export class IncrementFunction extends BaseFunction {
         }
     }
 
-    fromObject(data = {id: undefined, variable: undefined, value: undefined, conditions: undefined}) {
+    fromObject(data = {id: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.variable = data.variable;
-        this.value = data.value;
-        this.conditions = data.conditions;
     }
 
     toJSON() {
         return {
             id: this.id,
-            type: "increment",
-            variable: this.variable,
-            value: this.value,
-            conditions: this.conditions
+            type: "null",
         };
     }
 
-    get value(): string {
-        return this._value;
+    withinBounds(location: LocationInformation): boolean {
+        return true;
     }
-
-    set value(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Value", value);
-        this._value = value;
-    }
-
-    get variable(): string {
-        return this._variable;
-    }
-
-    set variable(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Value", value);
-        this._variable = value;
-    }
-
-    execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
-        if (!this.allConditionsPass(variables, conditions, locations, userLocation)) {
-            return;
-        }
-
-        let variable = variables.get(this.variable) || {id: this.variable, value: "0"};
-
-        let currentValue = parseInt(variable.value);
-        let newValue = currentValue + parseInt(this.value);
-
-        variable.value = newValue.toString();
-        variables.save(variable);
-    }
-
 }

@@ -1,0 +1,17 @@
+<template>
+    <div class="row">
+        <div class="col-xs-7 text-left"><h4>Available Readings:</h4></div>
+        <div class="col-xs-5 text-right">
+            <button class="btn" click.delegate="newReading()"><span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <button class="btn" click.delegate="refresh()"><span class="glyphicon glyphicon-refresh"></span>
+            </button>
+        </div>
+
+    </div>
+    <ul class="list-group">
+        <reading-summary repeat.for="reading of readings" reading.bind="reading"></reading-summary>
+        <div class="text-center content-top-padding" show.bind="readings.length == 0"><h4>There are no readings available,<br>please <a href="" click.delegate="newReading()">create one</a> to start.</h4></div>
+    </ul>
+
+</template>

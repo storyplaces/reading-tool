@@ -60,7 +60,7 @@ describe("CheckCondition", () => {
     });
 
     it("can be created with data", () => {
-        let checkCondition = new CheckCondition(typeChecker, {type: "check"});
+        let checkCondition = new CheckCondition(typeChecker, {});
 
         expect(checkCondition instanceof CheckCondition).toBeTruthy();
     });
@@ -75,20 +75,6 @@ describe("CheckCondition", () => {
 
         expect(() => {
             model.fromObject("a" as any)
-        }).toThrow();
-    });
-
-    it("can have its type set to comparison", () => {
-        let checkCondition = new CheckCondition(typeChecker);
-        checkCondition.type = "check";
-
-        expect(checkCondition.type).toEqual("check");
-    });
-
-    it("will throw an error if its type is set to something other than check", () => {
-        let checkCondition = new CheckCondition(typeChecker);
-        expect(() => {
-            checkCondition.type = "somethingRandom"
         }).toThrow();
     });
 
@@ -114,13 +100,13 @@ describe("CheckCondition", () => {
         let variables = container.invoke(VariableCollection, [[{id: "TestVariable", value:"something"}, {id: "NotTheTestVariable", value:"something"}]]);
 
         it("returns true if the variable exists", () => {
-            let checkCondition = new CheckCondition(typeChecker, {id: "test", type: "check", variable: "TestVariable"});
+            let checkCondition = new CheckCondition(typeChecker, {id: "test", variable: "TestVariable"});
             let result = checkCondition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
             expect(result).toBeTruthy();
         });
 
         it("returns false if the variable doesn't exist", () => {
-            let checkCondition = new CheckCondition(typeChecker, {id: "test", type: "check", variable: "SomethingElse"});
+            let checkCondition = new CheckCondition(typeChecker, {id: "test", variable: "SomethingElse"});
             let result = checkCondition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
             expect(result).toBeFalsy();
         });

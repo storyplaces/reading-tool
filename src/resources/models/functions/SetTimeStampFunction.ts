@@ -55,10 +55,9 @@ export class SetTimeStampFunction extends BaseFunction {
         }
     }
 
-    fromObject(data = {id: undefined, type: undefined, variable: undefined, value: undefined, conditions: undefined}) {
+    fromObject(data = {id: undefined, variable: undefined, value: undefined, conditions: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.type = data.type;
         this.variable = data.variable;
         this.conditions = data.conditions;
     }
@@ -66,20 +65,10 @@ export class SetTimeStampFunction extends BaseFunction {
     toJSON() {
         return {
             id: this.id,
-            type: this.type,
+            type: "settimestamp",
             variable: this.variable,
             conditions: this.conditions
         };
-    }
-
-    get type(): string {
-        return this._type;
-    }
-
-    set type(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Type", value);
-        this.typeChecker.validateScalarValue("Type", "settimestamp", value);
-        this._type = value;
     }
 
     get variable(): string {

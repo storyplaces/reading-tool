@@ -57,10 +57,9 @@ export class TimeRangeCondition extends BaseCondition {
         }
     }
 
-    fromObject(data = {id: undefined, type: undefined, variable: undefined, start: undefined, end: undefined}) {
+    fromObject(data = {id: undefined, variable: undefined, start: undefined, end: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.type = data.type;
         this.variable = data.variable;
         this.start = data.start;
         this.end = data.end;
@@ -69,21 +68,11 @@ export class TimeRangeCondition extends BaseCondition {
     toJSON() {
         return {
             id: this.id,
-            type: this.type,
+            type: "timerange",
             variable: this.variable,
             start: this.start,
             end: this.end
         };
-    }
-
-    get type(): string {
-        return this._type;
-    }
-
-    set type(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Type", value);
-        this.typeChecker.validateScalarValue("Type", "timerange", value);
-        this._type = value;
     }
 
     get variable(): string {
