@@ -44,11 +44,9 @@ export class StoryReadingPage {
         if (this.reading === undefined) {
             this.readingConnector.fetchById(params.readingId);
         }
-
-        this.story.pages.forEach((page) => {
-            page.updateViewable(this.reading.variables, this.story.conditions);
-        })
     }
+
+
 
     deactivate() {
         this.storyId = undefined;
