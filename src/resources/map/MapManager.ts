@@ -39,12 +39,14 @@ import {MapCore} from "../mapping/MapCore";
 import {LocationSource, LocationManager} from "../gps/LocationManager";
 import {LocationInformation} from "../gps/LocationInformation";
 import {RecenterControl} from "./controls/RecenterControl";
+import {CurrentMapLocation} from "./CurrentMapLocation";
 
 @inject(
     BindingEngine,
     MapCore,
     MapMapLayer,
     LocationManager,
+    CurrentMapLocation,
     NewInstance.of(CurrentLocationMarker),
     NewInstance.of(RecenterControl)
 )
@@ -59,6 +61,7 @@ export class MapManager {
                 private mapCore: MapCore,
                 private baseLayer: MapMapLayer,
                 private location: LocationManager,
+                private mapLocation: CurrentMapLocation,
                 private currentLocationMarker: CurrentLocationMarker,
                 private recenterControl: RecenterControl) {
     }
@@ -72,9 +75,11 @@ export class MapManager {
 
         this.mapCore.addEvent('moveend', (event) => this.setLocationFromMapEvent(event));
         this.mapCore.addEvent('move', (event) => this.moveCurrentLocationMarkerFromMapEvent(event));
+
         this.mapCore.addEvent('dblclick', () => this.enableRecenterControl());
         this.mapCore.addEvent('dragstart', () => this.enableRecenterControl());
         this.mapCore.addEvent('zoomstart', () => this.enableRecenterControl());
+
         this.mapCore.addEvent('recenter-control-click', () => this.disableRecenterControl());
 
         if (this.location.source == LocationSource.GPS) {
@@ -121,15 +126,14 @@ export class MapManager {
     }
 
     private setLocationFromMapEvent(event) {
-        if (this.location.source == LocationSource.Map) {
-            let newLocation = event.target.getCenter();
-            this.location.location = {
-                latitude: newLocation.lat,
-                longitude: newLocation.lng,
-                accuracy: undefined,
-                heading: undefined
-            };
-        }
+        let newLocation = event.target.getCenter();
+        this.mapLocation.location = {
+            latitude: newLocation.lat,
+            longitude: newLocation.lng,
+            accuracy: undefined,
+            heading: undefined
+        };
+
     }
 
     private disableRecenterControl() {

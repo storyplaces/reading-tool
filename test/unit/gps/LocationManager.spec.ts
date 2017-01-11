@@ -1,6 +1,8 @@
 import {GpsState, Gps} from "../../../src/resources/gps/Gps";
 import {LocationManager} from "../../../src/resources/gps/LocationManager";
 import {Container, BindingEngine} from "aurelia-framework";
+import {LocationInformation} from "../../../src/resources/gps/LocationInformation";
+import {CurrentMapLocation} from "../../../src/resources/map/CurrentMapLocation";
 
 /*******************************************************************
  *
@@ -41,12 +43,28 @@ describe("LocationManager", () => {
 
     class MockGps {
         public state: GpsState = GpsState.INITIALISING;
-        public position: Position;
+        public location: LocationInformation = {longitude: 1, latitude: 1, heading: 1, accuracy: 1};
+
+        public attach() {
+        }
+
+        public detach() {
+        }
+    }
+
+    class MockMapLocation {
+        public location: LocationInformation = {longitude: 2, latitude: 2, heading: 2, accuracy: 2};
+    }
+
+    class MockUserConfig {
+        public locationDemo: boolean = false;
     }
 
     let mockGps: MockGps;
-    let bindingEngine: BindingEngine;
+    let mockMapLocation: MockMapLocation;
+    let mockUserConfig: MockUserConfig;
     let container: Container = new Container().makeGlobal();
+    let bindingEngine: BindingEngine = resolve(BindingEngine);
 
     function resolve(object: Function, data?: any) {
         return container.invoke(object, [data]);
@@ -54,98 +72,164 @@ describe("LocationManager", () => {
 
     beforeEach(() => {
         mockGps = new MockGps();
-        bindingEngine = resolve(BindingEngine);
+        mockMapLocation = new MockMapLocation();
+        mockUserConfig = new MockUserConfig();
     });
 
     afterEach(() => {
         mockGps = undefined;
+        mockMapLocation = undefined;
+        mockUserConfig = undefined;
     });
 
-    it("will return OK when the GPS is OK", (done) => {
-        let location = new LocationManager(mockGps as Gps, bindingEngine);
+    describe("when system is in GPS mode", () => {
+        let location: LocationManager;
 
-        mockGps.state = GpsState.OK;
+        beforeEach(() => {
+            mockUserConfig.locationDemo = false;
+            location = new LocationManager(mockGps as Gps, mockMapLocation as CurrentMapLocation, bindingEngine, mockUserConfig);
+        });
 
-        window.setTimeout(() => {
-            expect(location.ok).toBeTruthy("for OK");
-            expect(location.gpsPermissionDenied).toBeFalsy("for Permission Denied");
-            expect(location.gpsUnavailable).toBeFalsy("for Unavailable");
-            expect(location.gpsUnsupported).toBeFalsy("for Unsupported");
-            done();
-        }, 1);
+        it("will return OK when the GPS is OK", (done) => {
+            mockGps.state = GpsState.OK;
+
+            window.setTimeout(() => {
+                expect(location.ok).toEqual(true, "for OK");
+                expect(location.gpsPermissionDenied).toEqual(false, "for Permission Denied");
+                expect(location.gpsUnavailable).toEqual(false, "for Unavailable");
+                expect(location.gpsUnsupported).toEqual(false, "for Unsupported");
+                done();
+            }, 1);
+        });
+
+        it("will return OK when the GPS is Initialising", (done) => {
+            mockGps.state = GpsState.INITIALISING;
+
+            window.setTimeout(() => {
+                expect(location.ok).toEqual(true, "for OK");
+                expect(location.gpsPermissionDenied).toEqual(false, "for Permission Denied");
+                expect(location.gpsUnavailable).toEqual(false, "for Unavailable");
+                expect(location.gpsUnsupported).toEqual(false, "for Unsupported");
+                done();
+            }, 1);
+        });
+
+        it("will return Permission Denied when GPS has Permission Denied", (done) => {
+            mockGps.state = GpsState.PERMISSION_DENIED;
+
+            window.setTimeout(() => {
+                expect(location.ok).toEqual(false, "for OK");
+                expect(location.gpsPermissionDenied).toEqual(true, "for Permission Denied");
+                expect(location.gpsUnavailable).toEqual(false, "for Unavailable");
+                expect(location.gpsUnsupported).toEqual(false, "for Unsupported");
+                done();
+            }, 1);
+        });
+
+
+        it("will return Unavailable when the GPS is Unavailable", (done) => {
+            mockGps.state = GpsState.ERROR;
+
+            window.setTimeout(() => {
+                expect(location.ok).toEqual(false, "for OK");
+                expect(location.gpsPermissionDenied).toEqual(false, "for Permission Denied");
+                expect(location.gpsUnavailable).toEqual(true, "for Unavailable");
+                expect(location.gpsUnsupported).toEqual(false, "for Unsupported");
+                done();
+            }, 1);
+        });
+
+
+        it("will return Unavailable when the GPS is Unavailable", (done) => {
+            mockGps.state = GpsState.POSITION_UNSUPPORTED;
+
+            window.setTimeout(() => {
+                expect(location.ok).toEqual(false, "for OK");
+                expect(location.gpsPermissionDenied).toEqual(false, "for Permission Denied");
+                expect(location.gpsUnavailable).toEqual(false, "for Unavailable");
+                expect(location.gpsUnsupported).toEqual(true, "for Unsupported");
+                done();
+            }, 1);
+        });
+
+        it("will show changes in location from GPS", (done) => {
+            mockGps.state = GpsState.OK;
+            mockGps.location = {longitude: 123, latitude: 456, heading: 789, accuracy: 321} as LocationInformation;
+
+            window.setTimeout(() => {
+                expect(location.location.longitude).toEqual(123);
+                expect(location.location.latitude).toEqual(456);
+                expect(location.location.heading).toEqual(789);
+                expect(location.location.accuracy).toEqual(321);
+
+                done();
+            }, 1);
+        });
+
+        it("will not show changes in location from the MapGPS", (done) => {
+            mockGps.state = GpsState.OK;
+            let previousLocation = location.location;
+
+            mockMapLocation.location = {longitude: 123, latitude: 456, heading: 789, accuracy: 321} as LocationInformation;
+
+            window.setTimeout(() => {
+                expect(location.location.longitude).toEqual(previousLocation.longitude);
+                expect(location.location.latitude).toEqual(previousLocation.latitude);
+                expect(location.location.heading).toEqual(previousLocation.heading);
+                expect(location.location.accuracy).toEqual(previousLocation.accuracy);
+
+                done();
+            }, 1);
+        });
     });
 
-    it("will return OK when the GPS is Initialising", (done) => {
-        let location = new LocationManager(mockGps as Gps, bindingEngine);
+    describe("when system is in Map mode", () => {
+        let location: LocationManager;
 
-        mockGps.state = GpsState.INITIALISING;
+        beforeEach(() => {
+            mockUserConfig.locationDemo = true;
+            location = new LocationManager(mockGps as Gps, mockMapLocation as CurrentMapLocation, bindingEngine, mockUserConfig);
+        });
 
-        window.setTimeout(() => {
-            expect(location.ok).toBeTruthy("for OK");
-            expect(location.gpsPermissionDenied).toBeFalsy("for Permission Denied");
-            expect(location.gpsUnavailable).toBeFalsy("for Unavailable");
-            expect(location.gpsUnsupported).toBeFalsy("for Unsupported");
-            done();
-        }, 1);
-    });
-
-    it("will return Permission Denied when GPS has Permission Denied", (done) => {
-        let location = new LocationManager(mockGps as Gps, bindingEngine);
-
-        mockGps.state = GpsState.PERMISSION_DENIED;
-
-        window.setTimeout(() => {
-            expect(location.ok).toBeFalsy("for OK");
-            expect(location.gpsPermissionDenied).toBeTruthy("for Permission Denied");
-            expect(location.gpsUnavailable).toBeFalsy("for Unavailable");
-            expect(location.gpsUnsupported).toBeFalsy("for Unsupported");
-            done();
-        }, 1);
-    });
+        it("will always return OK", (done) => {
+            window.setTimeout(() => {
+                expect(location.ok).toEqual(true, "for OK");
+                expect(location.gpsPermissionDenied).toEqual(false, "for Permission Denied");
+                expect(location.gpsUnavailable).toEqual(false, "for Unavailable");
+                expect(location.gpsUnsupported).toEqual(false, "for Unsupported");
+                done();
+            }, 1);
+        });
 
 
-    it("will return Unavailable when the GPS is Unavailable", (done) => {
-        let location = new LocationManager(mockGps as Gps, bindingEngine);
+        it("will not show changes in location from GPS", (done) => {
+            mockGps.state = GpsState.OK;
+            let previousLocation = location.location;
 
-        mockGps.state = GpsState.ERROR;
+            mockGps.location = {longitude: 123, latitude: 456, heading: 789, accuracy: 321} as LocationInformation;
 
-        window.setTimeout(() => {
-            expect(location.ok).toBeFalsy("for OK");
-            expect(location.gpsPermissionDenied).toBeFalsy("for Permission Denied");
-            expect(location.gpsUnavailable).toBeTruthy("for Unavailable");
-            expect(location.gpsUnsupported).toBeFalsy("for Unsupported");
-            done();
-        }, 1);
-    });
+            window.setTimeout(() => {
+                expect(location.location.longitude).toEqual(previousLocation.longitude);
+                expect(location.location.latitude).toEqual(previousLocation.latitude);
+                expect(location.location.heading).toEqual(previousLocation.heading);
+                expect(location.location.accuracy).toEqual(previousLocation.accuracy);
 
+                done();
+            }, 1);
+        });
 
-    it("will return Unavailable when the GPS is Unavailable", (done) => {
-        let location = new LocationManager(mockGps as Gps, bindingEngine);
+        it("will show changes in location from the Map", (done) => {
+            mockGps.state = GpsState.OK;
 
-        mockGps.state = GpsState.POSITION_UNSUPPORTED;
+            mockMapLocation.location = {longitude: 123, latitude: 456, heading: 789, accuracy: 321} as LocationInformation;
 
-        window.setTimeout(() => {
-            expect(location.ok).toBeFalsy("for OK");
-            expect(location.gpsPermissionDenied).toBeFalsy("for Permission Denied");
-            expect(location.gpsUnavailable).toBeFalsy("for Unavailable");
-            expect(location.gpsUnsupported).toBeTruthy("for Unsupported");
-            done();
-        }, 1);
-    });
-
-    it("will show changes in location from GPS", (done) => {
-        let location = new LocationManager(mockGps as Gps, bindingEngine);
-
-        mockGps.state = GpsState.OK;
-        mockGps.position = { coords: {longitude: 123, latitude: 456, heading:789, accuracy: 321}} as Position;
-
-        window.setTimeout(() => {
-            expect(location.location.longitude).toEqual(123);
-            expect(location.location.latitude).toEqual(456);
-            expect(location.location.heading).toEqual(789);
-            expect(location.location.accuracy).toEqual(321);
-
-            done();
-        }, 1);
+            window.setTimeout(() => {
+                expect(location.location.longitude).toEqual(123);
+                expect(location.location.latitude).toEqual(456);
+                expect(location.location.heading).toEqual(789);
+                expect(location.location.accuracy).toEqual(321);
+                done();
+            }, 1);
+        });
     });
 });

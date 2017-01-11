@@ -36,6 +36,7 @@ import {autoinject, BindingEngine, Disposable} from "aurelia-framework";
 import {Gps, GpsState} from "./Gps";
 import {LocationInformation} from "./LocationInformation";
 import {UserConfig} from "../store/UserConfig";
+import {CurrentMapLocation} from "../map/CurrentMapLocation";
 
 export enum LocationSource {
     GPS = 1,
@@ -53,17 +54,17 @@ export class LocationManager {
 
     gpsStateSub: Disposable;
     gpsPositionSub: Disposable;
+    mapPositionSub: Disposable;
 
     location: LocationInformation = {latitude: 50.935659, longitude: -1.396098, heading: 0, accuracy: 0};
     source: LocationSource = LocationSource.GPS;
 
-    constructor(private gps: Gps, private bindingEngine: BindingEngine, private userConfig: UserConfig) {
+    constructor(private gps: Gps, private currentMapLocation: CurrentMapLocation, private bindingEngine: BindingEngine, private userConfig: UserConfig) {
+        this.updateSource();
 
         this.bindingEngine.propertyObserver(this.userConfig, 'locationDemo').subscribe(() => {
             this.updateSource();
         });
-        this.updateSource();
-
     }
 
     private updateSource() {
@@ -76,14 +77,58 @@ export class LocationManager {
     }
 
     private switchLocationSourceToMap() {
+        this.detachGpsListeners();
         this.source = LocationSource.Map;
         this.ok = true;
-        this.gpsPermissionDenied = false;
-        this.gpsUnavailable = false;
-        this.gpsUnsupported = false;
+        this.disableGPS();
 
-        this.gps.detach();
+        this.attachMapListeners();
 
+        this.updatePosition(this.currentMapLocation.location);
+    }
+
+    private switchLocationSourceToGPS() {
+        this.detachMapListeners();
+        this.source = LocationSource.GPS;
+
+        this.initialiseGPS();
+        this.attachGpsListeners();
+        this.updatePosition(this.gps.location);
+    }
+
+    private attachMapListeners() {
+        if (!this.mapPositionSub) {
+            this.mapPositionSub = this.bindingEngine.propertyObserver(this.currentMapLocation, 'location')
+                .subscribe((newPosition: LocationInformation) => {
+                    this.updatePosition(newPosition)
+                });
+        }
+    }
+
+    private detachMapListeners() {
+        if (this.mapPositionSub) {
+            this.mapPositionSub.dispose();
+            this.mapPositionSub = undefined;
+        }
+    }
+
+    private attachGpsListeners() {
+        if (!this.gpsStateSub) {
+            this.gpsStateSub = this.bindingEngine.propertyObserver(this.gps, 'state')
+                .subscribe((newState: GpsState) => {
+                    this.updateStateFromGps(newState);
+                });
+        }
+
+        if (!this.gpsPositionSub) {
+            this.gpsPositionSub = this.bindingEngine.propertyObserver(this.gps, 'location')
+                .subscribe((newPosition: LocationInformation) => {
+                    this.updatePosition(newPosition)
+                });
+        }
+    }
+
+    private detachGpsListeners() {
         if (this.gpsStateSub) {
             this.gpsStateSub.dispose();
             this.gpsStateSub = undefined;
@@ -94,25 +139,18 @@ export class LocationManager {
         }
     }
 
-    private switchLocationSourceToGPS() {
-        this.source = LocationSource.GPS;
+    private initialiseGPS() {
         this.gps.attach();
 
         this.updateStateFromGps(this.gps.state);
+    }
 
-        if (!this.gpsStateSub) {
-            this.gpsStateSub = this.bindingEngine.propertyObserver(this.gps, 'state')
-                .subscribe((newState: GpsState) => {
-                    this.updateStateFromGps(newState);
-                });
-        }
+    private disableGPS() {
+        this.gpsPermissionDenied = false;
+        this.gpsUnavailable = false;
+        this.gpsUnsupported = false;
 
-        if (!this.gpsPositionSub) {
-            this.gpsPositionSub = this.bindingEngine.propertyObserver(this.gps, 'position')
-                .subscribe((newPosition: Position) => {
-                    this.updatePositionFromGps(newPosition)
-                });
-        }
+        this.gps.detach();
     }
 
     private updateStateFromGps(newState: GpsState) {
@@ -124,14 +162,9 @@ export class LocationManager {
         }
     }
 
-    private updatePositionFromGps(newPosition: Position) {
-        if (this.source == LocationSource.GPS && this.ok) {
-            this.location = {
-                latitude: newPosition.coords.latitude,
-                longitude: newPosition.coords.longitude,
-                heading: newPosition.coords.heading,
-                accuracy: newPosition.coords.accuracy
-            };
+    private updatePosition(newPosition: LocationInformation) {
+        if (this.ok && newPosition) {
+            this.location = newPosition;
         }
     }
 }

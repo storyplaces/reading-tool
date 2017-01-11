@@ -1,3 +1,4 @@
+import {LocationInformation} from "../gps/LocationInformation";
 /*******************************************************************
  *
  * StoryPlaces
@@ -33,49 +34,6 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {LocationInformation} from "./LocationInformation";
-export enum GpsState {
-    INITIALISING = 0,
-    OK = 1,
-    PERMISSION_DENIED = 2,
-    POSITION_UNSUPPORTED = 3,
-    ERROR = 4
-}
-
-export class Gps {
-    public state: GpsState = GpsState.INITIALISING;
-    public location: LocationInformation;
-
-    private watchId: number;
-
-    attach() {
-        if (!navigator.geolocation) {
-            this.state = GpsState.POSITION_UNSUPPORTED;
-            return;
-        }
-
-        this.watchId = navigator.geolocation.watchPosition(
-            (position: Position) => {
-                this.state = GpsState.OK;
-                this.location = {latitude: position.coords.latitude, longitude: position.coords.longitude, heading: position.coords.heading, accuracy: position.coords.heading};
-            },
-            (failure: PositionError) => {
-                this.state = (failure.code == failure.PERMISSION_DENIED) ? GpsState.PERMISSION_DENIED : GpsState.ERROR;
-                this.location = undefined;
-            },
-            this.GPSOptions()
-        );
-    }
-
-    detach() {
-        navigator.geolocation.clearWatch(this.watchId);
-    }
-
-    private GPSOptions(): PositionOptions {
-        return {
-            enableHighAccuracy: true,
-            maximumAge: 30000,
-            timeout: 30000
-        };
-    }
+export class CurrentMapLocation{
+    location: LocationInformation;
 }
