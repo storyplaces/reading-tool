@@ -82,13 +82,13 @@ export class MapManager {
 
         this.mapCore.addEvent('recenter-control-click', () => this.disableRecenterControl());
 
-        if (this.location.source == LocationSource.GPS) {
-            this.mapCore.addControl(this.recenterControl).then(() => {
-                this.recenterControl.disable();
-            });
-        }
+        this.mapCore.addControl(this.recenterControl).then(() => {
+            this.recenterControl.disable();
+        });
+
         this.locationSub = this.bindingEngine.propertyObserver(this.location, 'location').subscribe((location) => this.locationChanged(location));
         this.locationChanged(this.location.location);
+        this.panTo(this.location.location);
     }
 
     detach() {
@@ -110,8 +110,12 @@ export class MapManager {
         this.currentLocationMarker.location = newLocation;
 
         if (this.location.source == LocationSource.GPS && this.trackingGPSLocation) {
-            this.mapCore.panTo({lat: newLocation.latitude, lng: newLocation.longitude});
+            this.panTo(newLocation);
         }
+    }
+
+    private panTo(location: LocationInformation) {
+        this.mapCore.panTo({lat: location.latitude, lng: location.longitude})
     }
 
     private moveCurrentLocationMarkerFromMapEvent(event) {
