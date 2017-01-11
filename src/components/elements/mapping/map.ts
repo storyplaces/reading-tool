@@ -34,8 +34,8 @@
  */
 import {MapManager} from "../../../resources/map/MapManager";
 import {inject, bindable} from "aurelia-framework";
-import {Story} from "../../../resources/models/Story";
 import {MarkerManager} from "../../../resources/map/MarkerManager";
+import {ReadingManager} from "../../../resources/reading/ReadingManager";
 
 @inject(
     MapManager,
@@ -44,14 +44,15 @@ import {MarkerManager} from "../../../resources/map/MarkerManager";
 export class MapCustomElement {
     mapElement: HTMLElement;
 
-    @bindable story: Story;
+    @bindable readingManager: ReadingManager;
 
     constructor(private mapManager: MapManager, private markerManager: MarkerManager) {
     }
 
+
     attached() {
         this.mapManager.attach(this.mapElement);
-        this.markerManager.attach(this.story);
+        this.markerManager.attach(this.readingManager);
     }
 
     detached() {

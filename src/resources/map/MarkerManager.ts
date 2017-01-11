@@ -41,6 +41,7 @@ import {BaseLocation} from "../models/locations/BaseLocation";
 import {Page} from "../models/Page";
 import {CircleLocation} from "../models/locations/CircleLocation";
 import {StatefulMarker} from "./interfaces/StatefulMarker";
+import {ReadingManager} from "../reading/ReadingManager";
 import CircleMarker = L.CircleMarker;
 import marker = L.marker;
 
@@ -48,6 +49,7 @@ import marker = L.marker;
 export class MarkerManager {
 
     private story: Story;
+    private readingManager: ReadingManager;
     private pagesSub: Disposable;
     private markers: Array<StatefulMarker & MapMarker> = [];
 
@@ -56,10 +58,10 @@ export class MarkerManager {
                 private statusMakerFactory: (lat?: number, lon?: number, state?: boolean) => StatusMarker) {
     }
 
-    attach(story: Story) {
-        this.story = story;
-        this.pagesSub = this.bindingEngine.collectionObserver(story.pages.all).subscribe((changes) => this.pagesChanged(changes));
-        //TODO: Do we need to destory any existing markers here?
+    attach(readingManager: ReadingManager) {
+        this.story = readingManager.story;
+        this.readingManager = readingManager;
+        this.pagesSub = this.bindingEngine.propertyObserver(this.readingManager, 'viewablePages').subscribe((newValue, oldValue) => this.pagesChanged(newValue, oldValue));
         this.initMarkers();
     }
 
@@ -71,56 +73,68 @@ export class MarkerManager {
     }
 
     private initMarkers() {
-        this.story.pages.forEach(page => {
-            this.createMarkersFromPage(page);
-        });
+        this.createMarkersFromStory(this.readingManager.story);
+        this.pagesChanged(this.readingManager.viewablePages, []);
     }
 
     private getLocation(locationId): BaseLocation {
         return this.story.locations.getOrFail(locationId);
     }
 
-    private createMarkersFromPage(page: Page) {
-        page.hintLocations.forEach(locationId => {
-            let marker;
-            let location = this.getLocation(locationId);
+    private createMarkersFromStory(story: Story) {
+        story.pages.forEach(page => {
+            page.hintLocations.forEach(locationId => {
+                let marker;
+                let location = this.getLocation(locationId);
 
-            if (location instanceof CircleLocation) {
-                marker = this.statusMakerFactory(location.lat, location.lon, page.isReadable);
-                marker.pageId = page.id;
-                console.log(marker);
-            }
+                if (location instanceof CircleLocation) {
+                    marker = this.statusMakerFactory(location.lat, location.lon, page.isReadable);
+                    marker.pageId = page.id;
+                }
 
-            this.markers.push(marker);
-            console.log(page.isViewable);
-
-            if (page.isViewable) {
-                this.mapCore.addItem(marker);
-            }
+                this.markers.push(marker);
+            });
         });
     }
 
     private updateMarkersFromPage(page: Page) {
         let markersToUpdate = this.markers.filter(marker => marker.pageId == page.id);
 
-        if (page.isViewable) {
-            markersToUpdate.forEach(marker => {
-                marker.state = page.isReadable;
-
-                this.mapCore.hasItem(marker).then(hasMarker => {
-                    if (!hasMarker) {
-                        this.mapCore.addItem(marker);
-                    }
-                })
-            });
-        } else {
-            markersToUpdate.forEach(marker => {
-                this.mapCore.removeItem(marker);
-            });
-        }
+        markersToUpdate.forEach(marker => {
+            marker.state = page.isReadable;
+        });
     }
 
-    private pagesChanged(changes) {
-        console.log(changes);
+    private removeMarkersFromPage(page: Page) {
+        let markersToRemove = this.markers.filter(marker => marker.pageId == page.id);
+        markersToRemove.forEach(marker => this.mapCore.removeItem(marker));
     }
+
+    private addMarkersFromPage(page: Page) {
+        let markersToAdd = this.markers.filter(marker => marker.pageId == page.id);
+        markersToAdd.forEach(marker => this.mapCore.addItem(marker));
+    }
+
+
+    private pagesChanged(newPages: Array<Page>, oldPages: Array<Page>) {
+        console.log(newPages, oldPages);
+
+        newPages.forEach(page => {
+            let oldPageIndex = oldPages.indexOf(page)
+
+            if (oldPageIndex == -1) {
+                this.addMarkersFromPage(page);
+                return
+            }
+
+            this.updateMarkersFromPage(page);
+            oldPages.splice(oldPageIndex, 1);
+        });
+
+
+        //oldPages now is things to remove
+        oldPages.forEach(pageId => this.removeMarkersFromPage(pageId));
+    }
+
+
 }
