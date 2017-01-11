@@ -25,6 +25,17 @@ export class StoryConnector extends AbstractConnector<Story> {
         return this.storyCollection.get(id);
     }
 
+    byIdOrFetch(id: string): Promise<Story> {
+        return new Promise(complete => {
+           if (this.storyCollection.get(id)) {
+               complete(this.storyCollection.get(id));
+               return;
+           }
+
+           complete(this.fetchById(id).then(() => this.storyCollection.get(id)));
+        });
+    }
+
     fetchAll(): Promise<Array<Story>> {
         return this.storyplacesAPI.getAll().then(stories => {
             return stories.json().then (stories => {

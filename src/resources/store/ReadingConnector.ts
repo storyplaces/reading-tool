@@ -24,6 +24,17 @@ export class ReadingConnector extends AbstractConnector<Reading> {
         return this.readingCollection.get(id);
     }
 
+    byIdOrFetch(id: string): Promise<Reading> {
+        return new Promise(complete => {
+            if (this.readingCollection.get(id)) {
+                complete(this.readingCollection.get(id));
+                return;
+            }
+
+            complete(this.fetchById(id).then(() => this.readingCollection.get(id)));
+        });
+    }
+
     fetchAll(): Promise<Array<Reading>> {
         return this.storyplacesAPI.getAll().then(readings => {
             return readings.json().then (readings => {

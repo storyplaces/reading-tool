@@ -32,28 +32,43 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {LocationManager} from "../gps/LocationManager";
-import {autoinject, BindingEngine} from "aurelia-framework";
+import {autoinject, BindingEngine, Disposable} from "aurelia-framework";
 import {Reading} from "../models/Reading";
 import {Story} from "../models/Story";
+import {StoryConnector} from "../store/StoryConnector";
+import {ReadingConnector} from "../store/ReadingConnector";
+import {Page} from "../models/Page";
 
 @autoinject()
 export class ReadingManager {
 
-    private story: Story;
-    private reading: Reading;
+    story: Story;
+    reading: Reading;
 
-    constructor(private locationManager: LocationManager, private bindingEngine: BindingEngine) {
+    private variableSub: Disposable;
+    private locationSub: Disposable;
+
+    viewablePages: Array<Page>;
+
+    constructor(private locationManager: LocationManager, private storyConnector: StoryConnector, private readingConnector: ReadingConnector, private bindingEngine: BindingEngine) {
     }
 
-    attach(story: Story,reading: Reading) {
-        this.story = story;
-        this.reading = reading;
-
-        this.updateStatus();
-
-        this.attachListeners();
+    attach(storyId: string, readingId: string) {
+        return this.storyConnector.byIdOrFetch(storyId)
+            .then((story) => {
+                this.story = story;
+            })
+            .then(() => {
+                return this.readingConnector.byIdOrFetch(readingId)
+                    .then((reading) => {
+                    this.reading = reading;
+                });
+            })
+            .then(() => {
+                this.attachListeners();
+                this.updateStatus();
+            });
     }
 
     detach() {
@@ -62,8 +77,8 @@ export class ReadingManager {
     }
 
     private attachListeners() {
-        this.bindingEngine.collectionObserver(this.reading.variables.all).subscribe(() => this.updateStatus());
-        this.bindingEngine.propertyObserver(this.locationManager, 'location').subscribe(() => this.updateStatus());
+        this.variableSub = this.bindingEngine.collectionObserver(this.reading.variables.all).subscribe(() => this.updateStatus());
+        this.locationSub = this.bindingEngine.propertyObserver(this.locationManager, 'location').subscribe(() => this.updateStatus());
     }
 
     private updateStatus() {
@@ -71,6 +86,7 @@ export class ReadingManager {
         this.story.pages.forEach(page => {
             page.updateStatus(this.reading.variables, this.story.conditions, this.story.locations, this.locationManager.location);
         });
-    }
 
+        this.viewablePages = this.story.pages.all.filter(page => page.isViewable);
+    }
 }
