@@ -7,6 +7,7 @@ import {Story} from "../resources/models/Story";
 import {Page} from "../resources/models/Page";
 import {ReadingConnector} from "../resources/store/ReadingConnector";
 import {Reading} from "../resources/models/Reading";
+import {ReadingManager} from "../resources/reading/ReadingManager";
 
 @autoinject()
 export class StoryReadingPage {
@@ -14,7 +15,7 @@ export class StoryReadingPage {
     storyId: string;
     readingId: string;
 
-    constructor(private storyConnector: StoryConnector, private readingConnector: ReadingConnector) {
+    constructor(private storyConnector: StoryConnector, private readingConnector: ReadingConnector, private readingManager: ReadingManager) {
     }
 
     @computedFrom('storyConnector.all', 'storyId')
@@ -38,18 +39,19 @@ export class StoryReadingPage {
         this.storyId = params.storyId;
         this.readingId = params.readingId;
 
-        if (this.story === undefined) {
-            return this.storyConnector.fetchById(params.storyId);
-        }
-        if (this.reading === undefined) {
-            this.readingConnector.fetchById(params.readingId);
-        }
+        return this.storyConnector.fetchById(params.storyId)
+            .then(() => {
+                return this.readingConnector.fetchById(params.readingId);
+            }).
+            then(() => {
+                this.readingManager.attach(this.story, this.reading);
+            });
     }
-
 
 
     deactivate() {
         this.storyId = undefined;
+        this.readingManager.detach();
     }
 
 

@@ -52,6 +52,8 @@ export class ReadingManager {
         this.reading = reading;
 
         this.updateStatus();
+
+        this.attachListeners();
     }
 
     detach() {
@@ -59,7 +61,13 @@ export class ReadingManager {
         this.story = undefined;
     }
 
+    private attachListeners() {
+        this.bindingEngine.collectionObserver(this.reading.variables.all).subscribe(() => this.updateStatus());
+        this.bindingEngine.propertyObserver(this.locationManager, 'location').subscribe(() => this.updateStatus());
+    }
+
     private updateStatus() {
+        console.log("Updating status");
         this.story.pages.forEach(page => {
             page.updateStatus(this.reading.variables, this.story.conditions, this.story.locations, this.locationManager.location);
         });

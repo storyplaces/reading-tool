@@ -36,27 +36,20 @@ import {MapManager} from "../../../resources/map/MapManager";
 import {inject, bindable} from "aurelia-framework";
 import {Story} from "../../../resources/models/Story";
 import {MarkerManager} from "../../../resources/map/MarkerManager";
-import {VariableCollection} from "../../../resources/collections/VariableCollection";
 
 @inject(
     MapManager,
-    MarkerManager,
-    VariableCollection
+    MarkerManager
 )
 export class MapCustomElement {
     mapElement: HTMLElement;
 
     @bindable story: Story;
 
-    constructor(private mapManager: MapManager, private markerManager: MarkerManager, private variableCollection: VariableCollection) {
+    constructor(private mapManager: MapManager, private markerManager: MarkerManager) {
     }
 
     attached() {
-
-        this.story.pages.forEach(page => {
-            page.updateViewable(this.variableCollection, this.story.conditions);
-        });
-
         this.mapManager.attach(this.mapElement);
         this.markerManager.attach(this.story);
     }
