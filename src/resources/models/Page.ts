@@ -35,7 +35,6 @@
 import {BaseModel} from "./BaseModel";
 import {TypeChecker} from "../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
-import {BaseCondition} from "./conditions/BaseCondition";
 import {VariableCollection} from "../collections/VariableCollection";
 import {LocationInformation} from "../gps/LocationInformation";
 import {LocationCollection} from "../collections/LocationCollection";
@@ -60,7 +59,15 @@ export class Page extends BaseModel {
         this.fromObject(data);
     }
 
-    public fromObject(data: any = {id: undefined, name: undefined, conditions: undefined, content: undefined, pageTransition: undefined, hint: {locations:undefined, description:undefined}, functions: undefined}) {
+    public fromObject(data: any = {
+        id: undefined,
+        name: undefined,
+        conditions: undefined,
+        content: undefined,
+        pageTransition: undefined,
+        hint: {locations: undefined, description: undefined},
+        functions: undefined
+    }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.name = data.name;
@@ -174,19 +181,15 @@ export class Page extends BaseModel {
         this._isViewable = value;
     }
 
-
-    // A page is viewable if all conditions for the page are valid, not including any location conditions.
-    public updateViewable(variables: VariableCollection, conditions: ConditionCollection) {
+    public updateStatus(variables: VariableCollection, conditions: ConditionCollection, locations: LocationCollection, userLocation: LocationInformation) {
         this.isViewable = this.conditions.every((conditionId) => {
             return this.getCondition(conditions, conditionId).execute(variables, conditions);
         });
-    }
 
-    // A page is readable if all conditions for the page are valid, including all location conditions.
-    public updateReadable(variables: VariableCollection, conditions: ConditionCollection, locations: LocationCollection, userLocation: LocationInformation) {
-        this.isReadable = this.conditions.every((conditionId) => {
-            return this.getCondition(conditions, conditionId).execute(variables, conditions, locations, userLocation);
-        });
+        this.isReadable = this.isViewable
+            && this.conditions.every((conditionId) => {
+                return this.getCondition(conditions, conditionId).execute(variables, conditions, locations, userLocation);
+            });
     }
 
     public executeFunctions(variables: VariableCollection, conditions: ConditionCollection, locations: LocationCollection, userLocation: LocationInformation, functions: FunctionCollection) {

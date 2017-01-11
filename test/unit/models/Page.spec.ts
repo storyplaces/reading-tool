@@ -154,7 +154,7 @@ describe("Page model", () => {
         let variables = resolve(VariableCollection, []);
         let conditions = resolve(ConditionCollection, []);
 
-        model.updateViewable(variables, conditions);
+        model.updateStatus(variables, conditions, {} as LocationCollection, {} as LocationInformation);
         expect(model.isViewable).toEqual(true);
     });
 
@@ -169,7 +169,7 @@ describe("Page model", () => {
 
         let variables = resolve(VariableCollection, []);
 
-        model.updateViewable(variables, conditions);
+        model.updateStatus(variables, conditions, {} as LocationCollection, {} as LocationInformation);
         expect(model.isViewable).toEqual(true);
 
     });
@@ -179,7 +179,7 @@ describe("Page model", () => {
         let model = new Page(typeChecker, {id: "1", name: "name", conditions: []});
         let variables = resolve(VariableCollection, []);
 
-        model.updateReadable(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
+        model.updateStatus(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
         expect(model.isReadable).toEqual(true);
     });
 
@@ -194,7 +194,7 @@ describe("Page model", () => {
 
         let variables = resolve(VariableCollection, []);
 
-        model.updateReadable(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+        model.updateStatus(variables, conditions, {} as LocationCollection, {} as LocationInformation);
         expect(model.isReadable).toEqual(true);
     });
 
@@ -211,13 +211,25 @@ describe("Page model", () => {
             resolve(TrueCondition, {id: "true3"}),
             locationCondition
         ]);
+        let locations = container.invoke(LocationCollection, [[{
+            id: "someLocation",
+            type: "circle",
+            lat: 50.9360987,
+            lon: -1.3961843,
+            radius: 6
+        }]]);
         let conditionsForPage = ["true1", "true2", "true3", "locationCondition"];
         let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditionsForPage});
 
         let variables = resolve(VariableCollection, []);
 
 
-        model.updateViewable(variables, conditions);
+        model.updateStatus(variables, conditions, locations, {
+            latitude: 50.9362792,
+            longitude: -1.3962106,
+            accuracy: 0,
+            heading: 0
+        } as LocationInformation);
         expect(model.isViewable).toEqual(true);
     });
 
@@ -247,7 +259,7 @@ describe("Page model", () => {
         let variables = resolve(VariableCollection, []);
 
 
-        model.updateReadable(variables, conditions, locations, {
+        model.updateStatus(variables, conditions, locations, {
             latitude: 50.9362792,
             longitude: -1.3962106,
             accuracy: 0,
@@ -268,7 +280,7 @@ describe("Page model", () => {
 
         let variables = resolve(VariableCollection, []);
 
-        model.updateViewable(variables, conditions);
+        model.updateStatus(variables, conditions, {} as LocationCollection, {} as LocationInformation);
         expect(model.isViewable).toEqual(false);
     });
 
@@ -285,7 +297,7 @@ describe("Page model", () => {
 
         let variables = resolve(VariableCollection, []);
 
-        model.updateReadable(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+        model.updateStatus(variables, conditions, {} as LocationCollection, {} as LocationInformation);
         expect(model.isReadable).toEqual(false);
     });
 });
