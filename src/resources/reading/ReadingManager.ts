@@ -54,7 +54,7 @@ export class ReadingManager {
     constructor(private locationManager: LocationManager, private storyConnector: StoryConnector, private readingConnector: ReadingConnector, private bindingEngine: BindingEngine) {
     }
 
-    attach(storyId: string, readingId: string) {
+    attach(storyId: string, readingId: string, withUpdates: boolean = true) {
         return this.storyConnector.byIdOrFetch(storyId)
             .then((story) => {
                 this.story = story;
@@ -62,18 +62,21 @@ export class ReadingManager {
             .then(() => {
                 return this.readingConnector.byIdOrFetch(readingId)
                     .then((reading) => {
-                    this.reading = reading;
-                });
+                        this.reading = reading;
+                    });
             })
             .then(() => {
-                this.attachListeners();
-                this.updateStatus();
+                if (withUpdates) {
+                    this.attachListeners();
+                    this.updateStatus();
+                }
             });
     }
 
     detach() {
         this.reading = undefined;
         this.story = undefined;
+        this.detachListeners();
     }
 
     private attachListeners() {
@@ -81,8 +84,19 @@ export class ReadingManager {
         this.locationSub = this.bindingEngine.propertyObserver(this.locationManager, 'location').subscribe(() => this.updateStatus());
     }
 
+    private detachListeners() {
+        if (this.variableSub) {
+            this.variableSub.dispose();
+            this.variableSub = undefined;
+        }
+
+        if (this.locationSub) {
+            this.locationSub.dispose();
+            this.locationSub = undefined;
+        }
+    }
+
     private updateStatus() {
-        console.log("Updating status");
         this.story.pages.forEach(page => {
             page.updateStatus(this.reading.variables, this.story.conditions, this.story.locations, this.locationManager.location);
         });
