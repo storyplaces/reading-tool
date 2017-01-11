@@ -103,4 +103,8 @@ export class ReadingManager {
 
         this.viewablePages = this.story.pages.all.filter(page => page.isViewable);
     }
+
+    executePageFunctions(page: Page) {
+        page.executeFunctions(this.reading.variables, this.story.conditions, this.story.locations, this.locationManager.location, this.story.functions);
+    }
 }

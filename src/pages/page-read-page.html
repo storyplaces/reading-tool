@@ -33,11 +33,10 @@
   -->
 
 <template>
-    <a route-href="route: page-read; params.bind: {pageId: page.id, storyId: storyId, readingId: readingId}"
-       class="list-group-item list-group-item-success" if.bind="page.isReadable">
+
+    <div class="row content-full">
         <h4 class="list-group-item-heading text-left">${page.name}</h4>
-    </a>
-    <li class="list-group-item list-group-item-danger" if.bind="!page.isReadable">
-        <h4 class="list-group-item-heading text-left">${page.name}</h4>
-    </li>
+        <p>${page.content}</p>
+        <button type="text" click.trigger="callPageFunctions()">Finish Reading</button>
+    </div>
 </template>

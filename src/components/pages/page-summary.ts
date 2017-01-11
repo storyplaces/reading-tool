@@ -8,5 +8,7 @@ import {bindable, containerless} from "aurelia-framework";
 export class PageSummary{
 
     @bindable page: Page;
+    @bindable storyId: string;
+    @bindable readingId: string;
 
 }
