@@ -33,13 +33,7 @@
   -->
 
 <template>
-    <require from="../components/elements/mapping/map"></require>
-    <require from="../components/pages/page-list"></require>
-
-    <div class="row content-full">
-        <div class="col-xs-12 col-md-7 map-component">
-            <map class="content-full"></map>
-        </div>
-        <div class="col-xs-12 col-md-5 pages-list-component"><page-list pages.bind="viewablePages" reading-id.bind="readingId" class="content-top-padding pages-list"></page-list></div>
-    </div>
+    <a route-href="route: page-read; params.bind: {pageId: page.id}" class="list-group-item">
+        <h4 class="list-group-item-heading text-left">${page.name}</h4>
+    </a>
 </template>

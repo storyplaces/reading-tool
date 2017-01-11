@@ -1,0 +1,12 @@
+<template>
+    <require from="./page-summary"></require>
+
+    <div class="row">
+        <div class="col-xs-7 text-left"><h4>Available Pages:</h4></div>
+    </div>
+    <ul class="list-group">
+        <page-summary repeat.for="page of pages" page.bind="page"></page-summary>
+        <div class="text-center content-top-padding" show.bind="pages.length == 0"><h4>There are no pages available to read. Oops!</h4></div>
+    </ul>
+
+</template>
