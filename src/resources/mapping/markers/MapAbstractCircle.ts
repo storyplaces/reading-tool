@@ -76,4 +76,8 @@ export abstract class MapAbstractCircle implements MapLayerInterface {
     set fillOpacity(opacity: number) {
         this.marker.setStyle({opacity: opacity});
     }
+
+    destroy() {
+        this.marker.remove();
+    }
 }

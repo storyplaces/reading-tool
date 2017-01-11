@@ -36,15 +36,17 @@ import {inject, BindingEngine, NewInstance, Disposable} from "aurelia-framework"
 import {CurrentLocationMarker} from "./markers/CurrentLocationMarker";
 import {MapMapLayer} from "./layers/MapMapLayer";
 import {MapCore} from "../mapping/MapCore";
-import {LocationSource, LocationRepository} from "../gps/LocationRepository";
+import {LocationSource, LocationManager} from "../gps/LocationManager";
 import {LocationInformation} from "../gps/LocationInformation";
 import {RecenterControl} from "./controls/RecenterControl";
+import {CurrentMapLocation} from "./CurrentMapLocation";
 
 @inject(
     BindingEngine,
     MapCore,
     MapMapLayer,
-    LocationRepository,
+    LocationManager,
+    CurrentMapLocation,
     NewInstance.of(CurrentLocationMarker),
     NewInstance.of(RecenterControl)
 )
@@ -53,71 +55,97 @@ export class MapManager {
     private mapElement: HTMLElement;
     private locationSub: Disposable;
 
-    private panningWithLocation: boolean = true;
+    private trackingGPSLocation: boolean = true;
 
     constructor(private bindingEngine: BindingEngine,
                 private mapCore: MapCore,
                 private baseLayer: MapMapLayer,
-                private location: LocationRepository,
+                private location: LocationManager,
+                private mapLocation: CurrentMapLocation,
                 private currentLocationMarker: CurrentLocationMarker,
                 private recenterControl: RecenterControl) {
     }
 
-    attachToDom(mapElement: HTMLElement) {
+    attach(mapElement: HTMLElement) {
+
         this.mapElement = mapElement;
         this.mapCore.attachTo(this.mapElement);
         this.mapCore.addItem(this.baseLayer);
         this.mapCore.addItem(this.currentLocationMarker);
-        this.mapCore.addControl(this.recenterControl).then(() => {
-            this.recenterControl.disable();
-        });
 
-        this.addEvents();
+        this.mapCore.addEvent('moveend', (event) => this.setLocationFromMapEvent(event));
+        this.mapCore.addEvent('move', (event) => this.moveCurrentLocationMarkerFromMapEvent(event));
 
+        this.mapCore.addEvent('dblclick', () => this.enableRecenterControl());
+        this.mapCore.addEvent('dragstart', () => this.enableRecenterControl());
+        this.mapCore.addEvent('zoomstart', () => this.enableRecenterControl());
+
+        this.mapCore.addEvent('recenter-control-click', () => this.disableRecenterControl());
+
+        if (this.location.source == LocationSource.GPS) {
+            this.mapCore.addControl(this.recenterControl).then(() => {
+                this.recenterControl.disable();
+            });
+        }
         this.locationSub = this.bindingEngine.propertyObserver(this.location, 'location').subscribe((location) => this.locationChanged(location));
-        this.locationChanged(this.location.location);
     }
 
-    detachFromDom() {
+    detach() {
         this.locationSub.dispose();
-        this.removeEvents()
+        this.mapCore.removeControl(this.recenterControl);
+
+        this.mapCore.removeEvent('moveend');
+        this.mapCore.removeEvent('move');
+
+        this.mapCore.removeEvent('dblclick');
+        this.mapCore.removeEvent('dragstart');
+        this.mapCore.removeEvent('zoomstart');
+        this.mapCore.removeEvent('recenter-control-click');
+
         this.mapCore.detach();
     }
 
     private locationChanged(newLocation: LocationInformation) {
         this.currentLocationMarker.location = newLocation;
 
-        if (this.location.source == LocationSource.GPS && this.panningWithLocation) {
+        if (this.location.source == LocationSource.GPS && this.trackingGPSLocation) {
             this.mapCore.panTo({lat: newLocation.latitude, lng: newLocation.longitude});
         }
     }
 
-    private addEvents() {
-        this.mapCore.addEvent('dblclick', () => this.enableRecenterControl());
-        this.mapCore.addEvent('dragstart', () => this.enableRecenterControl());
-        this.mapCore.addEvent('zoomstart', () => this.enableRecenterControl());
+    private moveCurrentLocationMarkerFromMapEvent(event) {
+        if (this.location.source == LocationSource.Map) {
+            let newLocation = event.target.getCenter();
+            this.currentLocationMarker.location = {
+                latitude: newLocation.lat,
+                longitude: newLocation.lng,
+                accuracy: undefined,
+                heading: undefined
+            };
+        }
+    }
 
-        this.mapCore.addEvent('recenter-control-click', () => this.disableRecenterControl());
+    private setLocationFromMapEvent(event) {
+        let newLocation = event.target.getCenter();
+        this.mapLocation.location = {
+            latitude: newLocation.lat,
+            longitude: newLocation.lng,
+            accuracy: undefined,
+            heading: undefined
+        };
+
     }
 
     private disableRecenterControl() {
-        this.panningWithLocation = true;
+        this.trackingGPSLocation = true;
         this.locationChanged(this.location.location);
         this.recenterControl.disable();
     }
 
     private enableRecenterControl() {
-        if (this.panningWithLocation) {
-            this.panningWithLocation = false;
+        if (this.location.source == LocationSource.GPS) {
+            this.trackingGPSLocation = false;
             this.recenterControl.enable();
         }
     }
-
-    private removeEvents() {
-        this.mapCore.removeEvent('dblclick');
-        this.mapCore.removeEvent('dragstart');
-        this.mapCore.removeEvent('zoomstart');
-        this.mapCore.removeEvent('recenter-control-click');
-    }
-
 }

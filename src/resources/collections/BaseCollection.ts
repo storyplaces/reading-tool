@@ -53,6 +53,16 @@ export abstract class BaseCollection<DATA_TYPE extends Identifiable> {
         return this._data.find(item => item.id == id)
     }
 
+    public getOrFail(id: string, type?: string) : DATA_TYPE {
+        let item: DATA_TYPE = this.get(id);
+
+        if (!item) {
+            throw Error("Unable to get " + type || "item"+ " with id " + id);
+        }
+
+        return item
+    }
+
     public save(passedItem: any): void {
         let item = this.itemFromObject(passedItem);
 

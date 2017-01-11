@@ -34,14 +34,15 @@
  */
 import {Router, RouterConfiguration} from "aurelia-router";
 import {autoinject} from "aurelia-framework";
-import {LocationRepository} from "./resources/gps/LocationRepository";
+import {LocationManager} from "./resources/gps/LocationManager";
 import {Authenticator} from "./resources/auth/Authenticator";
+import {UserConfig} from "./resources/store/UserConfig";
 
 @autoinject()
 export class App {
     router: Router;
 
-    constructor(private location: LocationRepository, private authenticator: Authenticator) {
+    constructor(private authenticator: Authenticator, private userConfig: UserConfig) {
     }
 
     attached() {

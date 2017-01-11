@@ -86,6 +86,14 @@ export class MapCore {
         );
     }
 
+    hasItem(layer: MapLayerInterface): Promise<boolean> {
+        return this.mapReady.then(
+            map => {
+                return map.hasLayer(layer.leafletLayer);
+            }
+        )
+    }
+
     setLocation(latLng: LatLngLiteral) {
         this.mapReady.then(
             map => {
@@ -116,7 +124,13 @@ export class MapCore {
 
     removeEvent(eventName: string): Promise<void> {
         return this.mapReady.then(map => {
-            map.off(eventName)
+            map.off(eventName);
+        });
+    }
+
+    removeAllEvents(): Promise<void> {
+        return this.mapReady.then(map => {
+            map.off();
         });
     }
 

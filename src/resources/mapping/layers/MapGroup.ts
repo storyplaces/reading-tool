@@ -62,4 +62,8 @@ export class MapGroup implements MapLayerInterface {
     get leafletLayer(): L.Layer {
         return this.marker;
     };
+
+    destroy() {
+        this.marker.remove();
+    }
 }

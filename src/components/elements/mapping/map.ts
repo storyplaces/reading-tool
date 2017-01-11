@@ -33,24 +33,36 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {MapManager} from "../../../resources/map/MapManager";
-import {inject} from "aurelia-framework";
+import {inject, bindable} from "aurelia-framework";
+import {Story} from "../../../resources/models/Story";
+import {MarkerManager} from "../../../resources/map/MarkerManager";
+import {VariableCollection} from "../../../resources/collections/VariableCollection";
 
 @inject(
-    MapManager
+    MapManager,
+    MarkerManager,
+    VariableCollection
 )
 export class MapCustomElement {
-
     mapElement: HTMLElement;
 
-    constructor(private mapManager: MapManager) {
+    @bindable story: Story;
+
+    constructor(private mapManager: MapManager, private markerManager: MarkerManager, private variableCollection: VariableCollection) {
     }
 
     attached() {
-        this.mapManager.attachToDom(this.mapElement)
+
+        this.story.pages.forEach(page => {
+            page.updateViewable(this.variableCollection, this.story.conditions);
+        });
+
+        this.mapManager.attach(this.mapElement);
+        this.markerManager.attach(this.story);
     }
 
     detached() {
-        this.mapManager.detachFromDom()
+        this.markerManager.detach();
+        this.mapManager.detach()
     }
-
 }

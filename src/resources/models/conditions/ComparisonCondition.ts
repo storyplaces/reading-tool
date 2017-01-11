@@ -198,7 +198,7 @@ export class ComparisonCondition extends BaseCondition {
             let variable = variables.get(value);
 
             if (!variable) {
-                throw Error("Variable id " + value + " not found");
+                return undefined;
             }
 
             return variable.value;

@@ -45,6 +45,7 @@ import {MapIconInterface} from "../interfaces/MapIconInterface";
 @inject(MapMarkerDefaults)
 
 export class MapMarker implements MapLayerInterface {
+
     private marker: Marker;
 
     constructor(markerDefaults: MapMarkerDefaults, latitude: number, longitude: number, options: MarkerOptions = {}) {
@@ -73,5 +74,9 @@ export class MapMarker implements MapLayerInterface {
 
     set icon(icon: MapIconInterface) {
         this.marker.setIcon(icon.leafletIcon);
+    }
+
+    destroy() {
+        this.marker.remove();
     }
 }

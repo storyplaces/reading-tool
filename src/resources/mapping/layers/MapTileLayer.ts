@@ -49,4 +49,8 @@ export class MapTileLayer implements MapLayerInterface {
 
         return this.layer;
     }
+
+    destroy() {
+        this.layer.remove();
+    }
 }

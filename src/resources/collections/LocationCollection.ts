@@ -57,4 +57,9 @@ export class LocationCollection extends BaseCollection<BaseLocation> {
 
         return this.locationFactory(item);
     }
+
+
+    public getOrFail(id: string): BaseLocation {
+        return super.getOrFail(id, "Location");
+    }
 }

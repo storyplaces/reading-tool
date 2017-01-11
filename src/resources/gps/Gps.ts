@@ -33,6 +33,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {LocationInformation} from "./LocationInformation";
 export enum GpsState {
     INITIALISING = 0,
     OK = 1,
@@ -43,25 +44,31 @@ export enum GpsState {
 
 export class Gps {
     public state: GpsState = GpsState.INITIALISING;
-    public position: Position;
+    public location: LocationInformation;
 
-    constructor() {
+    private watchId: number;
+
+    attach() {
         if (!navigator.geolocation) {
             this.state = GpsState.POSITION_UNSUPPORTED;
             return;
         }
 
-        navigator.geolocation.watchPosition(
+        this.watchId = navigator.geolocation.watchPosition(
             (position: Position) => {
                 this.state = GpsState.OK;
-                this.position = position;
+                this.location = {latitude: position.coords.latitude, longitude: position.coords.longitude, heading: position.coords.heading, accuracy: position.coords.heading};
             },
             (failure: PositionError) => {
-                this.state = failure.code == failure.PERMISSION_DENIED ? GpsState.PERMISSION_DENIED : GpsState.ERROR;
-                this.position = undefined;
+                this.state = (failure.code == failure.PERMISSION_DENIED) ? GpsState.PERMISSION_DENIED : GpsState.ERROR;
+                this.location = undefined;
             },
             this.GPSOptions()
         );
+    }
+
+    detach() {
+        navigator.geolocation.clearWatch(this.watchId);
     }
 
     private GPSOptions(): PositionOptions {

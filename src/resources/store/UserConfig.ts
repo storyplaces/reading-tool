@@ -32,27 +32,7 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import Marker = L.Marker;
-import Icon = L.Icon;
-import IconOptions = L.IconOptions;
-import {MapIconDefaults} from "../settings/MapIconDefaults";
 
-import {inject} from "aurelia-framework";
-import {MapIconInterface} from "../interfaces/MapIconInterface";
-
-@inject(MapIconDefaults)
-export class MapIcon implements MapIconInterface{
-    private marker: Icon;
-
-    constructor(defaults: MapIconDefaults, options: IconOptions) {
-        this.marker = L.icon(Object.assign(defaults, options));
-    }
-
-    get leafletIcon(): L.Icon {
-        return this.marker;
-    };
-
-    destroy() {
-        this.marker.remove();
-    }
+export class UserConfig {
+    locationDemo: boolean = false;
 }

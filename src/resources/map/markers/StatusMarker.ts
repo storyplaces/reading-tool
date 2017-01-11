@@ -32,24 +32,26 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {MapMarker} from "../../mapping/markers/MapMarker";
 import {MapMarkerDefaults} from "../../mapping/settings/MapMarkerDefaults";
 import {inject} from "aurelia-framework";
 import {GreenIcon} from "../icons/GreenIcon";
 import {RedIcon} from "../icons/RedIcon";
 import {MapIcon} from "../../mapping/icons/MapIcon";
+import {StatefulMarker} from "../interfaces/StatefulMarker";
 
 @inject(MapMarkerDefaults, RedIcon, GreenIcon)
-export class StatusMarker extends MapMarker {
+export class StatusMarker extends MapMarker implements StatefulMarker{
+    public pageId: string;
 
     private redIcon: MapIcon;
     private greenIcon: MapIcon;
 
-    constructor(markerDefaults: MapMarkerDefaults, redIcon: RedIcon, greenIcon: GreenIcon, latitude: number, longitude: number) {
+    constructor(markerDefaults: MapMarkerDefaults, redIcon: RedIcon, greenIcon: GreenIcon, latitude: number, longitude: number, state: boolean) {
         super(markerDefaults, latitude, longitude, {icon: redIcon.leafletIcon});
         this.redIcon = redIcon;
         this.greenIcon = greenIcon;
+        this.state = state;
     }
 
     set state(state: boolean) {

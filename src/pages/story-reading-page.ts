@@ -39,7 +39,7 @@ export class StoryReadingPage {
         this.readingId = params.readingId;
 
         if (this.story === undefined) {
-            this.storyConnector.fetchById(params.storyId);
+            return this.storyConnector.fetchById(params.storyId);
         }
         if (this.reading === undefined) {
             this.readingConnector.fetchById(params.readingId);
