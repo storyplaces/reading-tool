@@ -88,6 +88,7 @@ export class MapManager {
             });
         }
         this.locationSub = this.bindingEngine.propertyObserver(this.location, 'location').subscribe((location) => this.locationChanged(location));
+        this.locationChanged(this.location.location);
     }
 
     detach() {
