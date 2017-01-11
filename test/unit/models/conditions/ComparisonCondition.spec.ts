@@ -974,7 +974,15 @@ describe("ComparisonCondition", () => {
                 condition = new ComparisonCondition(typeChecker, {id: "condition1", aType: "Variable", a: "variablea", bType: "String", b: "b", operand: "=="});
                 expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
 
-                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "doesNotExist", bType: "String", b: "b", operand: "=="});
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "doesNotExist",
+                    bType: "String",
+                    b: "b",
+                    operand: "=="
+                });
                 expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
             });
 
@@ -985,7 +993,15 @@ describe("ComparisonCondition", () => {
                 condition = new ComparisonCondition(typeChecker, {id: "condition1", aType: "Variable", a: "variablea", bType: "String", b: "a", operand: "!="});
                 expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
 
-                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "doesNotExist", bType: "String", b: "a", operand: "!="});
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "doesNotExist",
+                    bType: "String",
+                    b: "a",
+                    operand: "!="
+                });
                 expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(true);
             });
 
@@ -999,7 +1015,15 @@ describe("ComparisonCondition", () => {
                 condition = new ComparisonCondition(typeChecker, {id: "condition1", aType: "Variable", a: "variablea", bType: "String", b: "b", operand: ">"});
                 expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
 
-                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "doesNotExist", bType: "String", b: "b", operand: ">"});
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "doesNotExist",
+                    bType: "String",
+                    b: "b",
+                    operand: ">"
+                });
                 expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
             });
 
@@ -1013,7 +1037,15 @@ describe("ComparisonCondition", () => {
                 condition = new ComparisonCondition(typeChecker, {id: "condition1", aType: "Variable", a: "variableb", bType: "String", b: "a", operand: "<"});
                 expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
 
-                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "doesNotExist", bType: "String", b: "a", operand: "<"});
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "doesNotExist",
+                    bType: "String",
+                    b: "a",
+                    operand: "<"
+                });
                 expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
             });
 
@@ -1030,7 +1062,15 @@ describe("ComparisonCondition", () => {
                 condition = new ComparisonCondition(typeChecker, {id: "condition1", aType: "Variable", a: "variablea", bType: "String", b: "b", operand: ">="});
                 expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
 
-                condition = new ComparisonCondition(typeChecker, {id: "condition1", type: "comparison", aType: "Variable", a: "doesNotExist", bType: "String", b: "b", operand: ">="});
+                condition = new ComparisonCondition(typeChecker, {
+                    id: "condition1",
+                    type: "comparison",
+                    aType: "Variable",
+                    a: "doesNotExist",
+                    bType: "String",
+                    b: "b",
+                    operand: ">="
+                });
                 expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
             });
 
@@ -1047,29 +1087,8 @@ describe("ComparisonCondition", () => {
                 condition = new ComparisonCondition(typeChecker, {id: "condition1", aType: "Variable", a: "variableb", bType: "String", b: "a", operand: "<="});
                 expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
 
-        describe("throws an error when", () => {
-            it("can't find a variable in a", () => {
-                condition = new ComparisonCondition(typeChecker, {
-                    id: "condition1",
-                    aType: "Variable",
-                    a: "doesNotExist",
-                    bType: "Integer",
-                    b: "1",
-                    operand: "=="
-                });
-                expect(() => {condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)}).toThrow();
-            });
-
-            it("can't find a variable in b", () => {
-                condition = new ComparisonCondition(typeChecker, {
-                    id: "condition1",
-                    aType: "Integer",
-                    a: "1",
-                    bType: "Variable",
-                    b: "doesNotExist",
-                    operand: "=="
-                });
-                expect(() => {condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)}).toThrow();
+                condition = new ComparisonCondition(typeChecker, {id: "condition1", aType: "Variable", a: "doesNotExist", bType: "String", b: "a", operand: "<="});
+                expect(condition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation)).toEqual(false);
             });
         });
     });
