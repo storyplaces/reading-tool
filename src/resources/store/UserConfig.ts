@@ -34,5 +34,5 @@
  */
 
 export class UserConfig {
-    locationDemo: boolean = true;
+    locationDemo: boolean = false;
 }

@@ -59,7 +59,7 @@ export class LocationManager {
 
     constructor(private gps: Gps, private bindingEngine: BindingEngine, private userConfig: UserConfig) {
 
-        this.bindingEngine.propertyObserver(this.userConfig, 'locationDebug').subscribe(() => {
+        this.bindingEngine.propertyObserver(this.userConfig, 'locationDemo').subscribe(() => {
             this.updateSource();
         });
         this.updateSource();

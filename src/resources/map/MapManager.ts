@@ -53,7 +53,7 @@ export class MapManager {
     private mapElement: HTMLElement;
     private locationSub: Disposable;
 
-    private panningWithLocation: boolean = true;
+    private trackingGPSLocation: boolean = true;
 
     constructor(private bindingEngine: BindingEngine,
                 private mapCore: MapCore,
@@ -66,110 +66,81 @@ export class MapManager {
     attach(mapElement: HTMLElement) {
 
         this.mapElement = mapElement;
-        this.initMap();
-
-        this.locationSub = this.bindingEngine.propertyObserver(this.location, 'location').subscribe((location) => this.locationChanged(location));
-        this.locationSub = this.bindingEngine.propertyObserver(this.location, 'source').subscribe((source) => this.sourceChanged(source));
-        this.sourceChanged(this.location.source);
-        this.locationChanged(this.location.location);
-    }
-
-    private initMap() {
         this.mapCore.attachTo(this.mapElement);
         this.mapCore.addItem(this.baseLayer);
         this.mapCore.addItem(this.currentLocationMarker);
+
+        this.mapCore.addEvent('moveend', (event) => this.setLocationFromMapEvent(event));
+        this.mapCore.addEvent('move', (event) => this.moveCurrentLocationMarkerFromMapEvent(event));
+        this.mapCore.addEvent('dblclick', () => this.enableRecenterControl());
+        this.mapCore.addEvent('dragstart', () => this.enableRecenterControl());
+        this.mapCore.addEvent('zoomstart', () => this.enableRecenterControl());
+        this.mapCore.addEvent('recenter-control-click', () => this.disableRecenterControl());
 
         if (this.location.source == LocationSource.GPS) {
             this.mapCore.addControl(this.recenterControl).then(() => {
                 this.recenterControl.disable();
             });
         }
+        this.locationSub = this.bindingEngine.propertyObserver(this.location, 'location').subscribe((location) => this.locationChanged(location));
     }
 
     detach() {
         this.locationSub.dispose();
-        this.detachGPSTools();
-        this.detachMapTools();
+        this.mapCore.removeControl(this.recenterControl);
+
+        this.mapCore.removeEvent('moveend');
+        this.mapCore.removeEvent('move');
+
+        this.mapCore.removeEvent('dblclick');
+        this.mapCore.removeEvent('dragstart');
+        this.mapCore.removeEvent('zoomstart');
+        this.mapCore.removeEvent('recenter-control-click');
+
         this.mapCore.detach();
-    }
-
-    private sourceChanged(newSource: LocationSource) {
-        if (newSource == LocationSource.GPS) {
-            this.attachGPSTools();
-            this.detachMapTools();
-            return
-        }
-
-        this.attachMapTools();
-        this.detachGPSTools();
     }
 
     private locationChanged(newLocation: LocationInformation) {
         this.currentLocationMarker.location = newLocation;
 
-        if (this.location.source == LocationSource.GPS && this.panningWithLocation) {
+        if (this.location.source == LocationSource.GPS && this.trackingGPSLocation) {
             this.mapCore.panTo({lat: newLocation.latitude, lng: newLocation.longitude});
         }
     }
 
-    private attachMapTools() {
-        this.mapCore.addEvent('moveend', (event) => this.setLocationFromMap(event));
-        this.mapCore.addEvent('move', (event) => this.moveCurrentLocationMarkerFromMap(event));
+    private moveCurrentLocationMarkerFromMapEvent(event) {
+        if (this.location.source == LocationSource.Map) {
+            let newLocation = event.target.getCenter();
+            this.currentLocationMarker.location = {
+                latitude: newLocation.lat,
+                longitude: newLocation.lng,
+                accuracy: undefined,
+                heading: undefined
+            };
+        }
     }
 
-    private detachMapTools() {
-        this.mapCore.removeEvent('moveend');
-        this.mapCore.removeEvent('move');
-    }
-
-    private moveCurrentLocationMarkerFromMap(event) {
-        let newLocation = event.target.getCenter();
-        this.currentLocationMarker.location = {
-            latitude :newLocation.lat,
-            longitude: newLocation.lng,
-            accuracy: undefined,
-            heading: undefined
-        };
-    }
-
-    private setLocationFromMap(event) {
-        let newLocation = event.target.getCenter();
-        this.location.location = {
-            latitude :newLocation.lat,
-            longitude: newLocation.lng,
-            accuracy: undefined,
-            heading: undefined
-        };
-    }
-
-    private attachGPSTools() {
-        this.mapCore.addControl(this.recenterControl).then(() => {
-            this.recenterControl.disable();
-        });
-
-        this.mapCore.addEvent('dblclick', () => this.enableRecenterControl());
-        this.mapCore.addEvent('dragstart', () => this.enableRecenterControl());
-        this.mapCore.addEvent('zoomstart', () => this.enableRecenterControl());
-
-        this.mapCore.addEvent('recenter-control-click', () => this.disableRecenterControl());
-    }
-
-    private detachGPSTools() {
-        this.mapCore.removeEvent('dblclick');
-        this.mapCore.removeEvent('dragstart');
-        this.mapCore.removeEvent('zoomstart');
-        this.mapCore.removeEvent('recenter-control-click');
+    private setLocationFromMapEvent(event) {
+        if (this.location.source == LocationSource.Map) {
+            let newLocation = event.target.getCenter();
+            this.location.location = {
+                latitude: newLocation.lat,
+                longitude: newLocation.lng,
+                accuracy: undefined,
+                heading: undefined
+            };
+        }
     }
 
     private disableRecenterControl() {
-        this.panningWithLocation = true;
+        this.trackingGPSLocation = true;
         this.locationChanged(this.location.location);
         this.recenterControl.disable();
     }
 
     private enableRecenterControl() {
-        if (this.panningWithLocation) {
-            this.panningWithLocation = false;
+        if (this.location.source == LocationSource.GPS) {
+            this.trackingGPSLocation = false;
             this.recenterControl.enable();
         }
     }
