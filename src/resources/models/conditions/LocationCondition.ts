@@ -54,10 +54,9 @@ export class LocationCondition extends BaseCondition {
         }
     }
 
-    fromObject(data = {id: undefined, type: undefined, bool: undefined, location: undefined}) {
+    fromObject(data = {id: undefined, bool: undefined, location: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.type = data.type;
         this.bool = data.bool;
         this.location = data.location;
     }
@@ -65,20 +64,10 @@ export class LocationCondition extends BaseCondition {
     toJSON() {
         return {
             id: this.id,
-            type: this.type,
+            type: "location",
             bool: this.bool,
             location: this.location
         };
-    }
-
-    get type(): string {
-        return this._type;
-    }
-
-    set type(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Type", value);
-        this.typeChecker.validateScalarValue("Type", "location", value);
-        this._type = value;
     }
 
     get bool(): string {

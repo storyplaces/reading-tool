@@ -53,29 +53,18 @@ export class CheckCondition extends BaseCondition{
         }
     }
 
-    fromObject(data = {id: undefined, type: undefined, variable: undefined}) {
+    fromObject(data = {id: undefined, variable: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.type = data.type;
         this.variable = data.variable;
     }
 
     toJSON() {
         return {
             id: this.id,
-            type: this.type,
+            type: "check",
             variable: this.variable
         };
-    }
-
-    get type(): string {
-        return this._type;
-    }
-
-    set type(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Type", value);
-        this.typeChecker.validateScalarValue("Type", "check", value);
-        this._type = value;
     }
 
     get variable(): string {

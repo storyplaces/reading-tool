@@ -51,27 +51,16 @@ export class FalseCondition extends BaseCondition {
         }
     }
 
-    fromObject(data = {id: undefined, type: undefined, variable: undefined}) {
+    fromObject(data = {id: undefined, variable: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.type = data.type;
     }
 
     toJSON() {
         return {
             id: this.id,
-            type: this.type
+            type: "false"
         };
-    }
-
-    get type(): string {
-        return this._type;
-    }
-
-    set type(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Type", value);
-        this.typeChecker.validateScalarValue("Type", "false", value);
-        this._type = value;
     }
 
     execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {

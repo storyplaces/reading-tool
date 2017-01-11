@@ -67,8 +67,10 @@ export class Page extends BaseModel {
         this.conditions = data.conditions;
         this.content = data.content;
         this.pageTransition = data.pageTransition;
-        this.hintLocations = data.hint.locations;
-        this.hintDescription = data.hint.description;
+        if (data.hint) {
+            this.hintLocations = data.hint.locations;
+            this.hintDescription = data.hint.description;
+        }
         this.functions = data.functions;
     }
 
@@ -139,7 +141,7 @@ export class Page extends BaseModel {
     set pageTransition(value: string) {
         this.typeChecker.validateAsStringOrUndefined("Page Transition", value);
 
-        if (value != "next" && value != "end") {
+        if (value != "next" && value != "end" && value != undefined) {
             throw TypeError("Page transition must only be next or end");
         }
 

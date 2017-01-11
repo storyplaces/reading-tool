@@ -62,7 +62,7 @@ describe("TimeRangeCondition", () => {
     });
 
     it("can be created with data", () => {
-        let timeRangeCondition = new TimeRangeCondition(typeChecker, {type: "timerange", variable:"abc", start: "12:23", end: "13:45"});
+        let timeRangeCondition = new TimeRangeCondition(typeChecker, { variable:"abc", start: "12:23", end: "13:45"});
 
         expect(timeRangeCondition instanceof TimeRangeCondition).toBeTruthy();
 
@@ -82,22 +82,6 @@ describe("TimeRangeCondition", () => {
         expect(() => {
             model.fromObject("a" as any)
         }).toThrow();
-    });
-
-    describe("type", () => {
-        it("can be set to comparison", () => {
-            let timeRangeCondition = new TimeRangeCondition(typeChecker);
-            timeRangeCondition.type = "timerange";
-
-            expect(timeRangeCondition.type).toEqual("timerange");
-        });
-
-        it("will throw an error if set to something other than check", () => {
-            let timeRangeCondition = new TimeRangeCondition(typeChecker);
-            expect(() => {
-                timeRangeCondition.type = "somethingRandom"
-            }).toThrow();
-        });
     });
 
     describe("region variable", () => {
@@ -173,7 +157,7 @@ describe("TimeRangeCondition", () => {
             let start = moment().subtract(2, 'm').format("HH:mm");
             let end = moment().add(2, 'm').format("HH:mm");
 
-            let timeRangeCondition = new TimeRangeCondition(typeChecker, {id: "test", type: "timerange", start:start, end:end});
+            let timeRangeCondition = new TimeRangeCondition(typeChecker, {id: "test",  start:start, end:end});
             let result = timeRangeCondition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
             expect(result).toEqual(true);
         });
@@ -182,7 +166,7 @@ describe("TimeRangeCondition", () => {
             let start = moment().subtract(2, 'm').format("HH:mm");
             let end = moment().subtract(4, 'm').format("HH:mm");
 
-            let timeRangeCondition = new TimeRangeCondition(typeChecker, {id: "test", type: "timerange", start:start, end:end});
+            let timeRangeCondition = new TimeRangeCondition(typeChecker, {id: "test",  start:start, end:end});
             let result = timeRangeCondition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
             expect(result).toEqual(true);
         });
@@ -191,7 +175,7 @@ describe("TimeRangeCondition", () => {
             let start = moment().add(2, 'm').format("HH:mm");
             let end = moment().add(3, 'm').format("HH:mm");
 
-            let timeRangeCondition = new TimeRangeCondition(typeChecker, {id: "test", type: "timerange", start:start, end:end});
+            let timeRangeCondition = new TimeRangeCondition(typeChecker, {id: "test",  start:start, end:end});
             let result = timeRangeCondition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
             expect(result).toEqual(false);
         });
@@ -200,7 +184,7 @@ describe("TimeRangeCondition", () => {
             let start = moment().add(2, 'm').format("HH:mm");
             let end = moment().subtract(2, 'm').format("HH:mm");
 
-            let timeRangeCondition = new TimeRangeCondition(typeChecker, {id: "test", type: "timerange", start:start, end:end});
+            let timeRangeCondition = new TimeRangeCondition(typeChecker, {id: "test",  start:start, end:end});
             let result = timeRangeCondition.execute({} as VariableCollection, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
             expect(result).toEqual(false);
         });

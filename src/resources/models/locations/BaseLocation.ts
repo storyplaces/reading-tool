@@ -42,10 +42,5 @@ export abstract class BaseLocation extends BaseModel implements WithinBounds{
         super(typeChecker);
     }
 
-    abstract get type();
-    abstract set type(value: any);
-
-    protected _type: string;
-
     abstract withinBounds(location: LocationInformation): boolean;
 }

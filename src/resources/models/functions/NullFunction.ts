@@ -42,10 +42,7 @@ import {LocationInformation} from "../../gps/LocationInformation";
 
 @inject(TypeChecker)
 
-export class IncrementFunction extends BaseFunction {
-
-    private _variable: string;
-    private _value: string;
+export class NullFunction extends BaseFunction {
 
     constructor(typeChecker: TypeChecker, data?: any) {
         super(typeChecker);
@@ -55,54 +52,21 @@ export class IncrementFunction extends BaseFunction {
         }
     }
 
-    fromObject(data = {id: undefined, variable: undefined, value: undefined, conditions: undefined}) {
+    fromObject(data = {id: undefined, conditions: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.variable = data.variable;
-        this.value = data.value;
         this.conditions = data.conditions;
     }
 
     toJSON() {
         return {
             id: this.id,
-            type: "increment",
-            variable: this.variable,
-            value: this.value,
-            conditions: this.conditions
+            conditions: this.conditions,
+            type: "null"
         };
     }
 
-    get value(): string {
-        return this._value;
-    }
-
-    set value(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Value", value);
-        this._value = value;
-    }
-
-    get variable(): string {
-        return this._variable;
-    }
-
-    set variable(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Value", value);
-        this._variable = value;
-    }
-
     execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
-        if (!this.allConditionsPass(variables, conditions, locations, userLocation)) {
-            return;
-        }
-
-        let variable = variables.get(this.variable) || {id: this.variable, value: "0"};
-
-        let currentValue = parseInt(variable.value);
-        let newValue = currentValue + parseInt(this.value);
-
-        variable.value = newValue.toString();
-        variables.save(variable);
+        return;
     }
-
 }

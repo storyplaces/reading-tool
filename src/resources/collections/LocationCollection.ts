@@ -37,8 +37,9 @@ import {BaseLocation} from "../models/locations/BaseLocation";
 import {TypeFactory} from "../factories/TypeFactory";
 import {CircleLocation} from "../models/locations/CircleLocation";
 import {inject} from "aurelia-framework";
+import {NullLocation} from "../models/locations/NullLocation";
 
-@inject(TypeFactory.withMapping({'circle': CircleLocation}))
+@inject(TypeFactory.withMapping({'circle': CircleLocation, 'null': NullLocation}))
 export class LocationCollection extends BaseCollection<BaseLocation> {
 
     constructor(private locationFactory: (any?) => BaseLocation, data?: any[]) {

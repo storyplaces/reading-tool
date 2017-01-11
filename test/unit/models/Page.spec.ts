@@ -46,15 +46,21 @@ import {FalseCondition} from "../../../src/resources/models/conditions/boolean/F
 describe("Page model", () => {
     let factoryCalledWith;
     let typeChecker: TypeChecker;
+    let conditionCollectionFactoryCalledWith;
 
     // let factory = (data) => {
     //     factoryCalledWith = data;
     //     return data as VariableCollection;
     // };
 
-    let container:Container = new Container().makeGlobal();
+    let conditionCollectionFactory = (data) => {
+        conditionCollectionFactoryCalledWith = data;
+        return undefined;
+    };
 
-    function resolve(object: Function, data? : any) {
+    let container: Container = new Container().makeGlobal();
+
+    function resolve(object: Function, data?: any) {
         return container.invoke(object, [data]);
     }
 
@@ -76,21 +82,21 @@ describe("Page model", () => {
     });
 
     it("can be instantiated with data", () => {
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: [{id: "2"}]});
+        let model = new Page(typeChecker, {id: "1", name: "name", conditions: ["condition2"]});
 
         expect(model.id).toEqual("1");
         expect(model.name).toEqual("name");
-        expect(model.conditions).toEqual([{id: "2"}]);
+        expect(model.conditions).toEqual(["condition2"]);
     });
 
     it("can have an anonymous object passed to it", () => {
         let model = new Page(typeChecker);
 
-        model.fromObject({id: "1", name: "name", conditions: [{id: "2"}]});
+        model.fromObject({id: "1", name: "name", conditions: ["condition2"]});
 
         expect(model.id).toEqual("1");
         expect(model.name).toEqual("name");
-        expect(model.conditions).toEqual([{id: "2"}]);
+        expect(model.conditions).toEqual(["condition2"]);
     });
 
     it("will throw an error if something other than an object is passed to fromObject", () => {
@@ -114,29 +120,29 @@ describe("Page model", () => {
     });
 
     it("can be cast to JSON", () => {
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: [{id: "2"}]});
+        let model = new Page(typeChecker, {id: "1", name: "name", conditions: ["condition1"]});
 
         let result = JSON.stringify(model);
 
-        expect(result).toEqual('{"id":"1","name":"name","conditions":[{"id":"2"}]}');
+        expect(result).toEqual('{"id":"1","name":"name","conditions":["condition1"],"hint":{}}');
     });
 
     it("can have isReadable set and retrieved", () => {
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: [{id: "2"}]});
+        let model = new Page(typeChecker, {id: "1", name: "name", conditions: ["condition1"]});
 
         model.isReadable = true;
         expect(model.isReadable).toEqual(true);
     });
 
     it("can have isViewable set and retrieved", () => {
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: [{id: "2"}]});
+        let model = new Page(typeChecker, {id: "1", name: "name", conditions: ["condition1"]});
 
         model.isViewable = true;
         expect(model.isViewable).toEqual(true);
     });
 
     it("can have isViewable set and retrieved", () => {
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: [{id: "2"}]});
+        let model = new Page(typeChecker, {id: "1", name: "name", conditions: ["condition1"]});
 
         model.isViewable = true;
         expect(model.isViewable).toEqual(true);
@@ -153,12 +159,17 @@ describe("Page model", () => {
     });
 
     it("sets isViewable to true when all conditions are met", () => {
-        let conditions = [resolve(TrueCondition), resolve(TrueCondition), resolve(TrueCondition)];
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditions});
+        let conditions = new ConditionCollection(conditionCollectionFactory, [
+            resolve(TrueCondition, {id: "true1"}),
+            resolve(TrueCondition, {id: "true2"}),
+            resolve(TrueCondition, {id: "true3"}),
+        ]);
+        let conditionsForPage = ["true1", "true2", "true3"];
+        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditionsForPage});
 
         let variables = resolve(VariableCollection, []);
 
-        model.updateViewable(variables, {} as ConditionCollection);
+        model.updateViewable(variables, conditions);
         expect(model.isViewable).toEqual(true);
 
     });
@@ -173,37 +184,70 @@ describe("Page model", () => {
     });
 
     it("sets isReadable to true when all conditions are met", () => {
-        let conditions = [resolve(TrueCondition), resolve(TrueCondition), resolve(TrueCondition)];
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditions});
+        let conditions = new ConditionCollection(conditionCollectionFactory, [
+            resolve(TrueCondition, {id: "true1"}),
+            resolve(TrueCondition, {id: "true2"}),
+            resolve(TrueCondition, {id: "true3"}),
+        ]);
+        let conditionsForPage = ["true1", "true2", "true3"];
+        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditionsForPage});
 
         let variables = resolve(VariableCollection, []);
 
-        model.updateReadable(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
+        model.updateReadable(variables, conditions, {} as LocationCollection, {} as LocationInformation);
         expect(model.isReadable).toEqual(true);
     });
 
     it("sets isViewable to true when all conditions except location conditions are met", () => {
-        let locationCondition = new LocationCondition(typeChecker, {id: "test", type: "location", location: "someLocation", bool: "false"});
-        let conditions = [resolve(TrueCondition), resolve(TrueCondition), resolve(TrueCondition), locationCondition];
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditions});
+        let locationCondition = new LocationCondition(typeChecker, {
+            id: "locationCondition",
+            type: "location",
+            location: "someLocation",
+            bool: "false"
+        });
+        let conditions = new ConditionCollection(conditionCollectionFactory, [
+            resolve(TrueCondition, {id: "true1"}),
+            resolve(TrueCondition, {id: "true2"}),
+            resolve(TrueCondition, {id: "true3"}),
+            locationCondition
+        ]);
+        let conditionsForPage = ["true1", "true2", "true3", "locationCondition"];
+        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditionsForPage});
 
         let variables = resolve(VariableCollection, []);
 
 
-        model.updateViewable(variables, {} as ConditionCollection);
+        model.updateViewable(variables, conditions);
         expect(model.isViewable).toEqual(true);
     });
 
-    it("has sets isReadable to false when all conditions except location conditions are met", () => {
-        let locationCondition = new LocationCondition(typeChecker, {id: "test", type: "location", location: "someLocation", bool: "false"});
-        let locations = container.invoke(LocationCollection, [[{id: "someLocation", type: "circle", lat: 50.9360987, lon: -1.3961843, radius: 6}]]);
-        let conditions = [resolve(TrueCondition), resolve(TrueCondition), resolve(TrueCondition), locationCondition];
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditions});
+    it("sets isReadable to false when all conditions except location conditions are met", () => {
+        let locationCondition = new LocationCondition(typeChecker, {
+            id: "locationCondition",
+            type: "location",
+            location: "someLocation",
+            bool: "false"
+        });
+        let locations = container.invoke(LocationCollection, [[{
+            id: "someLocation",
+            type: "circle",
+            lat: 50.9360987,
+            lon: -1.3961843,
+            radius: 6
+        }]]);
+        let conditions = new ConditionCollection(conditionCollectionFactory, [
+            resolve(TrueCondition, {id: "true1"}),
+            resolve(TrueCondition, {id: "true2"}),
+            resolve(TrueCondition, {id: "true3"}),
+            locationCondition
+        ]);
+        let conditionsForPage = ["true1", "true2", "true3", "locationCondition"];
+        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditionsForPage});
 
         let variables = resolve(VariableCollection, []);
 
 
-        model.updateReadable(variables, {} as ConditionCollection, locations, {
+        model.updateReadable(variables, conditions, locations, {
             latitude: 50.9362792,
             longitude: -1.3962106,
             accuracy: 0,
@@ -212,23 +256,36 @@ describe("Page model", () => {
         expect(model.isReadable).toEqual(false);
     });
 
-    it("has sets isViewable to false when some conditions are unmet", () => {
-        let conditions = [resolve(TrueCondition), resolve(TrueCondition), resolve(TrueCondition), resolve(FalseCondition)];
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditions});
+    it("sets isViewable to false when some conditions are unmet", () => {
+        let conditions = new ConditionCollection(conditionCollectionFactory, [
+            resolve(TrueCondition, {id: "true1"}),
+            resolve(TrueCondition, {id: "true2"}),
+            resolve(TrueCondition, {id: "true3"}),
+            resolve(FalseCondition, {id: "false1"})
+        ]);
+        let conditionsForPage = ["true1", "true2", "true3", "false1"];
+        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditionsForPage});
 
         let variables = resolve(VariableCollection, []);
 
-        model.updateViewable(variables, {} as ConditionCollection);
+        model.updateViewable(variables, conditions);
         expect(model.isViewable).toEqual(false);
     });
 
-    it("has sets isReadable to false when some conditions are unmet", () => {
-        let conditions = [resolve(TrueCondition), resolve(TrueCondition), resolve(TrueCondition), resolve(FalseCondition)];
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditions});
+    it("sets isReadable to false when some conditions are unmet", () => {
+        let conditions = new ConditionCollection(conditionCollectionFactory, [
+            resolve(TrueCondition, {id: "true1"}),
+            resolve(TrueCondition, {id: "true2"}),
+            resolve(TrueCondition, {id: "true3"}),
+            resolve(FalseCondition, {id: "false1"})
+        ]);
+        let conditionsForPage = ["true1", "true2", "true3", "false1"];
+
+        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditionsForPage});
 
         let variables = resolve(VariableCollection, []);
 
-        model.updateReadable(variables, {} as ConditionCollection,  {} as LocationCollection, {} as LocationInformation);
+        model.updateReadable(variables, conditions, {} as LocationCollection, {} as LocationInformation);
         expect(model.isReadable).toEqual(false);
     });
 });

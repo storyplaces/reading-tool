@@ -62,7 +62,7 @@ describe("LogicalCondition", () => {
     });
 
     it("can be created with data", () => {
-        let logicalCondition = new LogicalCondition(typeChecker, {type: "logical", operand: "AND", conditions: ["abc", "def"]});
+        let logicalCondition = new LogicalCondition(typeChecker, { operand: "AND", conditions: ["abc", "def"]});
 
         expect(logicalCondition instanceof LogicalCondition).toBeTruthy();
 
@@ -81,22 +81,6 @@ describe("LogicalCondition", () => {
         expect(() => {
             model.fromObject("a" as any)
         }).toThrow();
-    });
-
-    describe("type", () => {
-        it("can be set to logical", () => {
-            let logicalCondition = new LogicalCondition(typeChecker);
-            logicalCondition.type = "logical";
-
-            expect(logicalCondition.type).toEqual("logical");
-        });
-
-        it("will throw an error if set to something other than check", () => {
-            let logicalCondition = new LogicalCondition(typeChecker);
-            expect(() => {
-                logicalCondition.type = "somethingRandom"
-            }).toThrow();
-        });
     });
 
     describe("operand variable", () => {
@@ -162,19 +146,19 @@ describe("LogicalCondition", () => {
         let conditions = container.invoke(ConditionCollection, [[true1, true2, true3, false1, false2, false3]]);
         
         it("returns true if in AND mode and all conditions are true", () => {
-            let logicalCondition = new LogicalCondition(typeChecker, {id: "test", type: "logical", operand: "AND", conditions: ["true1", "true2", "true3"]});
+            let logicalCondition = new LogicalCondition(typeChecker, {id: "test",  operand: "AND", conditions: ["true1", "true2", "true3"]});
             let result = logicalCondition.execute({} as VariableCollection, conditions, {} as LocationCollection, {} as LocationInformation);
             expect(result).toEqual(true);
         });
 
         it("returns false if in AND mode and one conditions is false", () => {
-            let logicalCondition = new LogicalCondition(typeChecker, {id: "test", type: "logical", operand: "AND", conditions: ["true1", "false1", "true3"]});
+            let logicalCondition = new LogicalCondition(typeChecker, {id: "test",  operand: "AND", conditions: ["true1", "false1", "true3"]});
             let result = logicalCondition.execute({} as VariableCollection, conditions, {} as LocationCollection, {} as LocationInformation);
             expect(result).toEqual(false);
         });
         
         it("throws if the condition doesn't exist", () => {
-            let logicalCondition = new LogicalCondition(typeChecker, {id: "test", type: "logical", conditions: ["somethingOther"]});
+            let logicalCondition = new LogicalCondition(typeChecker, {id: "test",  conditions: ["somethingOther"]});
             expect(() => {
                 logicalCondition.execute({} as VariableCollection, conditions, {} as LocationCollection, {} as LocationInformation);
             }).toThrow();

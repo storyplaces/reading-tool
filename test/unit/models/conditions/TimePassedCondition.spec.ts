@@ -63,7 +63,7 @@ describe("TimePassedCondition", () => {
     });
 
     it("can be created with data", () => {
-        let timePassedCondition = new TimePassedCondition(typeChecker, {type: "timepassed", minutes: 1, variable: "abc"});
+        let timePassedCondition = new TimePassedCondition(typeChecker, { minutes: 1, variable: "abc"});
 
         expect(timePassedCondition instanceof TimePassedCondition).toBeTruthy();
 
@@ -82,22 +82,6 @@ describe("TimePassedCondition", () => {
         expect(() => {
             model.fromObject("a" as any)
         }).toThrow();
-    });
-
-    describe("type", () => {
-        it("can be set to comparison", () => {
-            let timePassedCondition = new TimePassedCondition(typeChecker);
-            timePassedCondition.type = "timepassed";
-
-            expect(timePassedCondition.type).toEqual("timepassed");
-        });
-
-        it("will throw an error if set to something other than check", () => {
-            let timePassedCondition = new TimePassedCondition(typeChecker);
-            expect(() => {
-                timePassedCondition.type = "somethingRandom"
-            }).toThrow();
-        });
     });
 
     describe("region variable", () => {
@@ -140,19 +124,19 @@ describe("TimePassedCondition", () => {
         let variables = container.invoke(VariableCollection, [[{id: "timestamp1", value:fiveMinutesAgo.toString()}]]);
 
         it("returns true if more than the number of minutes have passed since the time in the variable", () => {
-            let timePassedCondition = new TimePassedCondition(typeChecker, {id: "test", type: "timepassed", minutes: 4, variable: "timestamp1"});
+            let timePassedCondition = new TimePassedCondition(typeChecker, {id: "test",  minutes: 4, variable: "timestamp1"});
             let result = timePassedCondition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
             expect(result).toEqual(true);
         });
 
         it("returns false if less than the number of minutes have passed since the time in the variable", () => {
-            let timePassedCondition = new TimePassedCondition(typeChecker, {id: "test", type: "timepassed", minutes: 6, variable: "timestamp1"});
+            let timePassedCondition = new TimePassedCondition(typeChecker, {id: "test",  minutes: 6, variable: "timestamp1"});
             let result = timePassedCondition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
             expect(result).toEqual(false);
         });
 
         it("throws if the condition doesn't exist", () => {
-            let timePassedCondition = new TimePassedCondition(typeChecker, {id: "test", type: "timepassed", minutes: 6, variable: "somethingElse"});
+            let timePassedCondition = new TimePassedCondition(typeChecker, {id: "test",  minutes: 6, variable: "somethingElse"});
             expect(() => {
                 timePassedCondition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
             }).toThrow();

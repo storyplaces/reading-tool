@@ -76,20 +76,6 @@ describe("CircleLocation", () => {
         }).toThrow();
     });
 
-    it("can have its type set to circle", () => {
-        let circleLocation = new CircleLocation(typeChecker, locationHelper);
-        circleLocation.type = "circle";
-
-        expect(circleLocation.type).toEqual("circle");
-    });
-
-    it("will throw an error if its type is set to something other than comparison", () => {
-        let circleLocation = new CircleLocation(typeChecker, locationHelper);
-        expect(() => {
-            circleLocation.type = "somethingRandom"
-        }).toThrow();
-    });
-
     it("can have its lat set to a number", () => {
         let circleLocation = new CircleLocation(typeChecker, locationHelper);
         circleLocation.lat = 123;
@@ -131,14 +117,14 @@ describe("CircleLocation", () => {
 
     describe("method withinBounds", () => {
         it("returns true when passed a location is within bounds", () => {
-            let circleLocation = new CircleLocation(typeChecker, locationHelper, {id:"location", type: "circle", lat: 50.9360987, lon: -1.3961843, radius: 6});
+            let circleLocation = new CircleLocation(typeChecker, locationHelper, {id:"location", lat: 50.9360987, lon: -1.3961843, radius: 6});
             let result = circleLocation.withinBounds({latitude: 50.9361435, longitude: -1.3961910, accuracy:0, heading: 0});
 
             expect(result).toEqual(true);
         });
 
         it("returns false when passed a location outside the  bounds", () => {
-            let circleLocation = new CircleLocation(typeChecker, locationHelper, {id:"location", type: "circle", lat: 50.9360987, lon: -1.3961843, radius: 6});
+            let circleLocation = new CircleLocation(typeChecker, locationHelper, {id:"location", lat: 50.9360987, lon: -1.3961843, radius: 6});
             let result = circleLocation.withinBounds({latitude: 50.9362792, longitude: -1.3962106, accuracy:0, heading: 0});
 
             expect(result).toEqual(false);

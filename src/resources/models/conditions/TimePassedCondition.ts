@@ -55,10 +55,9 @@ export class TimePassedCondition extends BaseCondition {
         }
     }
 
-    fromObject(data = {id: undefined, type: undefined, variable: undefined, minutes: undefined}) {
+    fromObject(data = {id: undefined, variable: undefined, minutes: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.type = data.type;
         this.variable = data.variable;
         this.minutes = data.minutes;
     }
@@ -66,20 +65,10 @@ export class TimePassedCondition extends BaseCondition {
     toJSON() {
         return {
             id: this.id,
-            type: this.type,
+            type: "timepassed",
             variable: this.variable,
             minutes: this.minutes
         };
-    }
-
-    get type(): string {
-        return this._type;
-    }
-
-    set type(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Type", value);
-        this.typeChecker.validateScalarValue("Type", "timepassed", value);
-        this._type = value;
     }
 
     get variable(): string {
