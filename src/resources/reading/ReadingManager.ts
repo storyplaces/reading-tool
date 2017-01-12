@@ -82,6 +82,7 @@ export class ReadingManager {
     private attachListeners() {
         this.variableSub = this.bindingEngine.collectionObserver(this.reading.variables.all).subscribe(() => this.updateStatus());
         this.locationSub = this.bindingEngine.propertyObserver(this.locationManager, 'location').subscribe(() => this.updateStatus());
+        window.setInterval(() => this.updateStatus(), 60 * 1000);
     }
 
     private detachListeners() {
@@ -97,6 +98,7 @@ export class ReadingManager {
     }
 
     private updateStatus() {
+        console.log("updating page status");
         this.story.pages.forEach(page => {
             page.updateStatus(this.reading.variables, this.story.conditions, this.story.locations, this.locationManager.location);
         });
