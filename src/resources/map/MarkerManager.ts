@@ -42,8 +42,7 @@ import {Page} from "../models/Page";
 import {CircleLocation} from "../models/locations/CircleLocation";
 import {StatefulMarker} from "./interfaces/StatefulMarker";
 import {ReadingManager} from "../reading/ReadingManager";
-import CircleMarker = L.CircleMarker;
-import marker = L.marker;
+import {PopupMarker} from "./interfaces/PopupMarker";
 
 @inject(MapCore, BindingEngine, Factory.of(StatusMarker))
 export class MarkerManager {
@@ -51,7 +50,7 @@ export class MarkerManager {
     private story: Story;
     private readingManager: ReadingManager;
     private pagesSub: Disposable;
-    private markers: Array<StatefulMarker & MapMarker> = [];
+    private markers: Array<StatefulMarker & MapMarker & PopupMarker> = [];
 
     constructor(private mapCore: MapCore,
                 private bindingEngine: BindingEngine,
@@ -91,6 +90,8 @@ export class MarkerManager {
                     marker = this.statusMakerFactory(location.lat, location.lon, page.isReadable);
                     marker.pageId = page.id;
                 }
+
+                marker.popupText = `<p><b>${page.name}</b></p>${page.hintDirection}`;
 
                 this.markers.push(marker);
             });

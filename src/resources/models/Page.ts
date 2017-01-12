@@ -47,7 +47,7 @@ export class Page extends BaseModel {
     private _conditions: Array<string>;
     private _content: string;
     private _pageTransition: string;
-    private _hintDescription: string;
+    private _hintDirection: string;
     private _hintLocations: Array<string>;
     private _functions: Array<string>
 
@@ -65,7 +65,7 @@ export class Page extends BaseModel {
         conditions: undefined,
         content: undefined,
         pageTransition: undefined,
-        hint: {locations: undefined, description: undefined},
+        hint: {locations: undefined, direction: undefined},
         functions: undefined
     }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
@@ -76,7 +76,7 @@ export class Page extends BaseModel {
         this.pageTransition = data.pageTransition;
         if (data.hint) {
             this.hintLocations = data.hint.locations;
-            this.hintDescription = data.hint.description;
+            this.hintDirection = data.hint.direction;
         }
         this.functions = data.functions;
     }
@@ -90,7 +90,7 @@ export class Page extends BaseModel {
             functions: this.functions,
             pageTransition: this.pageTransition,
             hint: {
-                description: this.hintDescription,
+                direction: this.hintDirection,
                 locations: this.hintLocations
             }
         }
@@ -132,13 +132,13 @@ export class Page extends BaseModel {
         this._hintLocations = value;
     }
 
-    get hintDescription(): string {
-        return this._hintDescription;
+    get hintDirection(): string {
+        return this._hintDirection;
     }
 
-    set hintDescription(value: string) {
+    set hintDirection(value: string) {
         this.typeChecker.validateAsStringOrUndefined("Hint Text", value);
-        this._hintDescription = value;
+        this._hintDirection = value;
     }
 
     get pageTransition(): string {

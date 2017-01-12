@@ -39,15 +39,17 @@ import {GreenIcon} from "../icons/GreenIcon";
 import {RedIcon} from "../icons/RedIcon";
 import {MapIcon} from "../../mapping/icons/MapIcon";
 import {StatefulMarker} from "../interfaces/StatefulMarker";
+import {PopupMarker} from "../interfaces/PopupMarker";
 
 @inject(MapMarkerDefaults, RedIcon, GreenIcon)
-export class StatusMarker extends MapMarker implements StatefulMarker{
+export class StatusMarker extends MapMarker implements StatefulMarker, PopupMarker{
+
     public pageId: string;
 
     private redIcon: MapIcon;
     private greenIcon: MapIcon;
 
-    constructor(markerDefaults: MapMarkerDefaults, redIcon: RedIcon, greenIcon: GreenIcon, latitude: number, longitude: number, state: boolean) {
+    constructor(markerDefaults: MapMarkerDefaults, redIcon: RedIcon, greenIcon: GreenIcon, latitude: number, longitude: number, state: boolean, popupText: string) {
         super(markerDefaults, latitude, longitude, {icon: redIcon.leafletIcon});
         this.redIcon = redIcon;
         this.greenIcon = greenIcon;
@@ -56,5 +58,10 @@ export class StatusMarker extends MapMarker implements StatefulMarker{
 
     set state(state: boolean) {
         this.icon = state ? this.greenIcon : this.redIcon;
+    }
+
+    set popupText(text: string) {
+        this.marker.unbindPopup();
+        this.marker.bindPopup(text);
     }
 }
