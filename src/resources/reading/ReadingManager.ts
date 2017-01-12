@@ -70,6 +70,10 @@ export class ReadingManager {
                     this.attachListeners();
                     this.updateStatus();
                 }
+                // Start the reading if it has not already been started.
+                if (this.reading.state == "notstarted") {
+                    this.startReading();
+                }
             });
     }
 
@@ -108,5 +112,20 @@ export class ReadingManager {
 
     executePageFunctions(page: Page) {
         page.executeFunctions(this.reading.variables, this.story.conditions, this.story.locations, this.locationManager.location, this.story.functions);
+        this.saveReading();
+    }
+
+    saveReading() {
+        this.readingConnector.save(this.reading);
+    }
+
+    startReading() {
+        this.reading.state = "inprogress";
+        this.saveReading();
+    }
+
+    closeReading() {
+        this.reading.state = "closed";
+        this.saveReading();
     }
 }

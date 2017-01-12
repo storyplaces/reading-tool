@@ -4,6 +4,8 @@ import {Reading} from "../models/Reading";
 import {ReadingAPI} from "./ReadingAPI";
 
 import {ReadingCollection} from "../collections/ReadingCollection";
+
+import moment = require('moment');
 /**
  * Created by andy on 09/12/16.
  */
@@ -60,6 +62,7 @@ export class ReadingConnector extends AbstractConnector<Reading> {
     }
 
     save(object: Reading): Promise<Reading> {
+        object.timestamp = moment().unix();
         return this.storyplacesAPI.save(object).then(reading => {
             return reading.json().then (reading => {
                 this.readingCollection.save(reading);

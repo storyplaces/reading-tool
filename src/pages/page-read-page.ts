@@ -21,9 +21,19 @@ export class PageReadPage {
         return this.readingManager.story.pages.get(this.pageId);
     }
 
+    get nextPageText(): string{
+        return this.page.pageTransition == "next" ? "Continue Reading" : "Finish Reading";
+    }
+
     callPageFunctions() {
         this.readingManager.executePageFunctions(this.page);
-        this.router.navigateBack();
+        if (this.page.pageTransition == "next") {
+            this.router.navigateBack();
+        } else {
+            // If it's the end of the story just go back to the home screen.
+            this.router.navigateToRoute('home');
+            this.readingManager.closeReading();
+        }
     }
 
     activate(params) {

@@ -40,23 +40,28 @@ import {TypeChecker} from "../utilities/TypeChecker";
 @inject(Factory.of(VariableCollection), TypeChecker)
 export class Reading extends BaseModel {
 
+
     private _variables: VariableCollection;
     private _userId: string;
     private _storyId: string;
     private _name: string;
+    private _state: string;
+    private _timestamp: number;
 
     constructor(private variableCollectionFactory: (any?) => VariableCollection, typeChecker: TypeChecker, data?: any) {
         super(typeChecker);
         this.fromObject(data);
     }
 
-    fromObject(data: any = {id: undefined, readingId: undefined, userId: undefined, variables: undefined, name:undefined}) {
+    fromObject(data: any = {id: undefined, readingId: undefined, userId: undefined, variables: undefined, name:undefined, state:undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
         this.storyId = data.storyId;
         this.userId = data.userId;
         this.name = data.name;
         this.variables = this.variableCollectionFactory(data.variables);
+        this.state = (data.state || "notstarted");
+        this.timestamp = data.timestamp;
     }
 
     toJSON() {
@@ -66,7 +71,21 @@ export class Reading extends BaseModel {
             storyId: this.storyId,
             userId: this.userId,
             variables: this.variables,
+            state: this.state,
+            timestamp: this.timestamp,
         }
+    }
+
+    get state(): string {
+        return this._state;
+    }
+
+    set state(value: string) {
+        this.typeChecker.validateAsStringOrUndefined('State', value);
+        if (value != "closed" && value != "notstarted" && value != "inprogress"){
+            throw TypeError("State can only be set to 'closed', 'notstarted' or 'inprogress'.")
+        }
+        this._state = value;
     }
 
     get name(): string {
@@ -76,6 +95,15 @@ export class Reading extends BaseModel {
     set name(value: string) {
         this.typeChecker.validateAsStringOrUndefined('Name', value);
         this._name = value;
+    }
+
+    get timestamp(): number {
+        return this._timestamp;
+    }
+
+    set timestamp(value: number) {
+        this.typeChecker.validateAsNumberOrUndefined('Time', value);
+        this._timestamp = value;
     }
 
     get storyId(): string {
@@ -104,4 +132,5 @@ export class Reading extends BaseModel {
         this.typeChecker.validateAsObjectOrUndefined("Variables", value, "VariableCollection", VariableCollection);
         this._variables = value;
     }
+
 }

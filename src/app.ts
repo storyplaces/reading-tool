@@ -54,7 +54,7 @@ export class App {
 
         config.map([
             {route: '/', name: 'home', moduleId: 'pages/story-overview-page', title: 'Story List'},
-            {route: '/tag/:tag', name: 'home', moduleId: 'pages/story-overview-page', title: 'Story List'},
+            {route: '/tag/:tag', name: 'tag', moduleId: 'pages/story-overview-page', title: 'Story List'},
             {route: '/story/:storyId', moduleId: 'pages/story-detail-page', title: 'Story', name: 'story-detail'},
             {route: '/story/:storyId/:readingId', moduleId: 'pages/story-reading-page', title: 'Reading', name: 'story-reading'},
             {route: '/story/:storyId/:readingId/:pageId', moduleId: 'pages/page-read-page', title: 'Page', name: 'page-read'}

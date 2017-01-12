@@ -51,12 +51,15 @@ export class StoryPlacesAPI {
 
     save(object: Identifiable): Promise<Response> {
         let method;
+        let path;
         if (typeof object.id !== 'undefined') {
             method = 'put';
+            path = this._path + object.id;
         } else {
             method = 'post';
+            path = this._path;
         }
-        return this.client.fetch(this._path, {
+        return this.client.fetch(path, {
             method: method,
             body: JSON.stringify(object)
         });

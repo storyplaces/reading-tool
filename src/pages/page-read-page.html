@@ -33,10 +33,9 @@
   -->
 
 <template>
-
     <div class="row content-full">
         <h4 class="list-group-item-heading text-left">${page.name}</h4>
-        <p>${page.content}</p>
-        <button type="text" click.trigger="callPageFunctions()">Finish Reading</button>
+        <p innerHtml.bind="page.content | sanitizeHTML"></p>
+        <button type="text" click.trigger="callPageFunctions()">${nextPageText}</button>
     </div>
 </template>

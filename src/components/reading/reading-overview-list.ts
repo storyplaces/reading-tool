@@ -1,5 +1,5 @@
 import {Reading} from "../../resources/models/Reading";
-import {bindable, computedFrom, inject, Factory, BindingEngine, Disposable} from "aurelia-framework";
+import {bindable, inject, Factory, BindingEngine, Disposable} from "aurelia-framework";
 import {ReadingConnector} from "../../resources/store/ReadingConnector";
 import {Authenticator} from "../../resources/auth/Authenticator";
 /**
@@ -25,17 +25,21 @@ export class ReadingOverviewListCustomElement {
 
     readings: Array<Reading> = [];
 
-    subscription : Disposable;
+    subscription: Disposable;
 
     attached() {
-        this.readings = this.readingConnector.byStoryId(this.storyId);
+        this.getOpenReadings();
         this.subscription = this.bindingEngine
             .collectionObserver(this.readingConnector.all)
             .subscribe(() => {
-                    this.readings = this.readingConnector.byStoryId(this.storyId);
+                    this.getOpenReadings();
                 }
             );
         this.refresh();
+    }
+
+    getOpenReadings() {
+        this.readings = this.readingConnector.byStoryId(this.storyId).filter(reading => reading.state != "closed");
     }
 
     detached() {
