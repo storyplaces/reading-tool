@@ -34,7 +34,7 @@
 
 <template>
     <a route-href="route: story-detail; params.bind: { storyId: story.id}" class="list-group-item">
-        <h4 class="list-group-item-heading">${story.name}<small> - ${story.author}</small></h4>
+        <h4 class="list-group-item-heading">${story.name}<small><br>${story.author}</small></h4>
         <div class=" list-group-item-text ">
             <!--TODO: Make this behave a bit better on narrow screens-->
             <span if.bind="story.audience == 'family'" class="label label-success">Family Friendly</span>
