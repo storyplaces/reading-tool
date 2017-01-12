@@ -35,9 +35,9 @@
 <template>
     <a route-href="route: page-read; params.bind: {pageId: page.id, storyId: storyId, readingId: readingId}"
        class="list-group-item list-group-item-success" if.bind="page.isReadable">
-        <h4 class="list-group-item-heading text-left">${page.name}</h4>
+        ${page.name}
     </a>
     <li class="list-group-item list-group-item-danger" if.bind="!page.isReadable">
-        <h4 class="list-group-item-heading text-left">${page.name}</h4>
+        ${page.name} - <small>${page.hintDirection}</small>
     </li>
 </template>
