@@ -53,10 +53,9 @@ export class CircleLocation extends BaseLocation{
         }
     }
 
-    fromObject(data = {id: undefined, type: undefined, lon: undefined, lat: undefined, radius: undefined}) {
+    fromObject(data = {id: undefined, lon: undefined, lat: undefined, radius: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.type = data.type;
         this.lon = data.lon;
         this.lat = data.lat;
         this.radius = data.radius
@@ -65,21 +64,11 @@ export class CircleLocation extends BaseLocation{
     toJSON() {
         return {
             id: this.id,
-            type: this.type,
+            type: "circle",
             lat: this.lat,
             lon: this.lon,
             radius: this.radius
         };
-    }
-
-    get type(): string {
-        return this._type;
-    }
-
-    set type(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Type", value);
-        this.typeChecker.validateScalarValue("Type", "circle", value);
-        this._type = value;
     }
 
     get radius(): number {
