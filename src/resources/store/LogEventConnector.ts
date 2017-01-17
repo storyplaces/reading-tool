@@ -1,20 +1,19 @@
-import {AbstractConnector} from "./AbstractConnector";
 import {inject, NewInstance} from "aurelia-framework";
-import {StoryPlacesAPI} from "./StoryplacesAPI";
 import {LogEvent} from "../models/LogEvent";
 import {LocalStore} from "./LocalStore";
 import moment = require('moment');
+import {LogEventAPI} from "./LogEventAPI";
 /**
  * Created by andy on 09/12/16.
  */
 
-@inject(NewInstance.of(StoryPlacesAPI), LocalStore)
+@inject(NewInstance.of(LogEventAPI), LocalStore)
 export class LogEventConnector {
 
     private toBeSaved: Array<LogEvent>;
 
-    constructor(private storyplacesAPI: StoryPlacesAPI, private localStore: LocalStore) {
-        this.storyplacesAPI.path = "/logevent/";
+    constructor(private logEventAPI: LogEventAPI, private localStore: LocalStore) {
+        this.logEventAPI.path = "/logevent/";
         this.toBeSaved = [];
     }
 
@@ -27,7 +26,7 @@ export class LogEventConnector {
         let sequence = Promise.resolve();
         this.toBeSaved.forEach((logEvent) => {
             sequence = sequence.then(() => {
-                this.storyplacesAPI.save(logEvent).then(response => {
+                this.logEventAPI.saveLogEvent(logEvent).then(response => {
                     this.removeFromToBeSaved(logEvent);
                 });
             });

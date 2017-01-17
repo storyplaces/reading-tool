@@ -66,7 +66,7 @@ export class NullFunction extends BaseFunction {
         };
     }
 
-    execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
+    execute(storyId: string, readingId: string, variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
         return;
     }
 }

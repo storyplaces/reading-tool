@@ -43,8 +43,11 @@ export class PageReadPage {
         this.storyId = params.storyId;
         this.readingId = params.readingId;
         this.pageId = params.pageId;
-        this.loggingHelper.logPageRead(this.storyId, this.readingId, this.pageId, this.page.name);
-        return this.readingManager.attach(this.storyId, this.readingId, false);
+        return this.readingManager.attach(this.storyId, this.readingId, false).then(() => {
+            this.loggingHelper.logPageRead(this.storyId, this.readingId, this.pageId, this.page.name);
+        });
+
+
     }
 
 
@@ -60,7 +63,7 @@ export class PageReadPage {
     private parseImageCachedMedia() {
         let imageElements = this.contentElement.querySelectorAll("img[data-media-id]");
 
-        for(let index = 0; index < imageElements.length; index++) {
+        for (let index = 0; index < imageElements.length; index++) {
             this.setSrcOnMediaItem(imageElements.item(index));
         }
     }
@@ -68,7 +71,7 @@ export class PageReadPage {
     private parseAudioCachedMedia() {
         let audioElements = this.contentElement.querySelectorAll("audio[data-media-id]");
 
-        for(let index = 0; index < audioElements.length; index++) {
+        for (let index = 0; index < audioElements.length; index++) {
             let element = audioElements.item(index);
             this.setSrcOnMediaItem(element);
             element.setAttribute("controls", "");
