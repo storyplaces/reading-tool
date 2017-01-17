@@ -128,7 +128,7 @@ describe("StoryPlacesAPI", () => {
         api.save(testObjectNoId).then((result) => {
             expect(result).toEqual(new Response("[]"));
             expect(client.fetch).toHaveBeenCalledTimes(1);
-            expect(client.fetch).toHaveBeenCalledWith(api.path, {
+            expect(client.fetch).toHaveBeenCalledWith(api.path + testObjectNoId.id.toString(), {
                 method: "put",
                 body: JSON.stringify(testObjectNoId.toJSON())
             });

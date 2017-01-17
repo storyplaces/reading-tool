@@ -74,7 +74,7 @@ describe('StorySummary', () => {
     it('sets the title and subtitle correctly', done => {
         component.create(bootstrap).then(() => {
             const titleElement = document.querySelector("h4");
-            expect(titleElement.innerHTML).toEqual("test-name<small> - test-author</small>");
+            expect(titleElement.innerHTML).toEqual("test-name<small><br>test-author</small>");
             done();
         });
     });
