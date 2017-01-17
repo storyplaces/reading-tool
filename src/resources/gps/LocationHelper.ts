@@ -6,7 +6,7 @@ import {CircleLocation} from "../models/locations/CircleLocation";
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) $today.year
+ Copyright (c) 2017
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
