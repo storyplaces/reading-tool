@@ -39,6 +39,7 @@ import {Story} from "../models/Story";
 import {StoryConnector} from "../store/StoryConnector";
 import {ReadingConnector} from "../store/ReadingConnector";
 import {Page} from "../models/Page";
+import {CachedMediaConnector} from "../store/CachedMediaConnector";
 
 @autoinject()
 export class ReadingManager {
@@ -48,10 +49,11 @@ export class ReadingManager {
 
     private variableSub: Disposable;
     private locationSub: Disposable;
+    private timeSub: number;
 
     viewablePages: Array<Page>;
 
-    constructor(private locationManager: LocationManager, private storyConnector: StoryConnector, private readingConnector: ReadingConnector, private bindingEngine: BindingEngine) {
+    constructor(private locationManager: LocationManager, private storyConnector: StoryConnector, private readingConnector: ReadingConnector, private bindingEngine: BindingEngine, private cachedMediaConnector: CachedMediaConnector) {
     }
 
     attach(storyId: string, readingId: string, withUpdates: boolean = true) {
@@ -74,6 +76,7 @@ export class ReadingManager {
                 if (this.reading.state == "notstarted") {
                     this.startReading();
                 }
+                this.cachedMediaConnector.fetchForStory(this.story);
             });
     }
 
@@ -86,7 +89,7 @@ export class ReadingManager {
     private attachListeners() {
         this.variableSub = this.bindingEngine.collectionObserver(this.reading.variables.all).subscribe(() => this.updateStatus());
         this.locationSub = this.bindingEngine.propertyObserver(this.locationManager, 'location').subscribe(() => this.updateStatus());
-        window.setInterval(() => this.updateStatus(), 60 * 1000);
+        this.timeSub = window.setInterval(() => this.updateStatus(), 60 * 1000);
     }
 
     private detachListeners() {
@@ -98,6 +101,11 @@ export class ReadingManager {
         if (this.locationSub) {
             this.locationSub.dispose();
             this.locationSub = undefined;
+        }
+
+        if (this.timeSub) {
+            clearInterval(this.timeSub);
+            this.timeSub = undefined;
         }
     }
 
