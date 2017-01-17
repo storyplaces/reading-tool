@@ -33,16 +33,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import IconOptions = L.IconOptions;
-import PointTuple = L.PointTuple;
-
-export class MapIconDefaults implements IconOptions {
-    iconUrl = '/images/icons/marker-icon.png';
-    iconRetinaUrl = '/images/icons/marker-icon-2x.png';
-    shadowUrl = '/images/icons/marker-shadow.png';
-    iconSize = [25, 41] as PointTuple;
-    iconAnchor = [12, 41] as PointTuple;
-    popupAnchor = [1, -34] as PointTuple;
-    tooltipAnchor = [16, -28] as PointTuple;
-    shadowSize = [41, 41] as PointTuple;
+export interface CachedMediaItem {
+    contentType: string,
+    content: string
 }

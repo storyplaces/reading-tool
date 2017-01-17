@@ -1,4 +1,4 @@
-import {LocationHelper} from "../../src/resources/gps/LocationHelper";
+import {LocationHelper} from "../../../src/resources/gps/LocationHelper";
 
 /*******************************************************************
  *

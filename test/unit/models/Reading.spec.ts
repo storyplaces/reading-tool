@@ -97,14 +97,9 @@ describe("Reading model", () => {
 
     it("will throw an error when readingId is set to something other than a string or undefined", () => {
         let model = new Reading(factory, typeChecker);
-
-<<<<<<< HEAD
-        expect(() => {model.storyId = 1 as any}).toThrow();
-=======
         expect(() => {
-            model.readingId = 1 as any
+            model.id = 1 as any
         }).toThrow();
->>>>>>> a8f1422e075730168784ff7760e33f4943c3c59a
     });
 
     it("will throw an error when userId is set to something other than a string or undefined", () => {
@@ -115,6 +110,30 @@ describe("Reading model", () => {
         }).toThrow();
     });
 
+    describe("variable state", () => {
+        it("can be set to notstarted", () => {
+            let model = new Reading(factory, typeChecker);
+            model.state = "notstarted";
+            expect(model.state).toEqual("notstarted");
+        });
+
+        it("can be set to inprogress", () => {
+            let model = new Reading(factory, typeChecker);
+            model.state = "inprogress";
+            expect(model.state).toEqual("inprogress");
+        });
+
+        it("can be set to finished", () => {
+            let model = new Reading(factory, typeChecker);
+            model.state = "closed";
+            expect(model.state).toEqual("closed");
+        });
+
+        it("will throw when set to something else", () => {
+            let model = new Reading(factory, typeChecker);
+            expect(() => {model.state = "something random";}).toThrow();
+        });
+    });
 
     it("will throw an error when variables is set to something other than an instance of VariableCollection", () => {
         let model = new Reading(factory, typeChecker);
@@ -130,6 +149,6 @@ describe("Reading model", () => {
         let result = JSON.stringify(model);
 
         //TODO: Make this a better test as variables is missed off
-        expect(result).toEqual('{"id":"1","storyId":"reading","userId":"user"}');
+        expect(result).toEqual('{"id":"1","storyId":"reading","userId":"user","state":"notstarted"}');
     });
 });

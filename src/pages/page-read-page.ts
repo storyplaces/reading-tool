@@ -6,6 +6,7 @@ import {Page} from "../resources/models/Page";
 import {ReadingManager} from "../resources/reading/ReadingManager";
 import {Router} from "aurelia-router";
 import {LoggingHelper} from "../resources/logging/LoggingHelper";
+import {CachedMediaConnector} from "../resources/store/CachedMediaConnector";
 
 @autoinject()
 export class PageReadPage {
@@ -13,8 +14,9 @@ export class PageReadPage {
     private readingId: string;
     private pageId: string;
 
+    contentElement: HTMLElement;
 
-    constructor(private readingManager: ReadingManager, private router: Router, private loggingHelper: LoggingHelper) {
+    constructor(private readingManager: ReadingManager, private router: Router, private loggingHelper: LoggingHelper, private cachedMediaConnector: CachedMediaConnector) {
     }
 
     @computedFrom('pageId', 'storyId')
@@ -50,5 +52,35 @@ export class PageReadPage {
         return this.readingManager.detach();
     }
 
+    attached() {
+        this.parseImageCachedMedia();
+        this.parseAudioCachedMedia();
+    }
+
+    private parseImageCachedMedia() {
+        let imageElements = this.contentElement.querySelectorAll("img[data-media-id]");
+
+        for(let index = 0; index < imageElements.length; index++) {
+            this.setSrcOnMediaItem(imageElements.item(index));
+        }
+    }
+
+    private parseAudioCachedMedia() {
+        let audioElements = this.contentElement.querySelectorAll("audio[data-media-id]");
+
+        for(let index = 0; index < audioElements.length; index++) {
+            let element = audioElements.item(index);
+            this.setSrcOnMediaItem(element);
+            element.setAttribute("controls", "");
+        }
+    }
+
+    private setSrcOnMediaItem(element: Element) {
+        let mediaId = element.getAttribute("data-media-id");
+        let mediaSrc = this.cachedMediaConnector.getItemSrc(this.storyId, parseInt(mediaId));
+        if (mediaSrc) {
+            element.setAttribute("src", mediaSrc);
+        }
+    }
 
 }
