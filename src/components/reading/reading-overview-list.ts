@@ -2,6 +2,7 @@ import {Reading} from "../../resources/models/Reading";
 import {bindable, inject, Factory, BindingEngine, Disposable} from "aurelia-framework";
 import {ReadingConnector} from "../../resources/store/ReadingConnector";
 import {Authenticator} from "../../resources/auth/Authenticator";
+import {LoggingHelper} from "../../resources/logging/LoggingHelper";
 /**
  * Created by andy on 28/11/16.
  */
@@ -10,14 +11,16 @@ import {Authenticator} from "../../resources/auth/Authenticator";
     ReadingConnector,
     Factory.of(Reading),
     BindingEngine,
-    Authenticator
+    Authenticator,
+    LoggingHelper
 )
 export class ReadingOverviewListCustomElement {
 
     constructor(private readingConnector: ReadingConnector,
                 private readingFactory: (any?) => Reading,
                 private bindingEngine: BindingEngine,
-                private auth: Authenticator) {
+                private auth: Authenticator,
+                private loggingHelper: LoggingHelper) {
 
     }
 
@@ -50,6 +53,7 @@ export class ReadingOverviewListCustomElement {
         var readingName = "Reading " + (this.readings.length + 1);
         var reading = this.readingFactory({storyId: this.storyId, userId: this.auth.userId, name: readingName});
         this.readingConnector.save(reading);
+        this.loggingHelper.logNewReading(this.storyId);
         this.refresh();
     }
 

@@ -40,14 +40,15 @@ import {ConditionCollection} from "../../collections/ConditionCollection";
 import {LocationCollection} from "../../collections/LocationCollection";
 import {LocationInformation} from "../../gps/LocationInformation";
 import moment = require('moment');
+import {LoggingHelper} from "../../logging/LoggingHelper";
 
-@inject(TypeChecker)
+@inject(TypeChecker, LoggingHelper)
 
 export class SetTimeStampFunction extends BaseFunction {
 
     private _variable: string;
 
-    constructor(typeChecker: TypeChecker, data?: any) {
+    constructor(typeChecker: TypeChecker, private loggingHelper: LoggingHelper, data?: any) {
         super(typeChecker);
 
         if (data) {
@@ -80,7 +81,7 @@ export class SetTimeStampFunction extends BaseFunction {
         this._variable = value;
     }
 
-    execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
+    execute(storyId: string, readingId: string, variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
         if (!this.allConditionsPass(variables, conditions, locations, userLocation)) {
             return;
         }
@@ -89,5 +90,6 @@ export class SetTimeStampFunction extends BaseFunction {
 
         variable.value = moment().unix().toString();
         variables.save(variable);
+        this.loggingHelper.logChangeVariable(storyId, readingId, variable.id, variable.value);
     }
 }

@@ -4,7 +4,8 @@
 import {autoinject, computedFrom} from "aurelia-framework";
 import {Page} from "../resources/models/Page";
 import {ReadingManager} from "../resources/reading/ReadingManager";
-import {Router} from 'aurelia-router';
+import {Router} from "aurelia-router";
+import {LoggingHelper} from "../resources/logging/LoggingHelper";
 
 @autoinject()
 export class PageReadPage {
@@ -13,7 +14,7 @@ export class PageReadPage {
     private pageId: string;
 
 
-    constructor(private readingManager: ReadingManager, private router: Router) {
+    constructor(private readingManager: ReadingManager, private router: Router, private loggingHelper: LoggingHelper) {
     }
 
     @computedFrom('pageId', 'storyId')
@@ -21,7 +22,7 @@ export class PageReadPage {
         return this.readingManager.story.pages.get(this.pageId);
     }
 
-    get nextPageText(): string{
+    get nextPageText(): string {
         return this.page.pageTransition == "next" ? "Continue Reading" : "Finish Reading";
     }
 
@@ -40,7 +41,7 @@ export class PageReadPage {
         this.storyId = params.storyId;
         this.readingId = params.readingId;
         this.pageId = params.pageId;
-
+        this.loggingHelper.logPageRead(this.storyId, this.readingId, this.pageId, this.page.name);
         return this.readingManager.attach(this.storyId, this.readingId, false);
     }
 

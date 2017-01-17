@@ -32,41 +32,71 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {TypeChecker} from "../../utilities/TypeChecker";
-import {BaseModel} from "../BaseModel";
-import {VariableCollection} from "../../collections/VariableCollection";
-import {ConditionCollection} from "../../collections/ConditionCollection";
-import {LocationCollection} from "../../collections/LocationCollection";
-import {LocationInformation} from "../../gps/LocationInformation";
-import {ExecutableFunction} from "../../interfaces/ExecutableFunction";
+import {inject} from "aurelia-framework";
+import {TypeChecker} from "../utilities/TypeChecker";
 
-export abstract class BaseFunction extends BaseModel implements ExecutableFunction {
-    private _conditions: Array<string>;
 
-    constructor(typeChecker: TypeChecker) {
-        super(typeChecker);
+@inject(TypeChecker)
+export class LogEvent {
+
+    private _userId: string;
+    private _date: string;
+    private _type: string;
+    private _data: Object;
+
+    constructor(private typeChecker: TypeChecker, data?: any) {
+        this.fromObject(data);
     }
 
-    get conditions(): Array<string> {
-        return this._conditions;
+    fromObject(data: any = {userId: undefined, type: undefined, date: undefined, data: undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.userId = data.userId;
+        this.type = data.type;
+        this.date = data.date;
+        this.data = data.data;
+
     }
 
-    set conditions(value: Array<string>) {
-        this.typeChecker.isUndefinedOrArrayOf("conditions", value, "string");
-        this._conditions = value;
+    get data(): Object {
+        return this._data;
     }
 
-    abstract execute(storyId: string, readingId: string, variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation);
+    set data(value: Object) {
+        this._data = value;
+    }
 
-    protected allConditionsPass(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
-        return this.conditions.every((conditionId) => {
-            let condition = conditions.get(conditionId);
+    get type(): string {
+        return this._type;
+    }
 
-            if (!condition) {
-                throw Error("Condition " + condition + " not found");
-            }
+    set type(value: string) {
+        this._type = value;
+    }
 
-            return condition.execute(variables, conditions, locations, userLocation)
-        })
-    };
+    get date(): string {
+        return this._date;
+    }
+
+    set date(value: string) {
+        this._date = value;
+    }
+
+    get userId(): string {
+        return this._userId;
+    }
+
+    set userId(value: string) {
+        this._userId = value;
+    }
+
+    toJSON() {
+        return {
+            userId: this.userId,
+            type: this.type,
+            date: this.date,
+            data: this.data,
+        }
+    }
+
+
 }

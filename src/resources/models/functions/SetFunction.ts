@@ -39,15 +39,16 @@ import {VariableCollection} from "../../collections/VariableCollection";
 import {ConditionCollection} from "../../collections/ConditionCollection";
 import {LocationCollection} from "../../collections/LocationCollection";
 import {LocationInformation} from "../../gps/LocationInformation";
+import {LoggingHelper} from "../../logging/LoggingHelper";
 
-@inject(TypeChecker)
+@inject(TypeChecker, LoggingHelper)
 
 export class SetFunction extends BaseFunction {
 
     private _variable: string;
     private _value: string;
 
-    constructor(typeChecker: TypeChecker, data?: any) {
+    constructor(typeChecker: TypeChecker, private loggingHelper: LoggingHelper, data?: any) {
         super(typeChecker);
 
         if (data) {
@@ -91,7 +92,7 @@ export class SetFunction extends BaseFunction {
         this._variable = value;
     }
 
-    execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
+    execute(storyId: string, readingId: string, variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
         if (!this.allConditionsPass(variables, conditions, locations, userLocation)) {
             return;
         }
@@ -100,5 +101,7 @@ export class SetFunction extends BaseFunction {
 
         variable.value = this.value;
         variables.save(variable);
+
+        this.loggingHelper.logChangeVariable(storyId, readingId, variable.id, variable.value);
     }
 }
