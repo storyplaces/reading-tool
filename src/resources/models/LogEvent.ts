@@ -39,7 +39,7 @@ import {TypeChecker} from "../utilities/TypeChecker";
 @inject(TypeChecker)
 export class LogEvent {
 
-    private _userId: string;
+    private _user: string;
     private _date: string;
     private _type: string;
     private _data: Object;
@@ -48,9 +48,9 @@ export class LogEvent {
         this.fromObject(data);
     }
 
-    fromObject(data: any = {userId: undefined, type: undefined, date: undefined, data: undefined}) {
+    fromObject(data: any = {user: undefined, type: undefined, date: undefined, data: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
-        this.userId = data.userId;
+        this.user = data.user;
         this.type = data.type;
         this.date = data.date;
         this.data = data.data;
@@ -81,17 +81,17 @@ export class LogEvent {
         this._date = value;
     }
 
-    get userId(): string {
-        return this._userId;
+    get user(): string {
+        return this._user;
     }
 
-    set userId(value: string) {
-        this._userId = value;
+    set user(value: string) {
+        this._user = value;
     }
 
     toJSON() {
         return {
-            userId: this.userId,
+            user: this.user,
             type: this.type,
             date: this.date,
             data: this.data,

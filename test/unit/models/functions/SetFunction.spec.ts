@@ -42,10 +42,18 @@ import {LocationCollection} from "../../../../src/resources/collections/Location
 import {VariableCollection} from "../../../../src/resources/collections/VariableCollection";
 import {FalseCondition} from "../../../../src/resources/models/conditions/boolean/FalseCondition";
 import {TrueCondition} from "../../../../src/resources/models/conditions/boolean/TrueCondition";
+import {LoggingHelper} from "../../../../src/resources/logging/LoggingHelper";
 
 describe("SetFunction", () => {
 
+    let container: Container = new Container().makeGlobal();
+
+    function resolve(object: Function, data?: any) {
+        return container.invoke(object, [data]);
+    }
+
     let typeChecker = new TypeChecker;
+    let loggingHelper = resolve(LoggingHelper);
 
     beforeEach(() => {
 
@@ -56,20 +64,20 @@ describe("SetFunction", () => {
     });
 
     it("can be created with data", () => {
-        let testFunction = new SetFunction(typeChecker, {type:"set"});
+        let testFunction = new SetFunction(typeChecker, loggingHelper, {type:"set"});
 
         expect(testFunction instanceof SetFunction).toBeTruthy();
     });
 
     it("can be created with no data", () => {
-        let testFunction = new SetFunction(typeChecker);
+        let testFunction = new SetFunction(typeChecker, loggingHelper);
 
         expect(testFunction instanceof SetFunction).toBeTruthy();
     });
 
 
     it("will throw an error if something other than an object is passed to fromObject", () => {
-        let model = new SetFunction(typeChecker);
+        let model = new SetFunction(typeChecker, loggingHelper);
 
         expect(() => {
             model.fromObject([] as any)
@@ -81,14 +89,14 @@ describe("SetFunction", () => {
     });
 
     it("can have its value set to a string", () => {
-        let testFunction = new SetFunction(typeChecker);
+        let testFunction = new SetFunction(typeChecker, loggingHelper);
         testFunction.value = "abc";
 
         expect(testFunction.value).toEqual("abc");
     });
 
     it("throw if its value set to something other than a string", () => {
-        let testFunction = new SetFunction(typeChecker);
+        let testFunction = new SetFunction(typeChecker, loggingHelper);
 
         expect(() => {testFunction.value = 123 as any;}).toThrow();
     });
@@ -106,6 +114,8 @@ describe("SetFunction", () => {
             trueCondition = container.invoke(TrueCondition, [{id: "true"}]);
             falseCondition = container.invoke(FalseCondition, [{id: "false"}]);
             conditions = container.invoke(ConditionCollection, [[trueCondition, falseCondition]]);
+
+            spyOn(loggingHelper, "logChangeVariable");
         });
 
         afterEach(() => {
@@ -116,51 +126,61 @@ describe("SetFunction", () => {
         });
 
         it("sets a existing variable to the passed value with no conditions set", () => {
-            let testFunction = new SetFunction(typeChecker, {id: "test", variable: "existing", value: "fish", conditions: []});
+            let testFunction = new SetFunction(typeChecker, loggingHelper, {id: "test", variable: "existing", value: "fish", conditions: []});
 
             expect(variables.get("existing").value).toEqual("1");
-            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            testFunction.execute("testStory", "testReading", variables, conditions, {} as LocationCollection, {} as LocationInformation);
             expect(variables.get("existing").value).toEqual("fish");
+            expect(loggingHelper.logChangeVariable).toHaveBeenCalledTimes(1);
+            expect(loggingHelper.logChangeVariable).toHaveBeenCalledWith("testStory", "testReading", "existing", "fish");
         });
 
         it("creates a new variable and sets it to the passed value with no conditions set", () => {
-            let testFunction = new SetFunction(typeChecker, {id: "test", variable: "doesNotExist", value: "foo", conditions: []});
+            let testFunction = new SetFunction(typeChecker, loggingHelper, {id: "test", variable: "doesNotExist", value: "foo", conditions: []});
 
             expect(variables.get("doesNotExist")).toBeUndefined();
-            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            testFunction.execute("testStory", "testReading", variables, conditions, {} as LocationCollection, {} as LocationInformation);
             expect(variables.get("doesNotExist").value).toEqual("foo");
+
+            expect(loggingHelper.logChangeVariable).toHaveBeenCalledTimes(1);
+            expect(loggingHelper.logChangeVariable).toHaveBeenCalledWith("testStory", "testReading", "doesNotExist", "foo");
         });
 
         it("sets a existing variable to the passed value with true conditions set", () => {
-            let testFunction = new SetFunction(typeChecker, {id: "test", variable: "existing", value: "bar", conditions: ["true", "true"]});
+            let testFunction = new SetFunction(typeChecker, loggingHelper, {id: "test", variable: "existing", value: "bar", conditions: ["true", "true"]});
 
             expect(variables.get("existing").value).toEqual("1");
-            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            testFunction.execute("testStory", "testReading", variables, conditions, {} as LocationCollection, {} as LocationInformation);
             expect(variables.get("existing").value).toEqual("bar");
+            expect(loggingHelper.logChangeVariable).toHaveBeenCalledTimes(1);
+            expect(loggingHelper.logChangeVariable).toHaveBeenCalledWith("testStory", "testReading", "existing", "bar");
         });
 
         it("creates a new variable and sets it to the passed value with true conditions set", () => {
-            let testFunction = new SetFunction(typeChecker, {id: "test", variable: "doesNotExist", value: "baz", conditions: ["true", "true"]});
+            let testFunction = new SetFunction(typeChecker, loggingHelper, {id: "test", variable: "doesNotExist", value: "baz", conditions: ["true", "true"]});
 
             expect(variables.get("doesNotExist")).toBeUndefined();
-            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            testFunction.execute("testStory", "testReading", variables, conditions, {} as LocationCollection, {} as LocationInformation);
             expect(variables.get("doesNotExist").value).toEqual("baz");
+            expect(loggingHelper.logChangeVariable).toHaveBeenCalledTimes(1);
+            expect(loggingHelper.logChangeVariable).toHaveBeenCalledWith("testStory", "testReading", "doesNotExist", "baz");
         });
 
         it("does not set a existing variable to the passed value if conditions fail", () => {
-            let testFunction = new SetFunction(typeChecker, {id: "test", variable: "existing", value: "doesNothing", conditions: ["false"]});
+            let testFunction = new SetFunction(typeChecker, loggingHelper, {id: "test", variable: "existing", value: "doesNothing", conditions: ["false"]});
 
             expect(variables.get("existing").value).toEqual("1");
-            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            testFunction.execute("testStory", "testReading", variables, conditions, {} as LocationCollection, {} as LocationInformation);
             expect(variables.get("existing").value).toEqual("1");
         });
 
         it("does not create a new variable if conditions fail", () => {
-            let testFunction = new SetFunction(typeChecker, {id: "test", variable: "doesNotExist", value: "neverSeen", conditions: ["false"]});
+            let testFunction = new SetFunction(typeChecker, loggingHelper, {id: "test", variable: "doesNotExist", value: "neverSeen", conditions: ["false"]});
 
             expect(variables.get("doesNotExist")).toBeUndefined();
-            testFunction.execute(variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            testFunction.execute("testStory", "testReading", variables, conditions, {} as LocationCollection, {} as LocationInformation);
             expect(variables.get("doesNotExist")).toBeUndefined();
+            expect(loggingHelper.logChangeVariable).toHaveBeenCalledTimes(0);
         });
     });
 });

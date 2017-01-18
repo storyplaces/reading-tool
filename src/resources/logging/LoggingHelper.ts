@@ -26,7 +26,7 @@ export class LoggingHelper {
             type: type,
             data: data,
             date: moment().toJSON(),
-            userId: this.authenticator.userId
+            user: this.authenticator.userId
         }
         return this.logEventFactory(logEvent);
     }
