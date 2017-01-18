@@ -55,7 +55,7 @@ export class CachedMediaConnector {
         });
     }
 
-    getItemSrc(storyId: string, itemId: number): string {
+    getItemSrc(storyId: string, itemId: string): string {
         let itemFromStore = this.getItem(storyId, itemId);
 
         if (itemFromStore) {
@@ -65,7 +65,7 @@ export class CachedMediaConnector {
         return this.makeMediaUrl(storyId, itemId);
     }
 
-    private fetchItem(storyId: string, itemId: number) {
+    private fetchItem(storyId: string, itemId: string) {
         this.api.getCachedMedia(storyId, itemId)
             .then(content => {
                 let data = this.makeDataURLFromContent(content);
@@ -76,11 +76,11 @@ export class CachedMediaConnector {
             });
     }
 
-    private getItem(storyId: string, itemId: number) {
+    private getItem(storyId: string, itemId: string) {
         return this.localStore.getItem("cached-media", this.makeStoreId(storyId, itemId));
     }
 
-    private saveItem(storyId: string, itemId: number, content: string) {
+    private saveItem(storyId: string, itemId: string, content: string) {
         this.localStore.saveItem("cached-media", this.makeStoreId(storyId, itemId), content);
     }
 
@@ -95,7 +95,7 @@ export class CachedMediaConnector {
         });
     }
 
-    private makeMediaUrl(storyId: string, itemId: number): string {
+    private makeMediaUrl(storyId: string, itemId: string): string {
         return `${this.config.read('server')}/story/${storyId}/media/${itemId}`;
     }
 
@@ -103,7 +103,7 @@ export class CachedMediaConnector {
         return `data:${content.contentType};base64,${content.content}`;
     }
 
-    private makeStoreId(storyId: string, itemId: number) {
-        return `${storyId}.${itemId.toString()}`;
+    private makeStoreId(storyId: string, itemId: string) {
+        return `${storyId}.${itemId}`;
     }
 }

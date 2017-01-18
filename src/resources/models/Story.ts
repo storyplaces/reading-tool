@@ -55,7 +55,7 @@ export class Story extends BaseModel {
     private _name: string;
     private _description: string;
     private _pages: PageCollection;
-    private _cachedMediaIds: Array<number>;
+    private _cachedMediaIds: Array<string>;
     private _conditions: ConditionCollection;
     private _functions: FunctionCollection;
     private _tags: Array<string>;
@@ -200,11 +200,12 @@ export class Story extends BaseModel {
         this._conditions = value;
     }
 
-    get cachedMediaIds(): Array<number> {
+    get cachedMediaIds(): Array<string> {
         return this._cachedMediaIds;
     }
 
-    set cachedMediaIds(value: Array<number>) {
+    set cachedMediaIds(value: Array<string>) {
+        this.typeChecker.isArrayOf("CachedMediaIds", value, "string");
         this._cachedMediaIds = value;
     }
 

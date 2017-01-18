@@ -91,11 +91,15 @@ export class MarkerManager {
                     marker.pageId = page.id;
                 }
 
-                marker.popupText = `<p><b>${page.name}</b></p>${page.hintDirection}`;
+                marker.popupText = this.makeMarkerPopupText(page);
 
                 this.markers.push(marker);
             });
         });
+    }
+
+    private makeMarkerPopupText(page) {
+        return `<p><b>${page.name}</b></p>${page.hintDirection}`;
     }
 
     private updateMarkersFromPage(page: Page) {
@@ -119,7 +123,6 @@ export class MarkerManager {
         markersToAdd.forEach(marker => this.mapCore.addItem(marker));
     }
 
-
     private pagesChanged(newPages: Array<Page>, oldPages: Array<Page>) {
         let changedPages = []
 
@@ -142,6 +145,4 @@ export class MarkerManager {
             }
         });
     }
-
-
 }
