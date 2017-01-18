@@ -4,17 +4,19 @@
 import {StoryConnector} from "../resources/store/StoryConnector";
 import {autoinject, computedFrom} from "aurelia-framework";
 import {Story} from "../resources/models/Story";
+import {LoggingHelper} from "../resources/logging/LoggingHelper";
 
 @autoinject()
 export class StoryDetailPage {
 
     storyId: string;
 
-    constructor(private storyConnector: StoryConnector) {
+    constructor(private storyConnector: StoryConnector,
+                private loggingHelper: LoggingHelper) {
     }
 
     @computedFrom('storyConnector.all', 'storyId')
-    get story() : Story{
+    get story(): Story {
         console.log("get story");
         return this.storyConnector.byId(this.storyId);
     }
@@ -25,6 +27,7 @@ export class StoryDetailPage {
         if (this.story === undefined) {
             this.storyConnector.fetchById(params.storyId);
         }
+        this.loggingHelper.logViewStory(this.storyId);
     }
 
     deactivate() {

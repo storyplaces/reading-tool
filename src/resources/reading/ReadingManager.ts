@@ -119,7 +119,7 @@ export class ReadingManager {
     }
 
     executePageFunctions(page: Page) {
-        page.executeFunctions(this.reading.variables, this.story.conditions, this.story.locations, this.locationManager.location, this.story.functions);
+        page.executeFunctions(this.story.id, this.reading.id, this.reading.variables, this.story.conditions, this.story.locations, this.locationManager.location, this.story.functions);
         this.saveReading();
     }
 
