@@ -92,8 +92,14 @@ export class MapManager {
     }
 
     detach() {
-        this.locationSub.dispose();
+        if (this.locationSub) {
+            this.locationSub.dispose();
+            this.locationSub = undefined;
+        }
+
         this.mapCore.removeControl(this.recenterControl);
+        this.mapCore.removeItem(this.baseLayer);
+        this.mapCore.removeItem(this.currentLocationMarker);
 
         this.mapCore.removeEvent('moveend');
         this.mapCore.removeEvent('move');
