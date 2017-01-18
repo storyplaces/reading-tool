@@ -36,7 +36,7 @@ import {CachedMediaItem} from "../interfaces/CachedMediaItem";
  */
 
 export class CachedMediaAPI extends StoryPlacesAPI {
-    getCachedMedia(storyId: string, itemId: number) :Promise<CachedMediaItem> {
-        return this.client.fetch("/story/" + storyId + "/media/" + itemId.toString() + "?data").then(response => response.json());
+    getCachedMedia(storyId: string, itemId: string) :Promise<CachedMediaItem> {
+        return this.client.fetch("/story/" + storyId + "/media/" + itemId + "?data").then(response => response.json());
     }
 }

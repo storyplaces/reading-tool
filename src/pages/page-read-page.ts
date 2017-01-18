@@ -80,7 +80,7 @@ export class PageReadPage {
 
     private setSrcOnMediaItem(element: Element) {
         let mediaId = element.getAttribute("data-media-id");
-        let mediaSrc = this.cachedMediaConnector.getItemSrc(this.storyId, parseInt(mediaId));
+        let mediaSrc = this.cachedMediaConnector.getItemSrc(this.storyId, mediaId);
         if (mediaSrc) {
             element.setAttribute("src", mediaSrc);
         }
