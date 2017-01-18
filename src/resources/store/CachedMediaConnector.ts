@@ -49,7 +49,8 @@ export class CachedMediaConnector {
         this.deleteOtherStoriesCachedData(story.id);
 
         story.cachedMediaIds.forEach(itemId => {
-            if (!this.getItem(story.id, itemId)) {
+
+            if (itemId.match(/^[a-f0-9]+$/i) && !this.getItem(story.id, itemId)) {
                 this.fetchItem(story.id, itemId);
             }
         });

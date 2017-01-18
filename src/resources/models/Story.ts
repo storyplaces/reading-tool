@@ -205,7 +205,7 @@ export class Story extends BaseModel {
     }
 
     set cachedMediaIds(value: Array<string>) {
-        this.typeChecker.isArrayOf("CachedMediaIds", value, "string");
+        this.typeChecker.isUndefinedOrArrayOf("CachedMediaIds", value, "string");
         this._cachedMediaIds = value;
     }
 
