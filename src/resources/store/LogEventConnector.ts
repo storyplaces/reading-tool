@@ -26,7 +26,7 @@ export class LogEventConnector {
         let sequence = Promise.resolve();
         this.toBeSaved.forEach((logEvent) => {
             sequence = sequence.then(() => {
-                this.logEventAPI.saveLogEvent(logEvent).then(response => {
+                return this.logEventAPI.saveLogEvent(logEvent).then(response => {
                     this.removeFromToBeSaved(logEvent);
                 });
             });
@@ -34,7 +34,7 @@ export class LogEventConnector {
         return sequence;
     }
 
-    removeFromToBeSaved(object: LogEvent) {
+    private removeFromToBeSaved(object: LogEvent) {
         this.toBeSaved = this.toBeSaved.filter(logEvent => logEvent !== object);
     }
 
