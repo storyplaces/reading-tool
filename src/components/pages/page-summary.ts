@@ -11,4 +11,5 @@ export class PageSummary{
     @bindable storyId: string;
     @bindable readingId: string;
 
+
 }

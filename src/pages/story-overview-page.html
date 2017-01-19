@@ -35,19 +35,21 @@
 <template>
     <require from="../components/story/story-overview-list"></require>
 
-    <div class="content">
+    <div class="container">
 
-        <div class="content-top-padding center-block logo-wrapper"><img class="logo" src="images/logo/StoryPlaces_full_600.png"></div>
-        <div class="center-block content-top-padding" show.bind="stories.length != 0">
-            <div class="row ">
-                <div class="col-md-10 col-xs-10"><h4>Available Stories:</h4></div>
-                <div class="col-md-2 col-xs-2 text-right">
-                    <button class="btn" click.delegate="refresh()"><span class="glyphicon glyphicon-refresh"></span></button>
-                </div>
+        <div class="center-block logo-wrapper"><img class="logo" src="images/logo/StoryPlaces_full_600.png"></div>
+        <div class="row" show.bind="stories.length != 0">
+            <div class="col-xs-9"><h4>Available Stories:</h4></div>
+            <div class="col-xs-3 text-right">
+                <button class="btn btn-sm btn-default" click.delegate="refresh()"><span class="glyphicon glyphicon-refresh"></span></button>
             </div>
-            <story-overview-list stories.bind="stories" class="content-top-padding story-overview-list"></story-overview-list>
         </div>
-        <div class="text-center content-top-padding" show.bind="stories.length == 0"><h4>There are no stories available,<br>please <a href="" click.delegate="refresh()">refresh</a> the list</h4></div>
+
+        <story-overview-list stories.bind="stories" class="content-top-padding story-overview-list" show.bind="stories.length != 0"></story-overview-list>
+
+        <div class="" show.bind="stories.length == 0">
+            <h4>There are no stories available,<br>please <a href="" click.delegate="refresh()">refresh</a> the list</h4>
+        </div>
 
     </div>
 </template>
