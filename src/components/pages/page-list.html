@@ -1,7 +1,7 @@
 <template>
     <require from="./page-summary"></require>
     <ul class="list-group content-full page-list">
-        <page-summary repeat.for="page of readingManager.viewablePages" page.bind="page" reading-id.bind="readingManager.reading.id" story-id.bind="readingManager.story.id"></page-summary>
+        <page-summary repeat.for="page of readingManager.viewablePages" page.bind="page" reading-id.bind="readingId" story-id.bind="storyId"></page-summary>
     </ul>
     <div class="text-center content-top-padding" if.bind="readingManager.viewablePages.length == 0"><h4>There are no pages available to read. Oops!</h4></div>
 </template>

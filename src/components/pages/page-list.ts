@@ -8,4 +8,13 @@ export class PageListCustomElement {
 
     @bindable readingManager: ReadingManager;
 
+    readingId: string;
+    storyId:string;
+
+    bind() {
+        this.readingId = this.readingManager.reading.id;
+        this.storyId = this.readingManager.story.id;
+        console.log(this.readingId, this.storyId);
+    }
+
 }
