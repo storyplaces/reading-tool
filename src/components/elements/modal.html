@@ -33,18 +33,20 @@
   -->
 
 <template>
-    <a if.bind="reading.state != 'closed'" route-href="route: story-reading; params.bind: { storyId: reading.storyId, readingId: reading.id}" class="list-group-item">
-        <h4 class="list-group-item-heading">${reading.name}</h4>
-        <div class="list-group-item-text">
-            <span if.bind="reading.state == 'inprogress'" class="label label-success">In progress</span>
-            <span if.bind="reading.state == 'notstarted'" class="label label-default">Not yet started</span>
-        </div>
-    </a>
-
-    <div if.bind="reading.state == 'closed'" class="list-group-item">
-        <h4 class="list-group-item-heading">${reading.name}</h4>
-        <div class="list-group-item-text">
-            <span class="label label-danger">Completed</span>
+    <!-- Modal -->
+    <div class="modal fade" id.bind="id" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">${title}</h4>
+                </div>
+                <div class="modal-body" innerHtml.bind="content | sanitizeHTML"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
+
 </template>

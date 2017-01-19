@@ -1,5 +1,5 @@
 import {Reading} from "../../resources/models/Reading";
-import {bindable, containerless} from "aurelia-framework";
+import {bindable, containerless, computedFrom} from "aurelia-framework";
 /**
  * Created by andy on 28/11/16.
  */
@@ -8,5 +8,4 @@ import {bindable, containerless} from "aurelia-framework";
 export class ReadingSummary{
 
     @bindable reading: Reading;
-
 }

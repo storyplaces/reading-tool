@@ -50,7 +50,6 @@ export class PageReadPage {
 
     }
 
-
     deactivate() {
         return this.readingManager.detach();
     }
@@ -85,5 +84,4 @@ export class PageReadPage {
             element.setAttribute("src", mediaSrc);
         }
     }
-
 }

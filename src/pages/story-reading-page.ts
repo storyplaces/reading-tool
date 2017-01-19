@@ -11,6 +11,11 @@ export class StoryReadingPage {
     storyId: string;
     readingId: string;
 
+    pageList: HTMLDivElement;
+
+    showUpArrow: boolean = false;
+    showDownArrow: boolean = false;
+
     constructor(private readingManager: ReadingManager,
                 private loggingHelper: LoggingHelper) {
     }
@@ -20,6 +25,16 @@ export class StoryReadingPage {
         this.readingId = params.readingId;
         this.loggingHelper.logViewReading(this.storyId, this.readingId);
         return this.readingManager.attach(this.storyId, this.readingId);
+    }
+
+    attached() {
+        this.pageList.onscroll = (event) => { this.caclulateArrows();}
+        this.caclulateArrows();
+    }
+
+    caclulateArrows() {
+        this.showUpArrow = (this.pageList.scrollTop != 0);
+        this.showDownArrow = (this.pageList.scrollTop < this.pageList.scrollHeight - this.pageList.offsetHeight);
     }
 
     deactivate() {

@@ -50,7 +50,9 @@
 .logo-wrapper {
   width: 95%;
   max-width: 600px;
+  padding: 1em 0;
   @media screen and (max-width: 768px) {
+    padding: 0.5em 0;
     width: 200px;
   }
 }
@@ -63,17 +65,13 @@
   }
 }
 
-.content-top-padding {
-  margin-top: 1em;
-}
-
 .story-overview-list {
   width: 100%;
 }
 
 .content {
   width: 100%;
-  padding: 0 1em 1em 1em;
+  padding: 1em 1em 1em 1em;
 }
 
 .content-full {
@@ -91,6 +89,8 @@ html, body {
 .router-view {
   height: calc(~"100% - 52px");
   display: block;
+  padding: 0;
+  margin: 0;
 }
 
 .map-component {
@@ -99,7 +99,6 @@ html, body {
 
   @media screen and (max-width: @screen-md) {
     height: 60%;
-    width: 100%;
   }
 
   padding: 0;
@@ -107,10 +106,38 @@ html, body {
 
 .pages-list-component {
   height: 100%;
+  overflow-y: auto;
+  border-left: solid lightgray 1px;
+  border-top: none;
+  padding: 0;
 
   @media screen and (max-width: @screen-md) {
     height: 40%;
-    width: 100%;
+
+    border-top: solid lightgray 1px;
+    border-left: none;
+
   }
-  padding:0;
+}
+
+.page-list {
+  padding: 0.25em;
+  :last-child {
+    margin-bottom: 0.25em;
+  }
+}
+
+.up-arrow {
+ position: fixed;
+  width: 1em;
+  right:0.5em;
+  z-index: 1;
+  padding-top: 0.25em;
+}
+
+.down-arrow {
+  position: fixed;
+  bottom: 0.25em;
+  width: 1em;
+  right: 0.5em;
 }

@@ -31,18 +31,32 @@ export class ReadingOverviewListCustomElement {
     subscription: Disposable;
 
     attached() {
-        this.getOpenReadings();
+        this.getReadings();
         this.subscription = this.bindingEngine
             .collectionObserver(this.readingConnector.all)
             .subscribe(() => {
-                    this.getOpenReadings();
+                    this.getReadings();
                 }
             );
         this.refresh();
     }
 
-    getOpenReadings() {
-        this.readings = this.readingConnector.byStoryId(this.storyId).filter(reading => reading.state != "closed");
+    getReadings() {
+        this.readings = this.readingConnector.byStoryId(this.storyId)
+            .sort((a: Reading, b: Reading) => {
+                if (a.state == b.state) {
+                    if (a.name > b.name) {return 1}
+                    if (a.name < b.name) {return -1}
+                    return 0;
+                }
+
+                if (a.state == "closed") { return 1 }
+                if (b.state == "closed") {return -1}
+                if (a.state == "inprogress") { return -1 }
+                if (b.state == "inprogress") {return 1}
+
+                return 0
+            });
     }
 
     detached() {
