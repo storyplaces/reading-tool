@@ -152,5 +152,14 @@
         ]
       }
     ]
+  },
+  "dist": {
+    "output": "dist",
+    "sources": [
+      "./scripts/**/*",
+      "./fonts/**/*",
+      "./images/**/*",
+      "./index.html"
+    ]
   }
 }

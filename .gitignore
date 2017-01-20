@@ -8,3 +8,4 @@ src/config/Config.ts
 css/bootstrap*
 fonts/glyphicons-halflings-regular*
 *.js
+dist/
