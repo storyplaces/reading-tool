@@ -36,7 +36,7 @@
 export class Config {
 
     private _config = {
-        server: "https://localhost:8080",
+        server: "/storyplaces",
         server_auth_password: "thisisadefaultpass"
     };
 
