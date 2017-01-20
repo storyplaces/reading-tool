@@ -14,7 +14,6 @@ export class StoryPlacesAPI {
     constructor(protected client: HttpClient, protected config: Config) {
         let headers = {};
 
-        //headers['X-Auth-Token'] = this.config.read('server_auth_password');
         headers['Content-Type'] = "application/json";
         headers['Accept'] = "application/json";
 
