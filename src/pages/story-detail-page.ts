@@ -30,7 +30,7 @@ export class StoryDetailPage {
         this.loggingHelper.logViewStory(this.storyId);
     }
 
-    deactivate() {
+    detatched() {
         this.storyId = undefined;
     }
 

@@ -37,7 +37,7 @@ export class StoryReadingPage {
         this.showDownArrow = (this.pageList.scrollTop < this.pageList.scrollHeight - this.pageList.offsetHeight);
     }
 
-    deactivate() {
+    detatched() {
         this.storyId = undefined;
         return this.readingManager.detach();
     }
