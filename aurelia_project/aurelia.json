@@ -91,7 +91,8 @@
         "name": "vendor-bundle.js",
         "prepend": [
           "node_modules/bluebird/js/browser/bluebird.core.js",
-          "node_modules/requirejs/require.js"
+          "node_modules/requirejs/require.js",
+          "node_modules/whatwg-fetch/fetch.js"
         ],
         "dependencies": [
           "aurelia-binding",
