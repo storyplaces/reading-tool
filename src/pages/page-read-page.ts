@@ -63,7 +63,9 @@ export class PageReadPage {
         let imageElements = this.contentElement.querySelectorAll("img[data-media-id]");
 
         for (let index = 0; index < imageElements.length; index++) {
-            this.setSrcOnMediaItem(imageElements.item(index));
+            let element = imageElements.item(index);
+            this.setSrcOnMediaItem(element);
+            element.className = "story-image";
         }
     }
 
