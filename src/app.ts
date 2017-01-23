@@ -33,8 +33,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {Router, RouterConfiguration} from "aurelia-router";
-import {autoinject} from "aurelia-framework";
-import {LocationManager} from "./resources/gps/LocationManager";
+import {autoinject,computedFrom} from "aurelia-framework";
 import {Authenticator} from "./resources/auth/Authenticator";
 import {UserConfig} from "./resources/store/UserConfig";
 
@@ -49,11 +48,24 @@ export class App {
         this.authenticator.login();
     }
 
+    @computedFrom('router.currentInstruction.config.name')
+    get readingAStory():boolean {
+        console.log("get reading a story");
+
+        if (!this.router.currentInstruction) {
+            return false;
+        }
+
+        return this.router.currentInstruction.config.name == 'story-reading' || this.router.currentInstruction.config.name == 'page-read';
+    }
+
     configureRouter(config: RouterConfiguration, router: Router) {
         config.title = 'StoryPlaces';
 
         config.map([
             {route: '/', name: 'home', moduleId: 'pages/story-overview-page', title: 'Story List'},
+            {route: '/help', name: 'help', moduleId: 'pages/help-page', title: 'Help'},
+            {route: '/about', name: 'about', moduleId: 'pages/about-page', title: 'About'},
             {route: '/tag/:tag', name: 'tag', moduleId: 'pages/story-overview-page', title: 'Story List'},
             {route: '/story/:storyId', moduleId: 'pages/story-detail-page', title: 'Story', name: 'story-detail'},
             {route: '/story/:storyId/:readingId', moduleId: 'pages/story-reading-page', title: 'Reading', name: 'story-reading'},
@@ -61,6 +73,7 @@ export class App {
         ]);
 
         this.router = router;
+        console.log(this.router);
     }
 
 }
