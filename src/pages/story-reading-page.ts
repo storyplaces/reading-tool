@@ -4,6 +4,7 @@
 import {autoinject} from "aurelia-framework";
 import {ReadingManager} from "../resources/reading/ReadingManager";
 import {LoggingHelper} from "../resources/logging/LoggingHelper";
+import {LocationManager} from "../resources/gps/LocationManager";
 
 @autoinject()
 export class StoryReadingPage {
@@ -17,7 +18,8 @@ export class StoryReadingPage {
     showDownArrow: boolean = false;
 
     constructor(private readingManager: ReadingManager,
-                private loggingHelper: LoggingHelper) {
+                private loggingHelper: LoggingHelper,
+                private location: LocationManager) {
     }
 
     activate(params) {

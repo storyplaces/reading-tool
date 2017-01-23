@@ -44,8 +44,5 @@
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
   </nav>
-  <div class="alert alert-danger text-center" if.bind="location.gpsPermissionDenied"><strong>Please grant StoryPlaces access to your device's location otherwise you will not get the full experience</strong></div>
-  <div class="alert alert-danger text-center" if.bind="location.gpsUnsupported"><strong>Your device does not support location, you will not be able to make full use of StoryPlaces</strong></div>
-  <div class="alert alert-warning text-center" if.bind="location.gpsUnavailable"><strong>GPS location has been lost</strong></div>
   <router-view class="router-view"></router-view>
 </template>

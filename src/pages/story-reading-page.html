@@ -35,13 +35,15 @@
 <template>
     <require from="../components/elements/mapping/map"></require>
     <require from="../components/pages/page-list"></require>
-
+    <div class="alert alert-danger text-center" if.bind="location.gpsPermissionDenied"><strong>StoryPlaces is best experienced with GPS enabled.</strong><br>If you do not wish to share your location you can enable Demo Mode from the advanced menu above (if on a mobile device you may need to open the menu at the top-right first)</div>
+    <div class="alert alert-danger text-center" if.bind="location.gpsUnsupported"><strong>Your device does not support location</strong><br>You will not be able to make full use of StoryPlaces.  However, you can enable Demo Mode from the advanced menu above (if on a mobile device you may need to open the menu at the top-right first)</div>
+    <div class="alert alert-warning text-center" if.bind="location.gpsUnavailable"><strong>Your GPS location has been temporarily lost</strong><br>If you do not get GPS signal back you can enable Demo Mode from the advanced menu above (if on a mobile device you may need to open the menu at the top-right first)</div>
     <div class="row content-full">
         <div class="col-xs-12 col-md-7 map-component">
             <map class="content-full" reading-manager.bind="readingManager"></map>
         </div>
         <div class="col-xs-12 col-md-5 pages-list-component" ref="pageList">
-            <div class="up-arrow" if.bind="showUpArrow"><span class="glyphicon glyphicon-arrow-up"></div>
+            <div class="up-arrow" if.bind="showUpArrow"><span class="glyphicon glyphicon-arrow-up"></span></div>
             <page-list reading-manager.bind="readingManager" class="pages-list content-full"></page-list>
             <div class="down-arrow" if.bind="showDownArrow"><span class="glyphicon glyphicon-arrow-down"></span></div>
         </div>
