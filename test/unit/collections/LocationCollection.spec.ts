@@ -73,6 +73,8 @@ describe("LocationCollection", () => {
 
         toJSON() {
         }
+
+        withinBounds():boolean {return null};
     }
 
     beforeEach(() => {
@@ -83,13 +85,13 @@ describe("LocationCollection", () => {
     });
 
     it("can be instantiated with no data", () => {
-        let collection = new LocationCollection(locationFactory);
+        let collection = new LocationCollection(locationFactory as any);
         expect(collection.all.length).toEqual(0);
         expect(locationFactoryCalledWith).toEqual("notYetCalled");
     });
 
     it("creates a set of Location objects when created with an array of plain objects", () => {
-        let collection = new LocationCollection(locationFactory, [{id: "1"}, {id: "2"}]);
+        let collection = new LocationCollection(locationFactory as any, [{id: "1"}, {id: "2"}]);
         expect(collection.all.length).toEqual(2);
         expect(locationFactoryCalledWith).not.toEqual("notYetCalled");
     });
@@ -100,7 +102,7 @@ describe("LocationCollection", () => {
         model1.id = "1";
         model2.id = "2";
 
-        let collection = new LocationCollection(locationFactory, [model1, model2]);
+        let collection = new LocationCollection(locationFactory as any, [model1, model2]);
 
         expect(collection.all[0] instanceof Location).toBeTruthy();
         expect(collection.all[0]).toBe(model1);
@@ -111,7 +113,7 @@ describe("LocationCollection", () => {
 
 
     it("creates a Location object when saving a plain object", () => {
-        let collection = new LocationCollection(locationFactory);
+        let collection = new LocationCollection(locationFactory as any);
         collection.save({id: "1"});
 
         expect(collection.all[0] instanceof Location).toBeTruthy();
@@ -122,7 +124,7 @@ describe("LocationCollection", () => {
         let model = new Location(typeChecker);
         model.id = "1";
 
-        let collection = new LocationCollection(locationFactory);
+        let collection = new LocationCollection(locationFactory as any);
         collection.save(model);
 
         expect(collection.all[0] instanceof Location).toBeTruthy();
@@ -131,7 +133,7 @@ describe("LocationCollection", () => {
     });
 
     it("creates a set of Location objects when saving an array of plain objects", () => {
-        let collection = new LocationCollection(locationFactory);
+        let collection = new LocationCollection(locationFactory as any);
         collection.saveMany([{id: "1"}, {id: "2"}]);
 
         expect(collection.all[0] instanceof Location).toBeTruthy();
@@ -145,7 +147,7 @@ describe("LocationCollection", () => {
         model1.id = "1";
         model2.id = "2";
 
-        let collection = new LocationCollection(locationFactory);
+        let collection = new LocationCollection(locationFactory as any);
         collection.saveMany([model1, model2]);
 
         expect(collection.all[0] instanceof Location).toBeTruthy();
