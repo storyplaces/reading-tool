@@ -66,6 +66,7 @@ export class App {
             {route: '/', name: 'home', moduleId: 'pages/story-overview-page', title: 'Story List'},
             {route: '/help', name: 'help', moduleId: 'pages/help-page', title: 'Help'},
             {route: '/about', name: 'about', moduleId: 'pages/about-page', title: 'About'},
+            {route: '/stop-reading', name: 'stop-reading', moduleId: 'pages/stop-reading-page', title: 'Stop Reading'},
             {route: '/tag/:tag', name: 'tag', moduleId: 'pages/story-overview-page', title: 'Story List'},
             {route: '/story/:storyId', moduleId: 'pages/story-detail-page', title: 'Story', name: 'story-detail'},
             {route: '/story/:storyId/:readingId', moduleId: 'pages/story-reading-page', title: 'Reading', name: 'story-reading'},
