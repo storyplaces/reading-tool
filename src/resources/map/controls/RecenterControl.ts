@@ -46,7 +46,7 @@ export class RecenterControl implements MapControlInterface {
     leafletControl: DisableableControl;
 
     constructor() {
-        let RecenterControl = L.Control.extend({
+        let RecenterControl = (L as any).Control.extend({
 
             link: undefined,
             map: undefined,
