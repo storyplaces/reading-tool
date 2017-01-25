@@ -1,9 +1,8 @@
 /**
  * Created by andy on 28/11/16.
  */
-
-import {StoryConnector} from '../resources/store/StoryConnector';
-import {autoinject, BindingEngine, Disposable} from 'aurelia-framework';
+import {StoryConnector} from "../resources/store/StoryConnector";
+import {autoinject, BindingEngine, computedFrom} from "aurelia-framework";
 import {Story} from "../resources/models/Story";
 
 @autoinject()
@@ -13,50 +12,76 @@ export class StoryOverviewPage {
     }
 
     tag: string;
-    stories: Array<Story>;
+    tags: Array<string>;
 
-    storiesSubscription: Disposable;
-    tagSubscription: Disposable;
+    audiences = [{id: "family", name: "Family Friendly"}, {id: "general", name: "General Audience"}, {id: "advisory", name: "Advisory Content"}];
+    selectedAudiences: Array<string> = [];
+    selectedTags: Array<string> = [];
 
-    attached() {
-        this.getStories();
-        this.storiesSubscription = this.bindingEngine
-            .collectionObserver(this.storyConnector.all)
-            .subscribe(() => {
-                this.getStories();
-            });
-        this.tagSubscription = this.bindingEngine
-            .propertyObserver(this, 'tag')
-            .subscribe(() => {
-                this.getStories();
-            });
-        this.refresh();
+    @computedFrom('storyConnector.all')
+    get stories(): Array<Story> {
+        console.log(this.storyConnector.all);
+        return this.storyConnector.all;
     }
 
-    getStories() {
-        if (!this.tag) {
-            this.stories = this.storyConnector.all;
-            return;
-        }
-        this.stories = this.storyConnector.all.filter((story) => {
-            return (story.tags.indexOf(this.tag) !== -1)
-        });
+    @computedFrom('selectedTags.length', ' selectedAudiences.length')
+    get filtersApplied(): boolean {
+        console.log("get filter");
+        return (this.selectedTags.length != this.tags.length) || (this.selectedAudiences.length != this.audiences.length)
     }
 
     activate(params) {
         this.tag = params.tag;
+        this.selectedTags = [];
         console.log("tag ", this.tag);
+        return this.refresh().then(() => {
+            this.tags = [];
+
+            this.storyConnector.all.forEach(story => {
+                this.addUniqueTags(story);
+            });
+
+            if (params.tag) {
+                let index = this.tags.indexOf(params.tag);
+                if (index != -1) {
+                    this.selectedTags.push(this.tags[index]);
+                }
+            }
+
+            if (this.selectedTags.length == 0) {
+                this.selectAllTags();
+            }
+
+            this.selectAllAudiences();
+        });
     }
 
-    detatched() {
-        this.storiesSubscription.dispose();
-        this.tagSubscription.dispose();
+    clearFilters() {
+        this.selectAllTags();
+        this.selectAllAudiences()
+    }
 
+    private selectAllTags() {
+        this.selectedTags = Array.from(this.tags);
+    }
+
+    private selectAllAudiences() {
+        this.selectedAudiences = [];
+        this.audiences.forEach(audience => {
+            this.selectedAudiences.push(audience.id);
+        });
     }
 
     refresh() {
-        this.storyConnector.fetchAll();
-        console.log("stories ", this.storyConnector.all);
+        return this.storyConnector.fetchAll();
+    }
+
+    private addUniqueTags(story: Story) {
+        story.tags.forEach(tag => {
+            if (this.tags.indexOf(tag) == -1) {
+                this.tags.push(tag);
+            }
+        });
     }
 
 }

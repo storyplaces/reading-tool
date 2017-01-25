@@ -4,7 +4,7 @@
   ~  *
   ~  This application was developed as part of the Leverhulme Trust funded
   ~  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
-  ~  Copyright (c) 2016
+  ~  Copyright (c) 2017
   ~  University of Southampton
   ~  Charlie Hargood, cah07r.ecs.soton.ac.uk
   ~  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -33,25 +33,21 @@
   -->
 
 <template>
-    <require from="../components/story/story-overview-list"></require>
-    <require from="../components/elements/collapsible-panel"></require>
-    <require from="../components/elements/bindable-modal"></require>
-    <require from="../components/reading/reading-overview-list"></require>
-
-    <div class="container">
-
-        <h2 class="text-center">${story.name}<br>
-            <small>${story.author}</small>
-        </h2>
-
-        <div class="text-center">
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#description-collapse">Description</button>
+    <!-- Modal -->
+    <div class="modal fade" id.bind="id" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">${title}</h4>
+                </div>
+                <div class="modal-body"><slot></slot></div>
+                <div class="modal-footer">
+                    <slot name="footer"></slot>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
-
-        <bindable-modal title.bind="story.name" id="description-collapse" content.bind="story.description"></bindable-modal>
-
-        <reading-overview-list story-id.bind="storyId" class="content-top-padding reading-overview-list"></reading-overview-list>
-
-
     </div>
+
 </template>
