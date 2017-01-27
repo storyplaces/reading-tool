@@ -79,15 +79,13 @@ export class Authenticator {
     private doBasicLogin(): Promise<boolean> {
         return this.storyplacesAPI
             .save({id: undefined})
-            .then(res => {
-                return res.json()
-                    .then(user => {
-                        this.typeChecker.validateAsStringOrUndefined("UserId", user.id);
-                        this._userId = user.id;
+            .then(res => res.json() as any)
+            .then(user => {
+                this.typeChecker.validateAsStringOrUndefined("UserId", user.id);
+                this._userId = user.id;
 
-                        localStorage.setItem(this.userIdStorageString, user.id);
-                        return true;
-                    });
+                localStorage.setItem(this.userIdStorageString, user.id);
+                return true;
             });
     }
 

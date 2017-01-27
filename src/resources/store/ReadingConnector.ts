@@ -37,35 +37,39 @@ export class ReadingConnector extends AbstractConnector<Reading> {
         });
     }
 
-    fetchAll(): Promise<Array<Reading>> {
+    fetchAll(): Promise<null> {
         return this.storyplacesAPI.getAll().then(readings => {
             return readings.json().then (readings => {
                 this.readingCollection.saveMany(readings);
+                return null;
             });
         })
     }
 
-    fetchById(id: string): Promise<Reading> {
+    fetchById(id: string): Promise<null> {
         return this.storyplacesAPI.getOne(id).then(reading => {
             return reading.json().then (reading => {
                 this.readingCollection.save(reading);
+                return null;
             });
         })
     }
 
-    fetchForUserAndStory(userId: string, storyId: string): Promise<Array<Reading>> {
+    fetchForUserAndStory(userId: string, storyId: string): Promise<null> {
         return this.storyplacesAPI.getAllForStoryAndUser(storyId, userId).then(readings => {
             return readings.json().then (readings => {
                 this.readingCollection.saveMany(readings);
+                return null;
             });
         })
     }
 
-    save(object: Reading): Promise<Reading> {
+    save(object: Reading): Promise<null> {
         object.timestamp = moment().unix();
         return this.storyplacesAPI.save(object).then(reading => {
             return reading.json().then (reading => {
                 this.readingCollection.save(reading);
+                return null;
             });
         });
     }
