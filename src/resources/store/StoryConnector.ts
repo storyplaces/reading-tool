@@ -36,31 +36,31 @@ export class StoryConnector extends AbstractConnector<Story> {
         });
     }
 
-    fetchAll(): Promise<null> {
-        return this.storyplacesAPI.getAll().then(stories => {
-            return stories.json().then (stories => {
+    fetchAll(): Promise<undefined> {
+        return this.storyplacesAPI.getAll()
+            .then(stories => stories.json() as any)
+            .then(stories => {
                 this.storyCollection.saveMany(stories);
-                return null;
+                return;
             });
-        })
     }
 
-    fetchById(id: string): Promise<null> {
-        return this.storyplacesAPI.getOne(id).then(story => {
-            return story.json().then(story => {
+    fetchById(id: string): Promise<undefined> {
+        return this.storyplacesAPI.getOne(id)
+            .then(story => story.json())
+            .then(story => {
                 this.storyCollection.save(story);
-                return null;
+                return;
             });
-        })
     }
 
-    save(object: Story): Promise<null> {
-        return this.storyplacesAPI.save(object).then(story => {
-            return story.json().then (story => {
+    save(object: Story): Promise<undefined> {
+        return this.storyplacesAPI.save(object)
+            .then(story => story.json())
+            .then(story => {
                 this.storyCollection.save(story);
-                return null;
+                return;
             });
-        });
     }
 
     remove(id: string): Promise<boolean> {

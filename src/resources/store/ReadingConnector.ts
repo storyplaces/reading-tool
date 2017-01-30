@@ -37,41 +37,41 @@ export class ReadingConnector extends AbstractConnector<Reading> {
         });
     }
 
-    fetchAll(): Promise<null> {
-        return this.storyplacesAPI.getAll().then(readings => {
-            return readings.json().then (readings => {
+    fetchAll(): Promise<undefined> {
+        return this.storyplacesAPI.getAll()
+            .then(readings => readings.json() as any)
+            .then(readings => {
                 this.readingCollection.saveMany(readings);
-                return null;
+                return;
             });
-        })
     }
 
-    fetchById(id: string): Promise<null> {
-        return this.storyplacesAPI.getOne(id).then(reading => {
-            return reading.json().then (reading => {
+    fetchById(id: string): Promise<undefined> {
+        return this.storyplacesAPI.getOne(id)
+            .then(reading => reading.json() as any)
+            .then(reading => {
                 this.readingCollection.save(reading);
-                return null;
+                return;
             });
-        })
     }
 
-    fetchForUserAndStory(userId: string, storyId: string): Promise<null> {
-        return this.storyplacesAPI.getAllForStoryAndUser(storyId, userId).then(readings => {
-            return readings.json().then (readings => {
+    fetchForUserAndStory(userId: string, storyId: string): Promise<undefined> {
+        return this.storyplacesAPI.getAllForStoryAndUser(storyId, userId)
+            .then(readings => readings.json() as any)
+            .then (readings => {
                 this.readingCollection.saveMany(readings);
-                return null;
+                return;
             });
-        })
     }
 
-    save(object: Reading): Promise<null> {
+    save(object: Reading): Promise<undefined> {
         object.timestamp = moment().unix();
-        return this.storyplacesAPI.save(object).then(reading => {
-            return reading.json().then (reading => {
+        return this.storyplacesAPI.save(object)
+            .then(reading => reading.json())
+            .then (reading => {
                 this.readingCollection.save(reading);
-                return null;
+                return;
             });
-        });
     }
 
     remove(id: string): Promise<boolean> {
