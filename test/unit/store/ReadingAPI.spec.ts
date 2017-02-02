@@ -28,23 +28,23 @@ describe("ReadingAPI", () => {
         container = null;
     });
 
-    it("calls fetch client with a get request when getAllForStory called", (finished) => {
-        let client = resolve(HttpClient);
-        spyOn(client, "fetch").and.returnValue(new Promise((success, failure) => {
-                return success(new Response("[]"));
-            })
-        );
-        var storyId = "123456";
-        let api = new ReadingAPI(client, config);
-        api.path = "/reading/";
-
-        api.getAllForStory(storyId).then((result) => {
-            expect(result).toEqual(new Response("[]"));
-            expect(client.fetch).toHaveBeenCalledTimes(1);
-            expect(client.fetch).toHaveBeenCalledWith(api.path + "story/" + storyId);
-            finished();
-        });
-    });
+    // it("calls fetch client with a get request when getAllForStory called", (finished) => {
+    //     let client = resolve(HttpClient);
+    //     spyOn(client, "fetch").and.returnValue(new Promise((success, failure) => {
+    //             return success(new Response("[]"));
+    //         })
+    //     );
+    //     var storyId = "123456";
+    //     let api = new ReadingAPI(client, config);
+    //     api.path = "/reading/";
+    //
+    //     api.getAllForStory(storyId).then((result) => {
+    //         expect(result).toEqual(new Response("[]"));
+    //         expect(client.fetch).toHaveBeenCalledTimes(1);
+    //         expect(client.fetch).toHaveBeenCalledWith(api.path + "story/" + storyId);
+    //         finished();
+    //     });
+    // });
 
     it("calls fetch client with a get request when getAllForStoryAndUser called", (finished) => {
         let client = resolve(HttpClient);
