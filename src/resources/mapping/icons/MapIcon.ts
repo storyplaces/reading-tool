@@ -37,11 +37,9 @@ import Icon = L.Icon;
 import IconOptions = L.IconOptions;
 import {MapIconDefaults} from "../settings/MapIconDefaults";
 
-import {inject} from "aurelia-framework";
 import {MapIconInterface} from "../interfaces/MapIconInterface";
 
-@inject(MapIconDefaults)
-export class MapIcon implements MapIconInterface{
+export abstract class MapIcon implements MapIconInterface{
     private marker: Icon;
 
     constructor(defaults: MapIconDefaults, options: IconOptions) {
