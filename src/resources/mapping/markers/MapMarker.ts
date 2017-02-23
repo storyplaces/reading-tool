@@ -38,13 +38,9 @@ import MarkerOptions = L.MarkerOptions;
 import Marker = L.Marker;
 import LatLngLiteral = L.LatLngLiteral;
 import {MapMarkerDefaults} from "../settings/MapMarkerDefaults";
-
-import {inject} from "aurelia-framework";
 import {MapIconInterface} from "../interfaces/MapIconInterface";
 
-@inject(MapMarkerDefaults)
-
-export class MapMarker implements MapLayerInterface {
+export abstract class MapMarker implements MapLayerInterface {
 
     protected marker: Marker;
 
