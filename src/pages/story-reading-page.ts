@@ -30,16 +30,16 @@ export class StoryReadingPage {
     }
 
     attached() {
-        this.pageList.onscroll = (event) => { this.caclulateArrows();}
-        this.caclulateArrows();
+        this.pageList.onscroll = (event) => { this.calculateArrows();}
+        this.calculateArrows();
     }
 
-    caclulateArrows() {
+    calculateArrows() {
         this.showUpArrow = (this.pageList.scrollTop != 0);
         this.showDownArrow = (this.pageList.scrollTop < this.pageList.scrollHeight - this.pageList.offsetHeight);
     }
 
-    detatched() {
+    detached() {
         this.storyId = undefined;
         return this.readingManager.detach();
     }

@@ -57,6 +57,6 @@ export class MapCustomElement {
 
     detached() {
         this.markerManager.detach();
-        this.mapManager.detach()
+        this.mapManager.detach();
     }
 }
