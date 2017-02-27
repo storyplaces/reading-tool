@@ -50,7 +50,7 @@ export class PageReadPage {
 
     }
 
-    detatched() {
+    deactivate() {
         return this.readingManager.detach();
     }
 
