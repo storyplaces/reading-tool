@@ -194,7 +194,7 @@ export class Page extends BaseModel {
 
     public executeFunctions(storyId: string, readingId: string, variables: VariableCollection, conditions: ConditionCollection, locations: LocationCollection, userLocation: LocationInformation, functions: FunctionCollection) {
         this.functions.forEach((functionId) => {
-            this.getFunction(functions, functionId).execute(storyId, readingId, variables, conditions, locations, userLocation);
+            this.getFunction(functions, functionId).execute(storyId, readingId, variables, conditions, functions, locations, userLocation);
         });
     }
 

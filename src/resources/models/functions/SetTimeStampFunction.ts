@@ -41,6 +41,7 @@ import {LocationCollection} from "../../collections/LocationCollection";
 import {LocationInformation} from "../../gps/LocationInformation";
 import moment = require('moment');
 import {LoggingHelper} from "../../logging/LoggingHelper";
+import {FunctionCollection} from "../../collections/FunctionCollection";
 
 @inject(TypeChecker, LoggingHelper)
 
@@ -81,7 +82,7 @@ export class SetTimeStampFunction extends BaseFunction {
         this._variable = value;
     }
 
-    execute(storyId: string, readingId: string, variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
+    execute(storyId: string, readingId: string, variables: VariableCollection, conditions: ConditionCollection, functions: FunctionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
         if (!this.allConditionsPass(variables, conditions, locations, userLocation)) {
             return;
         }

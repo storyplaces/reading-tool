@@ -40,6 +40,7 @@ import {ConditionCollection} from "../../collections/ConditionCollection";
 import {LocationCollection} from "../../collections/LocationCollection";
 import {LocationInformation} from "../../gps/LocationInformation";
 import {LoggingHelper} from "../../logging/LoggingHelper";
+import {FunctionCollection} from "../../collections/FunctionCollection";
 
 @inject(TypeChecker, LoggingHelper)
 
@@ -92,7 +93,7 @@ export class SetFunction extends BaseFunction {
         this._variable = value;
     }
 
-    execute(storyId: string, readingId: string, variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
+    execute(storyId: string, readingId: string, variables: VariableCollection, conditions: ConditionCollection, functions: FunctionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
         if (!this.allConditionsPass(variables, conditions, locations, userLocation)) {
             return;
         }

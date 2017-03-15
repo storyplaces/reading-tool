@@ -37,7 +37,8 @@ import {VariableCollection} from "../collections/VariableCollection";
 import {ConditionCollection} from "../collections/ConditionCollection";
 import {LocationInformation} from "../gps/LocationInformation";
 import {LocationCollection} from "../collections/LocationCollection";
+import {FunctionCollection} from "../collections/FunctionCollection";
 
 export interface ExecutableFunction {
-    execute(storyId: string, readingId: string, variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): null;
+    execute(storyId: string, readingId: string, variables: VariableCollection, conditions: ConditionCollection, functions: FunctionCollection, locations?: LocationCollection, userLocation?: LocationInformation): null;
 }

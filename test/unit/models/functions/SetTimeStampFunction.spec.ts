@@ -44,6 +44,7 @@ import {FalseCondition} from "../../../../src/resources/models/conditions/boolea
 import {TrueCondition} from "../../../../src/resources/models/conditions/boolean/TrueCondition";
 import moment = require('moment');
 import {LoggingHelper} from "../../../../src/resources/logging/LoggingHelper";
+import {FunctionCollection} from "../../../../src/resources/collections/FunctionCollection";
 
 describe("SetTimeStampFunction", () => {
 
@@ -96,12 +97,14 @@ describe("SetTimeStampFunction", () => {
         let trueCondition : TrueCondition
         let falseCondition :FalseCondition;
         let conditions :ConditionCollection;
+        let functions: FunctionCollection;
 
         beforeEach(() => {
             variables = container.invoke(VariableCollection, [[{id: "existing", value: "1"}]]);
             trueCondition = container.invoke(TrueCondition, [{id: "true"}]);
             falseCondition = container.invoke(FalseCondition, [{id: "false"}]);
             conditions = container.invoke(ConditionCollection, [[trueCondition, falseCondition]]);
+            functions = container.invoke(FunctionCollection,[]);
 
             spyOn(loggingHelper, "logChangeVariable");
         });
@@ -117,7 +120,7 @@ describe("SetTimeStampFunction", () => {
             let testFunction = new SetTimeStampFunction(typeChecker, loggingHelper, {id: "test", variable: "existing", conditions: []});
 
             expect(variables.get("existing").value).toEqual("1");
-            testFunction.execute("testStory", "testReading", variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            testFunction.execute("testStory", "testReading", variables, conditions, functions, {} as LocationCollection, {} as LocationInformation);
             expect(variables.get("existing").value).toEqual(moment().unix().toString());
         });
 
@@ -125,7 +128,7 @@ describe("SetTimeStampFunction", () => {
             let testFunction = new SetTimeStampFunction(typeChecker, loggingHelper, {id: "test",  variable: "doesNotExist", conditions: []});
 
             expect(variables.get("doesNotExist")).toBeUndefined();
-            testFunction.execute("testStory", "testReading", variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            testFunction.execute("testStory", "testReading", variables, conditions, functions, {} as LocationCollection, {} as LocationInformation);
             expect(variables.get("doesNotExist").value).toEqual(moment().unix().toString());
         });
 
@@ -133,7 +136,7 @@ describe("SetTimeStampFunction", () => {
             let testFunction = new SetTimeStampFunction(typeChecker, loggingHelper, {id: "test",  variable: "existing", conditions: ["true", "true"]});
 
             expect(variables.get("existing").value).toEqual("1");
-            testFunction.execute("testStory", "testReading", variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            testFunction.execute("testStory", "testReading", variables, conditions, functions, {} as LocationCollection, {} as LocationInformation);
             expect(variables.get("existing").value).toEqual(moment().unix().toString());
         });
 
@@ -141,7 +144,7 @@ describe("SetTimeStampFunction", () => {
             let testFunction = new SetTimeStampFunction(typeChecker, loggingHelper, {id: "test",  variable: "doesNotExist", conditions: ["true", "true"]});
 
             expect(variables.get("doesNotExist")).toBeUndefined();
-            testFunction.execute("testStory", "testReading", variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            testFunction.execute("testStory", "testReading", variables, conditions, functions, {} as LocationCollection, {} as LocationInformation);
             expect(variables.get("doesNotExist").value).toEqual(moment().unix().toString());
         });
 
@@ -149,7 +152,7 @@ describe("SetTimeStampFunction", () => {
             let testFunction = new SetTimeStampFunction(typeChecker, loggingHelper, {id: "test",  variable: "existing", conditions: ["false"]});
 
             expect(variables.get("existing").value).toEqual("1");
-            testFunction.execute("testStory", "testReading", variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            testFunction.execute("testStory", "testReading", variables, conditions, functions, {} as LocationCollection, {} as LocationInformation);
             expect(variables.get("existing").value).toEqual("1");
         });
 
@@ -157,7 +160,7 @@ describe("SetTimeStampFunction", () => {
             let testFunction = new SetTimeStampFunction(typeChecker, loggingHelper, {id: "test",  variable: "doesNotExist", conditions: ["false"]});
 
             expect(variables.get("doesNotExist")).toBeUndefined();
-            testFunction.execute("testStory", "testReading", variables, conditions, {} as LocationCollection, {} as LocationInformation);
+            testFunction.execute("testStory", "testReading", variables, conditions, functions, {} as LocationCollection, {} as LocationInformation);
             expect(variables.get("doesNotExist")).toBeUndefined();
         });
     });

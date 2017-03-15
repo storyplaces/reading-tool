@@ -40,12 +40,14 @@ import {SetFunction} from "../models/functions/SetFunction";
 import {NullFunction} from "../models/functions/NullFunction";
 import {SetTimeStampFunction} from "../models/functions/SetTimeStampFunction";
 import {IncrementFunction} from "../models/functions/IncrementFunction";
+import {ChainFunction} from "../models/functions/ChainFunction";
 
 @inject(
     TypeFactory.withMapping({
         'increment': IncrementFunction,
         'set': SetFunction,
         'settimestamp': SetTimeStampFunction,
+        'chain': ChainFunction,
         'null': NullFunction
     })
 )

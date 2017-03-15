@@ -32,8 +32,9 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 import {TypeChecker} from "../../../../src/resources/utilities/TypeChecker";
-import {IncrementFunction} from "../../../../src/resources/models/functions/IncrementFunction";
+import {ChainFunction} from "../../../../src/resources/models/functions/ChainFunction";
 import {Container} from "aurelia-framework";
 import {ConditionCollection} from "../../../../src/resources/collections/ConditionCollection";
 import {LocationInformation} from "../../../../src/resources/gps/LocationInformation";
@@ -41,10 +42,12 @@ import {LocationCollection} from "../../../../src/resources/collections/Location
 import {VariableCollection} from "../../../../src/resources/collections/VariableCollection";
 import {FalseCondition} from "../../../../src/resources/models/conditions/boolean/FalseCondition";
 import {TrueCondition} from "../../../../src/resources/models/conditions/boolean/TrueCondition";
+import moment = require('moment');
 import {LoggingHelper} from "../../../../src/resources/logging/LoggingHelper";
 import {FunctionCollection} from "../../../../src/resources/collections/FunctionCollection";
+import {SetFunction} from "../../../../src/resources/models/functions/SetFunction";
 
-describe("IncrementFunction", () => {
+describe("ChainFunction", () => {
 
     let container: Container = new Container().makeGlobal();
 
@@ -64,20 +67,20 @@ describe("IncrementFunction", () => {
     });
 
     it("can be created with data", () => {
-        let testFunction = new IncrementFunction(typeChecker, loggingHelper, {type: "increment"});
+        let testFunction = new ChainFunction(typeChecker, loggingHelper, {type:"settimestamp"});
 
-        expect(testFunction instanceof IncrementFunction).toBeTruthy();
+        expect(testFunction instanceof ChainFunction).toBeTruthy();
     });
 
     it("can be created with no data", () => {
-        let testFunction = new IncrementFunction(typeChecker, loggingHelper);
+        let testFunction = new ChainFunction(typeChecker, loggingHelper);
 
-        expect(testFunction instanceof IncrementFunction).toBeTruthy();
+        expect(testFunction instanceof ChainFunction).toBeTruthy();
     });
 
 
     it("will throw an error if something other than an object is passed to fromObject", () => {
-        let model = new IncrementFunction(typeChecker, loggingHelper);
+        let model = new ChainFunction(typeChecker, loggingHelper);
 
         expect(() => {
             model.fromObject([] as any)
@@ -86,22 +89,7 @@ describe("IncrementFunction", () => {
         expect(() => {
             model.fromObject("a" as any)
         }).toThrow();
-    });
-
-    it("can have its value set to a string", () => {
-        let testFunction = new IncrementFunction(typeChecker, loggingHelper);
-        testFunction.value = "abc";
-
-        expect(testFunction.value).toEqual("abc");
-    });
-
-    it("throw if its value set to something other than a string", () => {
-        let testFunction = new IncrementFunction(typeChecker, loggingHelper);
-
-        expect(() => {
-            testFunction.value = 123 as any;
-        }).toThrow();
-    });
+    })
 
     describe("method execute", () => {
         let container: Container = new Container().makeGlobal();
@@ -112,12 +100,26 @@ describe("IncrementFunction", () => {
         let conditions :ConditionCollection;
         let functions: FunctionCollection;
 
+        let testFunction1: SetFunction;
+        let testFunction2: SetFunction;
+        let testFunction3: SetFunction;
+
         beforeEach(() => {
             variables = container.invoke(VariableCollection, [[{id: "existing", value: "1"}]]);
             trueCondition = container.invoke(TrueCondition, [{id: "true"}]);
             falseCondition = container.invoke(FalseCondition, [{id: "false"}]);
             conditions = container.invoke(ConditionCollection, [[trueCondition, falseCondition]]);
-            functions = container.invoke(FunctionCollection,[]);
+
+            testFunction1 = container.invoke(SetFunction, [{id: "1"}]);
+            testFunction2 = container.invoke(SetFunction, [{id: "2"}]);
+            testFunction3 = container.invoke(SetFunction, [{id: "3"}]);
+
+            spyOn(testFunction1, 'execute');
+            spyOn(testFunction2, 'execute');
+            spyOn(testFunction3, 'execute');
+
+            functions = container.invoke(FunctionCollection,[[testFunction1, testFunction2, testFunction3]]);
+
             spyOn(loggingHelper, "logChangeVariable");
         });
 
@@ -128,62 +130,51 @@ describe("IncrementFunction", () => {
             conditions = undefined;
         });
 
-        it("increments a existing variable by the passed value with no conditions set", () => {
-            let testFunction = new IncrementFunction(typeChecker, loggingHelper, {id: "test", variable: "existing", value: "2", conditions: []});
-
-            expect(variables.get("existing").value).toEqual("1");
+        it("calls the correct functions with no conditions set", () => {
+            let testFunction = new ChainFunction(typeChecker, loggingHelper, {id: "test", functions: ["1", "2"], conditions: []});
             testFunction.execute("testStory", "testReading", variables, conditions, functions, {} as LocationCollection, {} as LocationInformation);
-            expect(variables.get("existing").value).toEqual("3");
-            expect(loggingHelper.logChangeVariable).toHaveBeenCalledTimes(1);
-            expect(loggingHelper.logChangeVariable).toHaveBeenCalledWith("testStory", "testReading", "existing", "3");
+
+            expect(testFunction1.execute).toHaveBeenCalledTimes(1);
+            expect(testFunction2.execute).toHaveBeenCalledTimes(1);
+            expect(testFunction3.execute).not.toHaveBeenCalled();
         });
 
-        it("creates a new variable and sets it to the passed value with no conditions set", () => {
-            let testFunction = new IncrementFunction(typeChecker, loggingHelper, {id: "test", variable: "doesNotExist", value: "2", conditions: []});
-
-            expect(variables.get("doesNotExist")).toBeUndefined();
+        it("calls the correct functions with true conditions set", () => {
+            let testFunction = new ChainFunction(typeChecker, loggingHelper, {id: "test", functions: ["1", "2"], conditions: ["true"]});
             testFunction.execute("testStory", "testReading", variables, conditions, functions, {} as LocationCollection, {} as LocationInformation);
-            expect(variables.get("doesNotExist").value).toEqual("2");
-            expect(loggingHelper.logChangeVariable).toHaveBeenCalledTimes(1);
-            expect(loggingHelper.logChangeVariable).toHaveBeenCalledWith("testStory", "testReading", "doesNotExist", "2");
+
+            expect(testFunction1.execute).toHaveBeenCalledTimes(1);
+            expect(testFunction2.execute).toHaveBeenCalledTimes(1);
+            expect(testFunction3.execute).not.toHaveBeenCalled();
         });
 
-        it("increments a existing variable by the passed value with true conditions set", () => {
-            let testFunction = new IncrementFunction(typeChecker, loggingHelper, {id: "test", variable: "existing", value: "2", conditions: ["true", "true"]});
 
-            expect(variables.get("existing").value).toEqual("1");
+        it("calls no functions with false conditions set", () => {
+            let testFunction = new ChainFunction(typeChecker, loggingHelper, {id: "test", functions: ["1", "2"], conditions: ["false"]});
             testFunction.execute("testStory", "testReading", variables, conditions, functions, {} as LocationCollection, {} as LocationInformation);
-            expect(variables.get("existing").value).toEqual("3");
-            expect(loggingHelper.logChangeVariable).toHaveBeenCalledTimes(1);
-            expect(loggingHelper.logChangeVariable).toHaveBeenCalledWith("testStory", "testReading", "existing", "3");
+
+            expect(testFunction1.execute).not.toHaveBeenCalled();
+            expect(testFunction2.execute).not.toHaveBeenCalled();
+            expect(testFunction3.execute).not.toHaveBeenCalled();
         });
 
-        it("creates a new variable and sets it to the passed value with true conditions set", () => {
-            let testFunction = new IncrementFunction(typeChecker, loggingHelper, {id: "test", variable: "doesNotExist", value: "2", conditions: ["true", "true"]});
 
-            expect(variables.get("doesNotExist")).toBeUndefined();
+        it("calls nothing if no functions passed", () => {
+            let testFunction = new ChainFunction(typeChecker, loggingHelper, {id: "test", functions: [], conditions: []});
             testFunction.execute("testStory", "testReading", variables, conditions, functions, {} as LocationCollection, {} as LocationInformation);
-            expect(variables.get("doesNotExist").value).toEqual("2");
-            expect(loggingHelper.logChangeVariable).toHaveBeenCalledTimes(1);
-            expect(loggingHelper.logChangeVariable).toHaveBeenCalledWith("testStory", "testReading", "doesNotExist", "2");
+
+            expect(testFunction1.execute).not.toHaveBeenCalled();
+            expect(testFunction2.execute).not.toHaveBeenCalled();
+            expect(testFunction3.execute).not.toHaveBeenCalled();
         });
 
-        it("does not increments a existing variable by the passed value if conditions fail", () => {
-            let testFunction = new IncrementFunction(typeChecker, loggingHelper, {id: "test", variable: "existing", value: "2", conditions: ["false"]});
-
-            expect(variables.get("existing").value).toEqual("1");
+        it("calls nothing if functions is undefined", () => {
+            let testFunction = new ChainFunction(typeChecker, loggingHelper, {id: "test", conditions: []});
             testFunction.execute("testStory", "testReading", variables, conditions, functions, {} as LocationCollection, {} as LocationInformation);
-            expect(variables.get("existing").value).toEqual("1");
-            expect(loggingHelper.logChangeVariable).toHaveBeenCalledTimes(0);
-        });
 
-        it("does not create a new variable if conditions fail", () => {
-            let testFunction = new IncrementFunction(typeChecker, loggingHelper, {id: "test", variable: "doesNotExist", value: "2", conditions: ["false"]});
-
-            expect(variables.get("doesNotExist")).toBeUndefined();
-            testFunction.execute("testStory", "testReading", variables, conditions, functions, {} as LocationCollection, {} as LocationInformation);
-            expect(variables.get("doesNotExist")).toBeUndefined();
-            expect(loggingHelper.logChangeVariable).toHaveBeenCalledTimes(0);
+            expect(testFunction1.execute).not.toHaveBeenCalled();
+            expect(testFunction2.execute).not.toHaveBeenCalled();
+            expect(testFunction3.execute).not.toHaveBeenCalled();
         });
     });
 });

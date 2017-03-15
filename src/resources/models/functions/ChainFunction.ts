@@ -44,10 +44,9 @@ import {FunctionCollection} from "../../collections/FunctionCollection";
 
 @inject(TypeChecker, LoggingHelper)
 
-export class IncrementFunction extends BaseFunction {
+export class ChainFunction extends BaseFunction {
 
-    private _variable: string;
-    private _value: string;
+    private _functionIds: Array<string>;
 
     constructor(typeChecker: TypeChecker, private loggingHelper: LoggingHelper, data?: any) {
         super(typeChecker);
@@ -57,55 +56,53 @@ export class IncrementFunction extends BaseFunction {
         }
     }
 
-    fromObject(data = {id: undefined, variable: undefined, value: undefined, conditions: undefined}) {
+    fromObject(data = {id: undefined, functions: undefined, conditions: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.variable = data.variable;
-        this.value = data.value;
+        this.functionIds = data.functions;
         this.conditions = data.conditions;
     }
 
     toJSON() {
         return {
             id: this.id,
-            type: "increment",
-            variable: this.variable,
-            value: this.value,
+            type: "set",
+            functionIds: this.functionIds,
             conditions: this.conditions
         };
     }
 
-    get value(): string {
-        return this._value;
+    get functionIds(): Array<string> {
+        return this._functionIds;
     }
 
-    set value(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Value", value);
-        this._value = value;
+    set functionIds(value: Array<string>) {
+        this.typeChecker.isUndefinedOrArrayOf("Function Ids", value, "string");
+        this._functionIds = value;
     }
 
-    get variable(): string {
-        return this._variable;
-    }
-
-    set variable(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Value", value);
-        this._variable = value;
-    }
 
     execute(storyId: string, readingId: string, variables: VariableCollection, conditions: ConditionCollection, functions: FunctionCollection, locations?: LocationCollection, userLocation?: LocationInformation) {
         if (!this.allConditionsPass(variables, conditions, locations, userLocation)) {
             return;
         }
 
-        let variable = variables.get(this.variable) || {id: this.variable, value: "0"};
+        if (!this.functionIds) {
+            return;
+        }
 
-        let currentValue = parseInt(variable.value);
-        let newValue = currentValue + parseInt(this.value);
-
-        variable.value = newValue.toString();
-        variables.save(variable);
-        this.loggingHelper.logChangeVariable(storyId, readingId, variable.id, variable.value);
+        this.functionIds.forEach((functionId) => {
+            this.getFunction(functions, functionId).execute(storyId, readingId, variables, conditions, functions, locations, userLocation);
+        });
     }
 
+    private getFunction(functions: FunctionCollection, functionId) {
+        let func = functions.get(functionId);
+
+        if (!func) {
+            throw Error("Function " + functionId + "was not found");
+        }
+
+        return func;
+    }
 }
