@@ -14,7 +14,10 @@ export class StoryOverviewPage {
     tag: string;
     tags: Array<string>;
 
-    audiences = [{id: "family", name: "Family Friendly"}, {id: "general", name: "General Audience"}, {id: "advisory", name: "Advisory Content"}];
+    audiences = [{id: "family", name: "Family Friendly"}, {id: "general", name: "General Audience"}, {
+        id: "advisory",
+        name: "Advisory Content"
+    }];
     selectedAudiences: Array<string> = [];
     selectedTags: Array<string> = [];
 
@@ -35,21 +38,12 @@ export class StoryOverviewPage {
         this.selectedTags = [];
         console.log("tag ", this.tag);
         return this.refresh().then(() => {
-            this.tags = [];
-
-            this.storyConnector.all.forEach(story => {
-                this.addUniqueTags(story);
-            });
-
             if (params.tag) {
+                this.selectedTags = [];
                 let index = this.tags.indexOf(params.tag);
                 if (index != -1) {
                     this.selectedTags.push(this.tags[index]);
                 }
-            }
-
-            if (this.selectedTags.length == 0) {
-                this.selectAllTags();
             }
 
             this.selectAllAudiences();
@@ -73,7 +67,16 @@ export class StoryOverviewPage {
     }
 
     refresh() {
-        return this.storyConnector.fetchAll();
+        return this.storyConnector.fetchAll()
+            .then(() => {
+                this.tags = [];
+
+                this.storyConnector.all.forEach(story => {
+                    this.addUniqueTags(story);
+                });
+
+                this.selectAllTags();
+            });
     }
 
     private addUniqueTags(story: Story) {

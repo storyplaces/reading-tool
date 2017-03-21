@@ -49,7 +49,7 @@ export class FilterStoryListValueConverter {
 
     filterOnTags(stories: Array<Story>, tags: Array<string>) {
         return stories.filter(story => {
-            return tags.some(tag => {
+            return story.tags.length == 0 || tags.some(tag => {
                 return story.tags.indexOf(tag) != -1;
             })
         });
