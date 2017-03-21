@@ -21,6 +21,10 @@ export class PageReadPage {
 
     @computedFrom('pageId', 'storyId')
     get page(): Page {
+        if (!this.readingManager) {
+            return undefined;
+        }
+
         return this.readingManager.story.pages.get(this.pageId);
     }
 
