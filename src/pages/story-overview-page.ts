@@ -4,6 +4,7 @@
 import {StoryConnector} from "../resources/store/StoryConnector";
 import {autoinject, BindingEngine, computedFrom} from "aurelia-framework";
 import {Story} from "../resources/models/Story";
+import {AuthoringStory} from "../../../authoring-tool/src/resources/models/AuthoringStory";
 
 @autoinject()
 export class StoryOverviewPage {
@@ -23,8 +24,9 @@ export class StoryOverviewPage {
 
     @computedFrom('storyConnector.all')
     get stories(): Array<Story> {
-        console.log(this.storyConnector.all);
-        return this.storyConnector.all;
+        return this.storyConnector.all.filter((story: Story) => {
+            return (story.publishState == "published");
+        });
     }
 
     @computedFrom('selectedTags.length', ' selectedAudiences.length')

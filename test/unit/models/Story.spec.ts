@@ -100,6 +100,7 @@ describe("Story model", () => {
         expect(model.pagesMapViewSettings).toEqual(undefined);
         expect(model.name).toEqual(undefined);
         expect(model.tags).toEqual(undefined);
+        expect(model.publishState).toEqual(undefined);
 
         expect(pageCollectionFactoryCalledWith).toBeUndefined();
         expect(pagesMapViewSettingsFactoryCalledWith).toBeUndefined();
@@ -108,7 +109,7 @@ describe("Story model", () => {
     it("can be instantiated with data", () => {
         let data = {
             id: "id", name: "name", cachedMediaIds: ["cachedMediaId"], conditions: [{id: "condition", type:"true"}], description: "description", functions: [{id: "function", type: "null"}],
-            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"], audience: "general", locations:[{id:"location", type: "null"}]
+            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"], audience: "general", locations:[{id:"location", type: "null"}], publishState: "published"
         };
 
 
@@ -121,6 +122,7 @@ describe("Story model", () => {
         expect(model.description).toEqual("description");
         expect(model.name).toEqual("name");
         expect(model.tags).toEqual(["tag"]);
+        expect(model.publishState).toEqual("published");
 
         expect(model.pages).toEqual(undefined);
         expect(model.pagesMapViewSettings).toEqual(undefined);
@@ -135,7 +137,7 @@ describe("Story model", () => {
     it("can have an anonymous Object passed to it", () => {
         let data = {
             id: "id", name: "name", cachedMediaIds: ["cachedMediaId"], conditions: [{id: "condition", type:"true"}], description: "description", functions: [{id: "function", type: "null"}],
-            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"], audience: "general", locations:[{id:"location", type: "null"}]
+            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"], audience: "general", locations:[{id:"location", type: "null"}], publishState: "published"
         };
 
         let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, functionCollectionFactory, conditionCollectionFactory, typeChecker);
@@ -147,6 +149,7 @@ describe("Story model", () => {
         expect(model.description).toEqual("description");
         expect(model.name).toEqual("name");
         expect(model.tags).toEqual(["tag"]);
+        expect(model.publishState).toEqual("published");
 
         expect(model.pages).toEqual(undefined);
         expect(model.pagesMapViewSettings).toEqual(undefined);
@@ -227,7 +230,7 @@ describe("Story model", () => {
     it("will output JSON when passed to JSON.stringify", () => {
         let data = {
             id: "id", name: "name", cachedMediaIds: ["cachedMediaId"], conditions: [{id: "condition", type: "true"}], description: "description", functions: [{id: "function", type: "null"}],
-            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"]
+            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"], publishState: "published"
         };
 
         let model = resolve(Story, data);
@@ -235,6 +238,6 @@ describe("Story model", () => {
         let result = JSON.stringify(model);
 
         //TODO:  Make this a real test as we don't have any sub modules!
-        expect(result).toEqual('{"id":"id","author":"author","cachedMediaIds":["cachedMediaId"],"conditions":[{"id":"condition","type":"true"}],"description":"description","functions":[{"id":"function","type":"null"}],"pages":[{"id":"page","hint":{}}],"pagesMapViewSettings":{},"name":"name","tags":["tag"],"locations":[]}');
+        expect(result).toEqual('{"id":"id","author":"author","cachedMediaIds":["cachedMediaId"],"conditions":[{"id":"condition","type":"true"}],"description":"description","functions":[{"id":"function","type":"null"}],"pages":[{"id":"page","hint":{}}],"pagesMapViewSettings":{},"name":"name","tags":["tag"],"locations":[],"publishState":"published"}');
     });
 });
