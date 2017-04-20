@@ -73,6 +73,8 @@ export class App {
             {route: '/story/:storyId/:readingId/:pageId', moduleId: 'pages/page-read-page', title: 'Page', name: 'page-read'}
         ]);
 
+        config.fallbackRoute('/');
+
         this.router = router;
         console.log(this.router);
     }
