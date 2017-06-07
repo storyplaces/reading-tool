@@ -4,7 +4,6 @@
 import {StoryConnector} from "../resources/store/StoryConnector";
 import {autoinject, BindingEngine, computedFrom} from "aurelia-framework";
 import {Story} from "../resources/models/Story";
-import {AuthoringStory} from "../../../authoring-tool/src/resources/models/AuthoringStory";
 
 @autoinject()
 export class StoryOverviewPage {
