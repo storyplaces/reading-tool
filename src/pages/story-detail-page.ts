@@ -18,12 +18,6 @@ export class StoryDetailPage {
                 private router: Router) {
     }
 
-    // @computedFrom('storyConnector.all', 'storyId')
-    // get story(): Story {
-    //     console.log("get story");
-    //     return this.storyConnector.byId(this.storyId);
-    // }
-
     activate(params) {
         this.storyId = params.storyId;
 

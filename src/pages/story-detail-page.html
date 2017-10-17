@@ -35,7 +35,6 @@
 <template>
     <require from="../components/story/story-overview-list"></require>
     <require from="../components/elements/collapsible-panel"></require>
-    <require from="../components/elements/bindable-modal"></require>
     <require from="../components/reading/reading-overview-list"></require>
 
     <div class="container">
@@ -43,14 +42,17 @@
         <h2 class="text-center">${story.name}<br>
             <small>${story.author}</small>
         </h2>
-
         <div class="text-center">
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#description-collapse">Description</button>
+            <span repeat.for="tag of story.tags"><span class="label label-default">${tag}</span></span>
+        </div>
+        <br>
+
+        <div class="text-left">
+            <div innerhtml.bind=story.description></div>
         </div>
 
-        <bindable-modal title.bind="story.name" id="description-collapse" content.bind="story.description"></bindable-modal>
-
-        <reading-overview-list story-id.bind="storyId" class="content-top-padding reading-overview-list"></reading-overview-list>
+        <reading-overview-list story-id.bind="storyId"
+                               class="content-top-padding reading-overview-list"></reading-overview-list>
 
 
     </div>
