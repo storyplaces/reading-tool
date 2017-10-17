@@ -115,8 +115,8 @@ describe('StorySummary', () => {
     it('should shows the tags correctly', done => {
         component.create(bootstrap).then(() => {
             const metaDataElement = document.querySelector("div.list-group-item-text");
-            expect(metaDataElement.innerHTML).toContain('<span class="label label-default">Southampton </span>');
-            expect(metaDataElement.innerHTML).toContain('<span class="label label-default">Bournemouth </span>');
+            expect(metaDataElement.innerHTML).toContain('<span class="label label-default">Southampton</span>');
+            expect(metaDataElement.innerHTML).toContain('<span class="label label-default">Bournemouth</span>');
             done();
         });
     });
