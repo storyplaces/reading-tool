@@ -28,8 +28,8 @@ export class PageReadPage {
         return this.readingManager.story.pages.get(this.pageId);
     }
 
-    get nextPageText(): string {
-        return this.page.pageTransition == "next" ? "Continue Reading" : "Finish Reading";
+    get finishPage(): boolean {
+        return this.page.pageTransition != "next";
     }
 
     callPageFunctions() {

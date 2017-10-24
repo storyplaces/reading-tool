@@ -33,9 +33,23 @@
   -->
 
 <template>
-    <div class="container">
-        <h4 class="text-center">${page.name}</h4>
-        <p innerHtml.bind="page.content | sanitizeHTML" ref="contentElement"></p>
-        <p><button type="text" click.trigger="callPageFunctions()" class="btn btn-primary">${nextPageText}</button></p>
+    <div class="reading-background">
+        <div class="panel panel-default reading-panel">
+            <div class="panel-heading">
+                <h3 class="text-center">${page.name}</h3>
+            </div>
+            <div class="panel-body">
+                <p innerHtml.bind="page.content | sanitizeHTML" ref="contentElement"></p>
+            </div>
+            <div class="panel-footer text-right">
+                <button if.bind="finishPage" type="text" click.trigger="callPageFunctions()" class="btn btn-primary">
+                    <i class="glyphicon glyphicon-flag" aria-hidden="true"></i> Finish Story
+                </button>
+
+                <button if.bind="!finishPage" type="text" click.trigger="callPageFunctions()" class="btn btn-primary">
+                    Continue Reading <i class="glyphicon glyphicon-arrow-right" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
     </div>
 </template>
