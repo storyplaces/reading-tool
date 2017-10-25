@@ -4,7 +4,7 @@
  *
  This application was developed as part of the Leverhulme Trust funded
  StoryPlaces Project. For more information, please visit storyplaces.soton.ac.uk
- Copyright (c) 2017
+ Copyright (c) 2016
  University of Southampton
  Charlie Hargood, cah07r.ecs.soton.ac.uk
  Kevin Puplett, k.e.puplett.soton.ac.uk
@@ -32,25 +32,38 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {JSONable} from "../interfaces/JSONable";
+import {FromObjectInterface} from "../interfaces/FromObjectInterface";
+import {TypeChecker} from "../utilities/TypeChecker";
+import {inject} from "aurelia-framework";
 
-import {autoinject} from 'aurelia-framework';
-import {LoggingHelper} from "../logging/LoggingHelper";
+@inject(TypeChecker)
+export class StoryOptions implements JSONable, FromObjectInterface {
 
-@autoinject()
-export class UserConfig {
+    // Log Locations disabled by default
+    private _logLocations: boolean = false;
 
-    constructor(){//private loggingHelper: LoggingHelper){
-        this.locationDemo = false;
+    constructor(private typeChecker: TypeChecker, data?: any) {
+        this.fromObject(data);
     }
 
-    get locationDemo(): boolean {
-        return this._locationDemo;
+    public fromObject(data: any = {logLocations: undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this._logLocations = data.logLocations;
     }
 
-    set locationDemo(value: boolean) {
-        this._locationDemo = value;
-        //this.loggingHelper.logDemoModeStateSet(value);
+    public toJSON() {
+        return {
+            logLocations: this._logLocations,
+        };
     }
 
-    private _locationDemo: boolean = false;
+    get logLocations(): boolean {
+        return this._logLocations;
+    }
+
+    set logLocations(value: boolean) {
+        this.typeChecker.validateAsBooleanOrUndefined("StoryOptions", value);
+        this._logLocations = value;
+    }
 }

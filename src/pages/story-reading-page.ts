@@ -5,6 +5,7 @@ import {autoinject} from "aurelia-framework";
 import {ReadingManager} from "../resources/reading/ReadingManager";
 import {LoggingHelper} from "../resources/logging/LoggingHelper";
 import {LocationManager} from "../resources/gps/LocationManager";
+import {StoryCollection} from "../resources/collections/StoryCollection";
 
 @autoinject()
 export class StoryReadingPage {
@@ -19,13 +20,14 @@ export class StoryReadingPage {
 
     constructor(private readingManager: ReadingManager,
                 private loggingHelper: LoggingHelper,
-                private location: LocationManager) {
+                private location: LocationManager,
+                private storyCollection: StoryCollection) {
     }
 
     activate(params) {
         this.storyId = params.storyId;
         this.readingId = params.readingId;
-        this.loggingHelper.logViewReading(this.storyId, this.readingId);
+        this.loggingHelper.logViewReading(this.storyCollection.get(this.storyId), this.readingId);
         return this.readingManager.attach(this.storyId, this.readingId);
     }
 

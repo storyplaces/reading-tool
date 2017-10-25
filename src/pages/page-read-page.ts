@@ -7,6 +7,7 @@ import {ReadingManager} from "../resources/reading/ReadingManager";
 import {Router} from "aurelia-router";
 import {LoggingHelper} from "../resources/logging/LoggingHelper";
 import {CachedMediaConnector} from "../resources/store/CachedMediaConnector";
+import {StoryCollection} from "../resources/collections/StoryCollection";
 
 @autoinject()
 export class PageReadPage {
@@ -16,7 +17,8 @@ export class PageReadPage {
 
     contentElement: HTMLElement;
 
-    constructor(private readingManager: ReadingManager, private router: Router, private loggingHelper: LoggingHelper, private cachedMediaConnector: CachedMediaConnector) {
+    constructor(private readingManager: ReadingManager, private router: Router, private loggingHelper: LoggingHelper, private cachedMediaConnector: CachedMediaConnector,
+                private storyCollection: StoryCollection) {
     }
 
     @computedFrom('pageId', 'storyId')
@@ -48,7 +50,7 @@ export class PageReadPage {
         this.readingId = params.readingId;
         this.pageId = params.pageId;
         return this.readingManager.attach(this.storyId, this.readingId, false).then(() => {
-            this.loggingHelper.logPageRead(this.storyId, this.readingId, this.pageId, this.page.name);
+            this.loggingHelper.logPageRead(this.storyCollection.get(this.storyId), this.readingId, this.pageId, this.page.name);
         });
 
 
