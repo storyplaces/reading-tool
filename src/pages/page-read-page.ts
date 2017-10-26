@@ -67,9 +67,12 @@ export class PageReadPage {
         let imageElements = this.contentElement.querySelectorAll("img[data-media-id]");
 
         for (let index = 0; index < imageElements.length; index++) {
+
             let element = imageElements.item(index);
             this.setSrcOnMediaItem(element);
-            element.className = "story-image";
+            element.className = "page-image";
+            let html = element.outerHTML;
+            element.outerHTML = "<div class='page-image-wrapper'>" + html + "</div>";
         }
     }
 
@@ -80,6 +83,13 @@ export class PageReadPage {
             let element = audioElements.item(index);
             this.setSrcOnMediaItem(element);
             element.setAttribute("controls", "");
+            element.className = "page-audio";
+
+            let width = element.clientWidth;
+            let height = element.clientHeight;
+            console.log(width);
+            let html = element.outerHTML;
+            element.outerHTML = `<div class='page-audio-wrapper' style='width: ${width}px;height: ${height}px'>` + html + "</div>";
         }
     }
 
