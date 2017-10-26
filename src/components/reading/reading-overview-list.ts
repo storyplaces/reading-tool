@@ -3,6 +3,7 @@ import {bindable, inject, Factory, BindingEngine, Disposable} from "aurelia-fram
 import {ReadingConnector} from "../../resources/store/ReadingConnector";
 import {Authenticator} from "../../resources/auth/Authenticator";
 import {LoggingHelper} from "../../resources/logging/LoggingHelper";
+import {StoryCollection} from "../../resources/collections/StoryCollection";
 /**
  * Created by andy on 28/11/16.
  */
@@ -12,7 +13,8 @@ import {LoggingHelper} from "../../resources/logging/LoggingHelper";
     Factory.of(Reading),
     BindingEngine,
     Authenticator,
-    LoggingHelper
+    LoggingHelper,
+    StoryCollection
 )
 export class ReadingOverviewListCustomElement {
 
@@ -20,7 +22,8 @@ export class ReadingOverviewListCustomElement {
                 private readingFactory: (any?) => Reading,
                 private bindingEngine: BindingEngine,
                 private auth: Authenticator,
-                private loggingHelper: LoggingHelper) {
+                private loggingHelper: LoggingHelper,
+                private storyCollection: StoryCollection) {
 
     }
 
@@ -67,7 +70,7 @@ export class ReadingOverviewListCustomElement {
         var readingName = "Reading " + (this.readings.length + 1);
         var reading = this.readingFactory({storyId: this.storyId, userId: this.auth.userId, name: readingName});
         this.readingConnector.save(reading);
-        this.loggingHelper.logNewReading(this.storyId);
+        this.loggingHelper.logNewReading(this.storyCollection.get(this.storyId));
         this.refresh();
     }
 

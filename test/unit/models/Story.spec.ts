@@ -43,6 +43,7 @@ describe("Story model", () => {
     let typeChecker: TypeChecker
     let functionCollectionFactoryCalledWith;
     let conditionCollectionFactoryCalledWith;
+    let storyOptionsFactoryCalledWith;
 
     let pageCollectionFactory = (data) => {
         pageCollectionFactoryCalledWith = data;
@@ -51,6 +52,11 @@ describe("Story model", () => {
 
     let pagesMapViewSettingsFactory = (data) => {
         pagesMapViewSettingsFactoryCalledWith = data;
+        return undefined;
+    };
+
+    let storyOptionsFactory = (data) => {
+        storyOptionsFactoryCalledWith = data;
         return undefined;
     };
 
@@ -78,6 +84,7 @@ describe("Story model", () => {
     beforeEach(() => {
         pageCollectionFactoryCalledWith = "set to something random";
         pagesMapViewSettingsFactoryCalledWith = "set to something random";
+        storyOptionsFactoryCalledWith = "set to something random";
         typeChecker = new TypeChecker();
     });
 
@@ -88,7 +95,7 @@ describe("Story model", () => {
 
 
     it("can be instantiated with no data", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, functionCollectionFactory, conditionCollectionFactory, storyOptionsFactory, typeChecker);
 
         expect(model.id).toBeUndefined();
         expect(model.author).toBeUndefined();
@@ -101,6 +108,7 @@ describe("Story model", () => {
         expect(model.name).toEqual(undefined);
         expect(model.tags).toEqual(undefined);
         expect(model.publishState).toEqual(undefined);
+        expect(model.storyOptions).toEqual(undefined);
 
         expect(pageCollectionFactoryCalledWith).toBeUndefined();
         expect(pagesMapViewSettingsFactoryCalledWith).toBeUndefined();
@@ -109,11 +117,11 @@ describe("Story model", () => {
     it("can be instantiated with data", () => {
         let data = {
             id: "id", name: "name", cachedMediaIds: ["cachedMediaId"], conditions: [{id: "condition", type:"true"}], description: "description", functions: [{id: "function", type: "null"}],
-            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"], audience: "general", locations:[{id:"location", type: "null"}], publishState: "published"
+            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"], audience: "general", locations:[{id:"location", type: "null"}], publishState: "published", storyOptions: {logLocations: true}
         };
 
 
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, functionCollectionFactory, conditionCollectionFactory, typeChecker, data);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, functionCollectionFactory, conditionCollectionFactory, storyOptionsFactory, typeChecker, data);
 
 
         expect(model.id).toEqual("id");
@@ -129,6 +137,7 @@ describe("Story model", () => {
         expect(pageCollectionFactoryCalledWith).toEqual([{id: "page"}]);
         expect(locationFactoryCalledWith).toEqual([{id: "location", "type": "null"}]);
         expect(pagesMapViewSettingsFactoryCalledWith).toEqual({setting: true});
+        expect(storyOptionsFactoryCalledWith).toEqual({logLocations: true});
         expect(conditionCollectionFactoryCalledWith).toEqual([{id: "condition", type:"true"}]);
         expect(functionCollectionFactoryCalledWith).toEqual([{id: "function", type:"null"}]);
     });
@@ -137,10 +146,10 @@ describe("Story model", () => {
     it("can have an anonymous Object passed to it", () => {
         let data = {
             id: "id", name: "name", cachedMediaIds: ["cachedMediaId"], conditions: [{id: "condition", type:"true"}], description: "description", functions: [{id: "function", type: "null"}],
-            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"], audience: "general", locations:[{id:"location", type: "null"}], publishState: "published"
+            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"], audience: "general", locations:[{id:"location", type: "null"}], publishState: "published", storyOptions: {logLocations: true}
         };
 
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, functionCollectionFactory, conditionCollectionFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, locationFactory, functionCollectionFactory, conditionCollectionFactory, storyOptionsFactory, typeChecker);
         model.fromObject(data);
 
         expect(model.id).toEqual("id");
@@ -158,11 +167,12 @@ describe("Story model", () => {
         expect(pagesMapViewSettingsFactoryCalledWith).toEqual({setting: true});
         expect(conditionCollectionFactoryCalledWith).toEqual([{id: "condition", type:"true"}]);
         expect(functionCollectionFactoryCalledWith).toEqual([{id: "function", type:"null"}]);
+        expect(storyOptionsFactoryCalledWith).toEqual({logLocations: true});
     });
 
 
     it("will throw an error if something other than an object is passed to fromObject", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, storyOptionsFactory, typeChecker);
 
         expect(() => {
             model.fromObject([] as any)
@@ -175,7 +185,7 @@ describe("Story model", () => {
 
 
     it("will throw an error if name is not set to a string or undefined", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, storyOptionsFactory, typeChecker);
 
         expect(() => {
             model.name = 1 as any
@@ -184,7 +194,7 @@ describe("Story model", () => {
 
 
     it("will throw an error if description is not set to a string or undefined", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, storyOptionsFactory, typeChecker);
 
         expect(() => {
             model.description = 1 as any
@@ -193,7 +203,7 @@ describe("Story model", () => {
 
 
     it("will throw an error if author is not set to a string or undefined", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, storyOptionsFactory, typeChecker);
 
         expect(() => {
             model.author = 1 as any
@@ -202,7 +212,7 @@ describe("Story model", () => {
 
 
     it("will throw an error if pages is not set to a PageCollection object", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, storyOptionsFactory, typeChecker);
 
         expect(() => {
             model.pages = 1 as any
@@ -211,7 +221,7 @@ describe("Story model", () => {
 
 
     it("will throw an error if pagesMapViewSettings is not set to a PagesCollection object", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, storyOptionsFactory, typeChecker);
 
         expect(() => {
             model.pagesMapViewSettings = 1 as any
@@ -219,7 +229,7 @@ describe("Story model", () => {
     });
 
     it("will throw an error if locations is not set to a LocationCollection object", () => {
-        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, typeChecker);
+        let model = new Story(pageCollectionFactory, pagesMapViewSettingsFactory, functionCollectionFactory, conditionCollectionFactory, locationFactory, storyOptionsFactory, typeChecker);
 
         expect(() => {
             model.locations = 1 as any
@@ -230,7 +240,7 @@ describe("Story model", () => {
     it("will output JSON when passed to JSON.stringify", () => {
         let data = {
             id: "id", name: "name", cachedMediaIds: ["cachedMediaId"], conditions: [{id: "condition", type: "true"}], description: "description", functions: [{id: "function", type: "null"}],
-            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"], publishState: "published"
+            pages: [{id: "page"}], pagesMapViewSettings: {setting: true}, author: "author", tags: ["tag"], publishState: "published", storyOptions: {"logLocations": true}
         };
 
         let model = resolve(Story, data);
@@ -238,6 +248,6 @@ describe("Story model", () => {
         let result = JSON.stringify(model);
 
         //TODO:  Make this a real test as we don't have any sub modules!
-        expect(result).toEqual('{"id":"id","author":"author","cachedMediaIds":["cachedMediaId"],"conditions":[{"id":"condition","type":"true"}],"description":"description","functions":[{"id":"function","type":"null"}],"pages":[{"id":"page","hint":{}}],"pagesMapViewSettings":{},"name":"name","tags":["tag"],"locations":[],"publishState":"published"}');
+        expect(result).toEqual('{"id":"id","author":"author","cachedMediaIds":["cachedMediaId"],"conditions":[{"id":"condition","type":"true"}],"description":"description","functions":[{"id":"function","type":"null"}],"pages":[{"id":"page","hint":{}}],"pagesMapViewSettings":{},"name":"name","tags":["tag"],"locations":[],"publishState":"published","storyOptions":{"logLocations":true}}');
     });
 });

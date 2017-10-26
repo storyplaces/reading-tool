@@ -34,6 +34,7 @@
  */
 import {PageCollection} from "../collections/PageCollection";
 import {PagesMapViewSettings} from "./PagesMapViewSettings";
+import {StoryOptions} from "./StoryOptions";
 import {Factory, inject} from "aurelia-framework";
 import {BaseModel} from "./BaseModel";
 import {TypeChecker} from "../utilities/TypeChecker";
@@ -47,6 +48,7 @@ import {ConditionCollection} from "../collections/ConditionCollection";
     Factory.of(LocationCollection),
     Factory.of(FunctionCollection),
     Factory.of(ConditionCollection),
+    Factory.of(StoryOptions),
     TypeChecker
 )
 export class Story extends BaseModel {
@@ -63,12 +65,14 @@ export class Story extends BaseModel {
     private _audience: string;
     private _locations: LocationCollection;
     private _publishState: string;
+    private _storyOptions: StoryOptions;
 
     constructor(private pageCollectionFactory: (any?) => PageCollection,
                 private pagesMapViewSettingsFactory: (any?) => PagesMapViewSettings,
                 private locationCollectionFactory: (any?) => LocationCollection,
                 private functionCollectionFactory: (any?) => FunctionCollection,
                 private conditionCollectionFactory: (any?) => ConditionCollection,
+                private storyOptionsFactory: (any?) => StoryOptions,
                 typeChecker: TypeChecker,
                 data?: any) {
         super(typeChecker);
@@ -88,7 +92,8 @@ export class Story extends BaseModel {
         description: undefined,
         audience: undefined,
         locations: undefined,
-        publishState: undefined
+        publishState: undefined,
+        storyOptions: undefined
     }) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
@@ -104,6 +109,7 @@ export class Story extends BaseModel {
         this.audience = data.audience;
         this.locations = this.locationCollectionFactory(data.locations);
         this.publishState = data.publishState;
+        this.storyOptions = this.storyOptionsFactory(data.storyOptions);
     }
 
     public toJSON() {
@@ -120,7 +126,8 @@ export class Story extends BaseModel {
             tags: this.tags,
             audience: this.audience,
             locations: this.locations,
-            publishState: this.publishState
+            publishState: this.publishState,
+            storyOptions: this.storyOptions
         }
     }
 
@@ -176,6 +183,15 @@ export class Story extends BaseModel {
     set pagesMapViewSettings(pagesMapViewSettings) {
         this.typeChecker.validateAsObjectOrUndefined("PagesMapViewSettings", pagesMapViewSettings, "PagesMapViewSettings", PagesMapViewSettings);
         this._pagesMapViewSettings = pagesMapViewSettings
+    }
+
+    get storyOptions(): StoryOptions {
+        return this._storyOptions;
+    }
+
+    set storyOptions(storyOptions) {
+        this.typeChecker.validateAsObjectOrUndefined("StoryOptions", storyOptions, "StoryOptions", StoryOptions);
+        this._storyOptions = storyOptions
     }
 
     get pages(): PageCollection {
