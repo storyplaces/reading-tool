@@ -40,6 +40,8 @@ import {LocationSource, LocationManager} from "../gps/LocationManager";
 import {LocationInformation} from "../gps/LocationInformation";
 import {RecenterControl} from "./controls/RecenterControl";
 import {CurrentMapLocation} from "./CurrentMapLocation";
+import {EventAggregator} from 'aurelia-event-aggregator';
+import {LocateMapEvent} from "../events/LocateMapEvent";
 
 @inject(
     BindingEngine,
@@ -47,6 +49,7 @@ import {CurrentMapLocation} from "./CurrentMapLocation";
     MapMapLayer,
     LocationManager,
     CurrentMapLocation,
+    EventAggregator,
     NewInstance.of(CurrentLocationMarker),
     NewInstance.of(RecenterControl)
 )
@@ -62,6 +65,7 @@ export class MapManager {
                 private baseLayer: MapMapLayer,
                 private location: LocationManager,
                 private mapLocation: CurrentMapLocation,
+                private eventAggregator: EventAggregator,
                 private currentLocationMarker: CurrentLocationMarker,
                 private recenterControl: RecenterControl) {
     }
@@ -85,6 +89,8 @@ export class MapManager {
         this.mapCore.addControl(this.recenterControl).then(() => {
             this.recenterControl.disable();
         });
+
+        this.eventAggregator.subscribe(LocateMapEvent, (event : LocateMapEvent) => this.panTo(event.location))
 
         this.locationSub = this.bindingEngine.propertyObserver(this.location, 'location').subscribe((location) => this.locationChanged(location));
         this.locationChanged(this.location.location);

@@ -34,6 +34,10 @@
 @import "../node_modules/bootstrap/less/bootstrap";
 @import (less) "../node_modules/leaflet/dist/leaflet.css";
 
+@readingPageWidth: 600px;
+@readingImageMinWidth: 400px;
+@readingImageBoundary: 440px;
+
 .navbar {
   margin-bottom: 0;
 }
@@ -125,6 +129,7 @@ html, body {
   :last-child {
     margin-bottom: 0.25em;
   }
+  margin-bottom: 0;
 }
 
 .up-arrow {
@@ -153,18 +158,18 @@ html, body {
   background-color: dimgrey;
   padding: 1em 0;
 
-  @media screen and (max-width: @screen-md) {
+  @media screen and (max-width: @readingPageWidth) {
     padding: 0;
   }
 }
 
 .page-panel {
   margin: 0 auto;
-  max-width: @screen-md;
+  max-width: @readingPageWidth;
   text-align: justify;
 
 
-  @media screen and (max-width: @screen-md) {
+  @media screen and (max-width: @readingPageWidth) {
     border-radius: 0;
   }
 
@@ -175,23 +180,16 @@ html, body {
 }
 
 .page-image {
-  @media screen and (min-width:  @screen-md) {
-    min-width: calc( @screen-md / 2 );
-  }
-
-  @media screen and (min-width:  @screen-sm) {
-    min-width: calc( @screen-sm / 2 );
+  @media screen and (min-width: @readingImageBoundary) {
+    min-width: @readingImageMinWidth;
   }
 
   max-width: calc(~"100% - 2em");
   margin: 0 auto;
   display: block;
-  border: black 5px solid;
-  border-radius: 4px;
 }
 
 .page-image-wrapper {
-
 }
 
 .page-audio {
@@ -211,4 +209,8 @@ html, body {
 .page-content {
 
 
+}
+
+.page-summary-text {
+  display: inline-block;
 }
