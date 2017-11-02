@@ -1,8 +1,7 @@
 <template>
     <require from="./page-summary"></require>
-    <require from="../../value-converters/order-pages"></require>
     <ul class="list-group page-list">
-        <page-summary repeat.for="page of readingManager.viewablePages | orderPages" page.bind="page" reading-id.bind="readingId" story-id.bind="storyId" demo-mode.bind="demoMode" locate.delegate="locatePage($event.detail)"></page-summary>
+        <page-summary repeat.for="page of viewablePages" page.bind="page" reading-id.bind="readingId" story-id.bind="storyId" demo-mode.bind="demoMode" locate.delegate="locatePage($event.detail)"></page-summary>
     </ul>
     <div class="text-center small" if.bind="demoMode">Click a red page to center the map on it</div>
     <div class="text-center content-top-padding" if.bind="readingManager.viewablePages.length == 0"><h4>There are no pages available to read</h4></div>

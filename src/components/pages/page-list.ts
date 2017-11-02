@@ -1,4 +1,4 @@
-import {bindable, inject, Factory, computedFrom} from "aurelia-framework";
+import {bindable, computedFrom, Factory, inject} from "aurelia-framework";
 import {ReadingManager} from "../../resources/reading/ReadingManager";
 import {LocationInformation} from "../../resources/gps/LocationInformation";
 import {CircleLocation} from "../../resources/models/locations/CircleLocation";
@@ -34,6 +34,18 @@ export class PageListCustomElement {
         return this.userConfig.locationDemo
     }
 
+    @computedFrom('readingManager.viewablePages')
+    get viewablePages() {
+        return this.readingManager.viewablePages
+            .sort((a, b) => {
+                if (a.isReadable == b.isReadable) {
+                    return a.name > b.name ? 1 : -1;
+                }
+
+                return a.isReadable ? -1 : 1;
+            })
+    }
+
     bind() {
         this.readingId = this.readingManager.reading.id;
         this.storyId = this.readingManager.story.id;
@@ -57,7 +69,7 @@ export class PageListCustomElement {
 
         let location = this.readingManager.story.locations.get(locationId) as CircleLocation;
 
-        let locationInformation : LocationInformation = {
+        let locationInformation: LocationInformation = {
             latitude: location.lat,
             longitude: location.lon,
             heading: null,
