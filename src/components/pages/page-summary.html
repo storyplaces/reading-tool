@@ -37,8 +37,10 @@
        class="list-group-item list-group-item-success" if.bind="page.isReadable">
         ${page.name}
     </a>
-    <li class="list-group-item list-group-item-danger" if.bind="!page.isReadable">
-        ${page.name}<br>
-        <small>${page.hintDirection}</small>
+    <li class="list-group-item list-group-item-danger" if.bind="!page.isReadable" click.delegate="locatePage()">
+        <div class="page-summary-text">
+            ${page.name}<br>
+            <small>${page.hintDirection}</small>
+        </div>
     </li>
 </template>
