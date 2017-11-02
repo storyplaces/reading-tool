@@ -47,6 +47,18 @@
         </div>
         <br>
 
+        <div class="panel panel-danger" if.bind="story.storyOptions.logLocations">
+            <div class="panel-heading">
+                <h3 class="panel-title">Warning</h3>
+            </div>
+            <div class="panel-body">
+                Please note that for research purposes your locations and movements when reading this particular story
+                will be recorded, these are stored anonymously and used to help the StoryPlaces researchers understand
+                how readers experience and interact with locative literature. More details on our privacy policy can be
+                found here LINK TO BE ADDED! TODO.
+            </div>
+        </div>
+
         <div class="text-left">
             <div innerhtml.bind=story.description></div>
         </div>
