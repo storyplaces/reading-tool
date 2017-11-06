@@ -39,8 +39,8 @@ export class PageReadPage {
         if (this.page.pageTransition == "next") {
             this.router.navigateBack();
         } else {
-            // If it's the end of the story just go back to the home screen.
-            this.router.navigateToRoute('home');
+            // If it's the end of the story go to the story finish page
+            this.router.navigateToRoute('story-finish', {'storyId': this.storyId});
             this.readingManager.closeReading();
         }
     }
