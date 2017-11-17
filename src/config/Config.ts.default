@@ -37,7 +37,8 @@ export class Config {
 
     private _config = {
         server: "/storyplaces",
-    };
+        storyFinish: storyFinish,
+     };
 
     read(key: string) {
         return this._config[key];

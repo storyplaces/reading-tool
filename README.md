@@ -38,6 +38,7 @@ Installation:
 -------------
 See the server repository README file for a suggested directory structure.
 * Copy the `/src/config/Config.ts.default` file as `/src/config/Config.ts`
+* Copy the `/src/config/storyFinish.ts.default` file as `/src/config/storyFinish.ts` and add content as required
 * Update the server path to be the relative path from the reading tool to the server API.
 * run `npm install`
 * run `au build --env prod`

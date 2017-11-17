@@ -66,7 +66,7 @@ export class ChainFunction extends BaseFunction {
     toJSON() {
         return {
             id: this.id,
-            type: "set",
+            type: "chain",
             functionIds: this.functionIds,
             conditions: this.conditions
         };

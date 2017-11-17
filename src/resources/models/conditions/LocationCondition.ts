@@ -43,7 +43,6 @@ import {LocationCollection} from "../../collections/LocationCollection";
 @inject(TypeChecker)
 export class LocationCondition extends BaseCondition {
 
-    private _bool: string;
     private _location: string;
 
     constructor(typeChecker: TypeChecker, data?: any) {
@@ -57,7 +56,6 @@ export class LocationCondition extends BaseCondition {
     fromObject(data = {id: undefined, bool: undefined, location: undefined}) {
         this.typeChecker.validateAsObjectAndNotArray("Data", data);
         this.id = data.id;
-        this.bool = data.bool;
         this.location = data.location;
     }
 
@@ -65,19 +63,10 @@ export class LocationCondition extends BaseCondition {
         return {
             id: this.id,
             type: "location",
-            bool: this.bool,
             location: this.location
         };
     }
 
-    get bool(): string {
-        return this._bool;
-    }
-
-    set bool(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("bool", value);
-        this._bool = value;
-    }
 
     get location(): string {
         return this._location;
@@ -100,6 +89,6 @@ export class LocationCondition extends BaseCondition {
             throw Error("Location id " + this.location + " not found");
         }
 
-        return this.bool == "true" && location.withinBounds(userLocation);
+        return location.withinBounds(userLocation);
     }
 }
