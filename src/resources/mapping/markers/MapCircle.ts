@@ -1,5 +1,7 @@
 import {MapAbstractCircle} from "./MapAbstractCircle";
-import CircleOptions = L.CircleOptions;
+
+import * as L from 'leaflet';
+
 /*******************************************************************
  *
  * StoryPlaces
@@ -37,7 +39,7 @@ import CircleOptions = L.CircleOptions;
 
 export class MapCircle extends MapAbstractCircle{
 
-    constructor(latitude: number, longitude: number, radius: number, passedOptions: CircleOptions = {}) {
+    constructor(latitude: number, longitude: number, radius: number, passedOptions: L.CircleMarkerOptions = {}) {
         super();
         let options = Object.assign({radius: radius}, passedOptions);
         this.marker = L.circle({lat: latitude, lng: longitude}, options);

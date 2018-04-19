@@ -1,4 +1,6 @@
 import {MapAbstractCircle} from "./MapAbstractCircle";
+
+import * as L from 'leaflet';
 import CircleMarkerOptions = L.CircleMarkerOptions;
 /*******************************************************************
  *
