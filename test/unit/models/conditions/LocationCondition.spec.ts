@@ -89,8 +89,8 @@ describe("LocationCondition", () => {
         let container: Container = new Container().makeGlobal();
         let locations = container.invoke(LocationCollection, [[{id: "someLocation", type: "circle", lat: 50.9360987, lon: -1.3961843, radius: 6}]]);
 
-        it("returns true if the user's location is within the bounds of the location and bool is true", () => {
-            let locationCondition = new LocationCondition(typeChecker, {id: "test", location: "someLocation", bool:"true"});
+        it("returns true if the user's location is within the bounds of the location", () => {
+            let locationCondition = new LocationCondition(typeChecker, {id: "test", location: "someLocation"});
             let result = locationCondition.execute({} as VariableCollection, {} as ConditionCollection, locations, {
                 latitude: 50.9361435,
                 longitude: -1.3961910,
@@ -100,8 +100,8 @@ describe("LocationCondition", () => {
             expect(result).toEqual(true);
         });
 
-        it("returns false if the user's location is not within the bounds of the location and bool is true", () => {
-            let locationCondition = new LocationCondition(typeChecker, {id: "test", location: "someLocation", bool: "true"});
+        it("returns false if the user's location is not within the bounds of the location", () => {
+            let locationCondition = new LocationCondition(typeChecker, {id: "test", location: "someLocation"});
             let result = locationCondition.execute({} as VariableCollection, {} as ConditionCollection, locations, {
                 latitude: 50.9362792,
                 longitude: -1.3962106,
@@ -112,30 +112,9 @@ describe("LocationCondition", () => {
         });
 
 
-        it("returns false if the user's location is within the bounds of the location and bool is false", () => {
-            let locationCondition = new LocationCondition(typeChecker, {id: "test", location: "someLocation", bool:"false"});
-            let result = locationCondition.execute({} as VariableCollection, {} as ConditionCollection, locations, {
-                latitude: 50.9361435,
-                longitude: -1.3961910,
-                accuracy: 0,
-                heading: 0
-            } as LocationInformation);
-            expect(result).toEqual(false);
-        });
 
-        it("returns false if the user's location is not within the bounds of the location and bool is false", () => {
-            let locationCondition = new LocationCondition(typeChecker, {id: "test", location: "someLocation", bool: "false"});
-            let result = locationCondition.execute({} as VariableCollection, {} as ConditionCollection, locations, {
-                latitude: 50.9362792,
-                longitude: -1.3962106,
-                accuracy: 0,
-                heading: 0
-            } as LocationInformation);
-            expect(result).toEqual(false);
-        });
-
-        it("returns true if the user's location is within the bounds of the location and bool is true", () => {
-            let locationCondition = new LocationCondition(typeChecker, {id: "test", location: "someLocation", bool:"true"});
+        it("returns true if the user's location is within the bounds of the location", () => {
+            let locationCondition = new LocationCondition(typeChecker, {id: "test", location: "someLocation"});
             let result = locationCondition.execute({} as VariableCollection, {} as ConditionCollection, locations, {
                 latitude: 50.9361435,
                 longitude: -1.3961910,
@@ -145,14 +124,8 @@ describe("LocationCondition", () => {
             expect(result).toEqual(true);
         });
 
-        it("returns true locations are passed as undefined bool is true", () => {
-            let locationCondition = new LocationCondition(typeChecker, {id: "test", location: "someLocation", bool:"true"});
-            let result = locationCondition.execute({} as VariableCollection, {} as ConditionCollection, undefined, undefined);
-            expect(result).toEqual(true);
-        });
-
-        it("returns true locations are passed as undefined bool is false", () => {
-            let locationCondition = new LocationCondition(typeChecker, {id: "test", location: "someLocation", bool:"false"});
+        it("returns true locations are passed as undefined", () => {
+            let locationCondition = new LocationCondition(typeChecker, {id: "test", location: "someLocation"});
             let result = locationCondition.execute({} as VariableCollection, {} as ConditionCollection, undefined, undefined);
             expect(result).toEqual(true);
         });
