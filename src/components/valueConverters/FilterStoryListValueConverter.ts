@@ -36,7 +36,6 @@ import {Story} from "../../resources/models/Story";
 
 export class FilterStoryListValueConverter {
     toView(stories, audience, tags) {
-        console.log(audience);
         let storiesOut = this.filterOnAudience(stories, audience);
         return this.filterOnTags(storiesOut, tags);
     }

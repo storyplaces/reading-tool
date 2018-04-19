@@ -103,7 +103,6 @@ export class MarkerManager {
     }
 
     private updateMarkersFromPage(page: Page) {
-        console.log("Updating markers for ", page);
         let markersToUpdate = this.markers.filter(marker => marker.pageId == page.id);
 
         markersToUpdate.forEach(marker => {
@@ -112,13 +111,11 @@ export class MarkerManager {
     }
 
     private removeMarkersFromPage(page: Page) {
-        console.log("Removing markers for ", page);
         let markersToRemove = this.markers.filter(marker => marker.pageId == page.id);
         markersToRemove.forEach(marker => this.mapCore.removeItem(marker));
     }
 
     private addMarkersFromPage(page: Page) {
-        console.log("Adding markers for ", page);
         let markersToAdd = this.markers.filter(marker => marker.pageId == page.id);
         markersToAdd.forEach(marker => this.mapCore.addItem(marker));
     }

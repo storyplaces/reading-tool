@@ -110,7 +110,6 @@ export class ReadingManager {
     }
 
     private updateStatus() {
-        console.log("updating page status");
         this.story.pages.forEach(page => {
             page.updateStatus(this.reading.variables, this.story.conditions, this.story.locations, this.locationManager.location);
         });

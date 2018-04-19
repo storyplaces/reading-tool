@@ -30,14 +30,12 @@ export class StoryOverviewPage {
 
     @computedFrom('selectedTags.length', ' selectedAudiences.length')
     get filtersApplied(): boolean {
-        console.log("get filter");
         return (this.selectedTags.length != this.tags.length) || (this.selectedAudiences.length != this.audiences.length)
     }
 
     activate(params) {
         this.tag = params.tag;
         this.selectedTags = [];
-        console.log("tag ", this.tag);
         return this.refresh().then(() => {
             if (params.tag) {
                 this.selectedTags = [];

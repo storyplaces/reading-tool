@@ -49,12 +49,9 @@ export class PageListCustomElement {
     bind() {
         this.readingId = this.readingManager.reading.id;
         this.storyId = this.readingManager.story.id;
-        console.log(this.readingId, this.storyId);
     }
 
     locatePage(pageId: string) {
-        console.log(pageId);
-
         if (!this.demoMode) {
             return;
         }

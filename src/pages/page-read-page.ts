@@ -89,7 +89,6 @@ export class PageReadPage {
 
             let width = element.clientWidth;
             let height = element.clientHeight;
-            console.log(width);
             let html = element.outerHTML;
             element.outerHTML = `<div class='page-audio-wrapper' style='width: ${width}px;height: ${height}px'>` + html + "</div>";
         }

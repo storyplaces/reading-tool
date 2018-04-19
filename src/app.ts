@@ -50,8 +50,6 @@ export class App {
 
     @computedFrom('router.currentInstruction.config.name')
     get readingAStory():boolean {
-        console.log("get reading a story");
-
         if (!this.router.currentInstruction) {
             return false;
         }
@@ -77,7 +75,6 @@ export class App {
         config.fallbackRoute('/');
 
         this.router = router;
-        console.log(this.router);
     }
 
 }
