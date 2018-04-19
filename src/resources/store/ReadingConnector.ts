@@ -1,5 +1,5 @@
 import {AbstractConnector} from "./AbstractConnector";
-import {inject, NewInstance, computedFrom} from 'aurelia-framework';
+import {inject, NewInstance} from 'aurelia-framework';
 import {Reading} from "../models/Reading";
 import {ReadingAPI} from "./ReadingAPI";
 
@@ -37,40 +37,40 @@ export class ReadingConnector extends AbstractConnector<Reading> {
         });
     }
 
-    fetchAll(): Promise<undefined> {
+    fetchAll(): Promise<Array<Reading>> {
         return this.storyplacesAPI.getAll()
             .then(readings => readings.json() as any)
             .then(readings => {
                 this.readingCollection.saveMany(readings);
-                return;
+                return readings;
             });
     }
 
-    fetchById(id: string): Promise<undefined> {
+    fetchById(id: string): Promise<Reading> {
         return this.storyplacesAPI.getOne(id)
             .then(reading => reading.json() as any)
             .then(reading => {
                 this.readingCollection.save(reading);
-                return;
+                return reading;
             });
     }
 
-    fetchForUserAndStory(userId: string, storyId: string): Promise<undefined> {
+    fetchForUserAndStory(userId: string, storyId: string): Promise<Array<Reading>> {
         return this.storyplacesAPI.getAllForStoryAndUser(storyId, userId)
             .then(readings => readings.json() as any)
             .then (readings => {
                 this.readingCollection.saveMany(readings);
-                return;
+                return readings;
             });
     }
 
-    save(object: Reading): Promise<undefined> {
+    save(object: Reading): Promise<Reading> {
         object.timestamp = moment().unix();
         return this.storyplacesAPI.save(object)
             .then(reading => reading.json())
             .then (reading => {
                 this.readingCollection.save(reading);
-                return;
+                 return reading;
             });
     }
 
