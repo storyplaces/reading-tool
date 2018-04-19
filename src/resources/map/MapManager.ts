@@ -57,6 +57,7 @@ export class MapManager {
 
     private mapElement: HTMLElement;
     private locationSub: Disposable;
+    private eventSub: Disposable;
 
     private trackingGPSLocation: boolean = true;
 
@@ -90,7 +91,7 @@ export class MapManager {
             this.recenterControl.disable();
         });
 
-        this.eventAggregator.subscribe(LocateMapEvent, (event : LocateMapEvent) => this.panTo(event.location))
+        this.eventSub = this.eventAggregator.subscribe(LocateMapEvent, (event : LocateMapEvent) => this.panTo(event.location))
 
         this.locationSub = this.bindingEngine.propertyObserver(this.location, 'location').subscribe((location) => this.locationChanged(location));
         this.locationChanged(this.location.location);
@@ -101,6 +102,11 @@ export class MapManager {
         if (this.locationSub) {
             this.locationSub.dispose();
             this.locationSub = undefined;
+        }
+
+        if (this.eventSub) {
+            this.eventSub.dispose();
+            this.eventSub = undefined;
         }
 
         this.mapCore.removeControl(this.recenterControl);

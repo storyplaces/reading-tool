@@ -8,6 +8,7 @@ import {CurrentMapLocation} from "../../../src/resources/map/CurrentMapLocation"
 import {CurrentLocationMarker} from "../../../src/resources/map/markers/CurrentLocationMarker";
 import {RecenterControl} from "../../../src/resources/map/controls/RecenterControl";
 import {MapManager} from "../../../src/resources/map/MapManager";
+import {EventAggregator} from 'aurelia-event-aggregator';
 
 
 /*******************************************************************
@@ -450,6 +451,7 @@ describe("MapManager", () => {
     let recenterControl: RecenterControl;
     let mapManager: MapManager;
     let element: HTMLElement;
+    let eventAggregator = resolve(EventAggregator);
 
 
     function resolve(object: Function, data?: any) {
@@ -509,36 +511,36 @@ describe("MapManager", () => {
     class MockMapCore {
         events: Map<string, Function> = new Map<string, Function>();
 
-        addEvent(event: string, callback: Function): Promise<null> {
+        addEvent(event: string, callback: Function): Promise<void> {
             this.events.set(event, callback);
             return Promise.resolve()
         }
 
-        removeEvent(event: string): Promise<null> {
+        removeEvent(event: string): Promise<void> {
             return Promise.resolve();
         }
 
-        addItem(item: MapLayerInterface): Promise<null> {
+        addItem(item: MapLayerInterface): Promise<void> {
             return Promise.resolve()
         }
 
-        removeItem(item: MapLayerInterface): Promise<null> {
+        removeItem(item: MapLayerInterface): Promise<void> {
             return Promise.resolve()
         }
 
-        addControl(control: MapControlInterface): Promise<null> {
+        addControl(control: MapControlInterface): Promise<void> {
             return Promise.resolve()
         }
 
-        removeControl(control: MapControlInterface): Promise<null> {
+        removeControl(control: MapControlInterface): Promise<void> {
             return Promise.resolve()
         }
 
-        attachTo(element: HTMLElement): Promise<null> {
+        attachTo(element: HTMLElement): Promise<void> {
             return Promise.resolve()
         }
 
-        detach(): Promise<null> {
+        detach(): Promise<void> {
             return Promise.resolve()
         }
 
@@ -566,7 +568,8 @@ describe("MapManager", () => {
         mapLocation = new MockLocation() as CurrentMapLocation;
         currentLocationMarker = new MockCurrentLocationMarker() as CurrentLocationMarker;
         recenterControl = new MockRecenterControl() as RecenterControl;
-        mapManager = new MapManager(bindingEngine, mapCore as any, baseLayer, userLocation, mapLocation, currentLocationMarker, recenterControl);
+
+        mapManager = new MapManager(bindingEngine, mapCore as any, baseLayer, userLocation, mapLocation, eventAggregator, currentLocationMarker, recenterControl);
         element = document.createElement("div");
     });
 
