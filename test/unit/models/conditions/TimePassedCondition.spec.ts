@@ -135,11 +135,10 @@ describe("TimePassedCondition", () => {
             expect(result).toEqual(false);
         });
 
-        it("throws if the condition doesn't exist", () => {
+        it("returns false if the condition doesn't exist", () => {
             let timePassedCondition = new TimePassedCondition(typeChecker, {id: "test",  minutes: 6, variable: "somethingElse"});
-            expect(() => {
-                timePassedCondition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
-            }).toThrow();
+            let result = timePassedCondition.execute(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
+            expect(result).toEqual(false);
         });
     });
 });
