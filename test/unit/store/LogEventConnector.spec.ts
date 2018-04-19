@@ -28,7 +28,7 @@ describe("LogEventConnector", () => {
         let localStore = resolve(LocalStore);
 
         new LogEventConnector(logEventAPI, localStore);
-    })
+    });
 
     it("save adds LogEvent to array if it is not successful.", () => {
         let logEventAPI = resolve(LogEventAPI);
@@ -38,7 +38,7 @@ describe("LogEventConnector", () => {
 
         let logEventConnector = new LogEventConnector(logEventAPI, localStore);
 
-        let logEvent = resolve(LogEvent, {})
+        let logEvent = resolve(LogEvent, {});
 
         logEventConnector.save(logEvent).then((response) => {
             expect(logEventConnector.all.length).toEqual(1);

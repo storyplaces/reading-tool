@@ -21,14 +21,15 @@ export class LogEventConnector {
         return this.toBeSaved;
     }
 
-    save(object: LogEvent): Promise<null> {
+    save(object: LogEvent): Promise<void> {
         this.toBeSaved.push(object);
         let sequence = Promise.resolve();
         this.toBeSaved.forEach((logEvent) => {
             sequence = sequence.then(() => {
                 return this.logEventAPI.saveLogEvent(logEvent).then(response => {
                     this.removeFromToBeSaved(logEvent);
-                });
+                })
+                    .catch(()=>{});
             });
         });
         return sequence;
