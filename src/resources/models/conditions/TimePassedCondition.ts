@@ -55,22 +55,6 @@ export class TimePassedCondition extends BaseCondition {
         }
     }
 
-    fromObject(data = {id: undefined, variable: undefined, minutes: undefined}) {
-        this.typeChecker.validateAsObjectAndNotArray("Data", data);
-        this.id = data.id;
-        this.variable = data.variable;
-        this.minutes = data.minutes;
-    }
-
-    toJSON() {
-        return {
-            id: this.id,
-            type: "timepassed",
-            variable: this.variable,
-            minutes: this.minutes
-        };
-    }
-
     get variable(): string {
         return this._variable;
     }
@@ -89,11 +73,27 @@ export class TimePassedCondition extends BaseCondition {
         this._minutes = value;
     }
 
+    fromObject(data = {id: undefined, variable: undefined, minutes: undefined}) {
+        this.typeChecker.validateAsObjectAndNotArray("Data", data);
+        this.id = data.id;
+        this.variable = data.variable;
+        this.minutes = data.minutes;
+    }
+
+    toJSON() {
+        return {
+            id: this.id,
+            type: "timepassed",
+            variable: this.variable,
+            minutes: this.minutes
+        };
+    }
+
     execute(variables: VariableCollection, conditions: ConditionCollection, locations?: LocationCollection, userLocation?: LocationInformation): boolean {
         let timeStamp = variables.get(this.variable);
 
         if (!timeStamp) {
-            throw Error("Variable " + this.variable + " was not found");
+            return false;
         }
 
         let now = moment();
