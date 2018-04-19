@@ -36,30 +36,30 @@ export class StoryConnector extends AbstractConnector<Story> {
         });
     }
 
-    fetchAll(): Promise<undefined> {
+    fetchAll(): Promise<Array<Story>> {
         return this.storyplacesAPI.getAll()
             .then(stories => stories.json() as any)
             .then(stories => {
                 this.storyCollection.saveMany(stories);
-                return;
+                return stories;
             });
     }
 
-    fetchById(id: string): Promise<undefined> {
+    fetchById(id: string): Promise<Story> {
         return this.storyplacesAPI.getOne(id)
             .then(story => story.json())
             .then(story => {
                 this.storyCollection.save(story);
-                return;
+                return story;
             });
     }
 
-    save(object: Story): Promise<undefined> {
+    save(object: Story): Promise<Story> {
         return this.storyplacesAPI.save(object)
             .then(story => story.json())
             .then(story => {
                 this.storyCollection.save(story);
-                return;
+                return story;
             });
     }
 
