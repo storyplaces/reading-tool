@@ -3,6 +3,7 @@ import {LocationManager} from "../../../src/resources/gps/LocationManager";
 import {Container, BindingEngine} from "aurelia-framework";
 import {LocationInformation} from "../../../src/resources/gps/LocationInformation";
 import {CurrentMapLocation} from "../../../src/resources/map/CurrentMapLocation";
+import {UserConfig} from "../../../src/resources/store/UserConfig";
 
 /*******************************************************************
  *
@@ -62,7 +63,7 @@ describe("LocationManager", () => {
 
     let mockGps: MockGps;
     let mockMapLocation: MockMapLocation;
-    let mockUserConfig: MockUserConfig;
+    let mockUserConfig: UserConfig;
     let container: Container = new Container().makeGlobal();
     let bindingEngine: BindingEngine = resolve(BindingEngine);
 
@@ -73,7 +74,7 @@ describe("LocationManager", () => {
     beforeEach(() => {
         mockGps = new MockGps();
         mockMapLocation = new MockMapLocation();
-        mockUserConfig = new MockUserConfig();
+        mockUserConfig = new MockUserConfig() as UserConfig;
     });
 
     afterEach(() => {
