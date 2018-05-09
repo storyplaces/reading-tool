@@ -48,8 +48,8 @@ export class ReadingOverviewListCustomElement {
         this.readings = this.readingConnector.byStoryId(this.storyId)
             .sort((a: Reading, b: Reading) => {
                 if (a.state == b.state) {
-                    if (a.name > b.name) {return 1}
-                    if (a.name < b.name) {return -1}
+                    if (a.timestamp < b.timestamp) {return 1}
+                    if (a.timestamp > b.timestamp) {return -1}
                     return 0;
                 }
 
