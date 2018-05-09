@@ -60,7 +60,7 @@
         </div>
 
         <div class="text-left">
-            <div innerhtml.bind=story.description></div>
+            <div innerHtml.bind="story.description | sanitizeHTML" class="description-field"></div>
         </div>
 
         <reading-overview-list story-id.bind="storyId"

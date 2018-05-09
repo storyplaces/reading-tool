@@ -37,7 +37,7 @@
 
     <div class="container">
         <div><h2 class="text-center">${collection.name}</h2></div>
-        <div>${collection.description}</div>
+        <div innerHtml.bind="collection.description | sanitizeHTML" class="description-field"></div>
         <story-overview-filter refresh.call="refresh()" stories.bind="stories" tag.bind="tag" loading.bind="loading"></story-overview-filter>
     </div>
 </template>

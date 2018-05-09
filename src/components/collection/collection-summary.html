@@ -35,8 +35,6 @@
 <template>
     <a route-href="route: collection-detail; params.bind: { slug: collection.slug}" class="list-group-item">
         <h4 class="list-group-item-heading">${collection.name}</h4>
-        <div class="list-group-item-text">
-            ${collection.description}
-        </div>
+        <div class="list-group-item-text" innerHtml.bind="collection.description | sanitizeHTML"></div>
     </a>
 </template>
