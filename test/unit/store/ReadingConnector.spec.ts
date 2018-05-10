@@ -48,7 +48,7 @@ describe("ReadingConnector", () => {
         let readingConnector = new ReadingConnector(readingCollection, storyPlacesAPI);
         let result = readingConnector.all;
         expect(result).toEqual([]);
-    })
+    });
 
     it("calls readingCollection.get when byId is called", () => {
         let readingCollection = resolve(ReadingCollection);
@@ -61,7 +61,7 @@ describe("ReadingConnector", () => {
         expect(result).toEqual(testReading);
         expect(readingCollection.get).toHaveBeenCalledTimes(1);
         expect(readingCollection.get).toHaveBeenCalledWith(("123"));
-    })
+    });
 
     it("calls storyplacesAPI.getAll and readingCollection.saveMany when fetchAll is called", (finished) => {
         let readingCollection = resolve(ReadingCollection);
@@ -74,14 +74,14 @@ describe("ReadingConnector", () => {
 
         let readingConnector = new ReadingConnector(readingCollection, storyPlacesAPI);
         readingConnector.fetchAll().then(result => {
-            expect(result).toBeUndefined();
+            expect(result).toEqual([]);
             expect(storyPlacesAPI.getAll).toHaveBeenCalledTimes(1);
             expect(storyPlacesAPI.getAll).toHaveBeenCalledWith();
             expect(readingCollection.saveMany).toHaveBeenCalledTimes(1);
             expect(readingCollection.saveMany).toHaveBeenCalledWith([]);
             finished();
         });
-    })
+    });
 
     it("calls storyplacesAPI.getOne and readingCollection.save when fetchById is called", (finished) => {
         let readingCollection = resolve(ReadingCollection);
@@ -94,14 +94,14 @@ describe("ReadingConnector", () => {
 
         let readingConnector = new ReadingConnector(readingCollection, storyPlacesAPI);
         readingConnector.fetchById('123').then(result => {
-            expect(result).toBeUndefined();
+            expect(result).toEqual({"id": "123"});
             expect(storyPlacesAPI.getOne).toHaveBeenCalledTimes(1);
             expect(storyPlacesAPI.getOne).toHaveBeenCalledWith('123');
             expect(readingCollection.save).toHaveBeenCalledTimes(1);
             expect(readingCollection.save).toHaveBeenCalledWith({id: '123'});
             finished();
         });
-    })
+    });
 
     it("calls storyplacesAPI.save and readingCollection.save when save is called", (finished) => {
         let readingCollection = resolve(ReadingCollection);
@@ -116,14 +116,14 @@ describe("ReadingConnector", () => {
 
         let readingConnector = new ReadingConnector(readingCollection, storyPlacesAPI);
         readingConnector.save(reading).then(result => {
-            expect(result).toBeUndefined();
+            expect(result).toEqual({"id": "123"});
             expect(storyPlacesAPI.save).toHaveBeenCalledTimes(1);
             expect(storyPlacesAPI.save).toHaveBeenCalledWith(reading);
             expect(readingCollection.save).toHaveBeenCalledTimes(1);
             expect(readingCollection.save).toHaveBeenCalledWith({id: '123'});
             finished();
         });
-    })
+    });
 
     it("calls readingCollection.all and only returns items with the correct storyId when byStoryId is called", () => {
         let reading1 = resolve(Reading);
@@ -141,7 +141,7 @@ describe("ReadingConnector", () => {
         let readingConnector = new ReadingConnector(readingCollection, storyPlacesAPI);
         let result = readingConnector.byStoryId("test-story-id-1");
         expect(result).toEqual([reading1]);
-    })
+    });
 
     it("calls readingCollection.all and returns empty array when there are no matching readings", () => {
         let reading1 = resolve(Reading);
@@ -159,5 +159,5 @@ describe("ReadingConnector", () => {
         let readingConnector = new ReadingConnector(readingCollection, storyPlacesAPI);
         let result = readingConnector.byStoryId("test-story-id-3");
         expect(result).toEqual([]);
-    })
+    });
 });
