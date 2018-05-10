@@ -63,7 +63,7 @@ export class Collection extends BaseModel {
     }
 
     set slug(value: string) {
-        this.typeChecker.validateAsStringOrUndefined("Slug", value);
+        this.typeChecker.isUndefinedOrMatchesRegex("Slug", value, '^[a-z0-9-]+$');
         this._slug = value;
     }
 
@@ -97,7 +97,7 @@ export class Collection extends BaseModel {
         this.name = data.name;
         this.description = data.description;
         this.slug = data.slug;
-        this.storyIds = data.storyIds;
+        this.storyIds = data.storyIds || [];
     }
 
     public toJSON() {

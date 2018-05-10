@@ -1,4 +1,5 @@
 import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
+
 /*******************************************************************
  *
  * StoryPlaces
@@ -35,24 +36,65 @@ import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
  */
 
 describe("TypeChecker", () => {
+    let typeChecker;
+
+    beforeEach(() => {
+        typeChecker = new TypeChecker();
+    });
+
+
+    //region Scalar
+    describe("validateAsScalar", () => {
+        it("throws an error if type checking a string and you don't pass a string", () => {
+            expect(() => {
+                typeChecker.validateAsScalar("test", 1, 'string');
+            }).toThrow();
+        });
+        it("does not throw an error if type checking a string and you pass a string", () => {
+            expect(() => {
+                typeChecker.validateAsScalar("test", "a", 'string');
+            }).not.toThrow();
+        });
+
+        it("throws an error if type checking a number and you don't pass a number", () => {
+            expect(() => {
+                typeChecker.validateAsScalar("test", "a", 'number');
+            }).toThrow();
+        });
+
+        it("does not throw an error if type checking a number and you pass a number", () => {
+            expect(() => {
+                typeChecker.validateAsScalar("test", 123, 'number');
+            }).not.toThrow();
+        });
+
+        it("throws an error if type checking a boolean and you don't pass a boolean", () => {
+            expect(() => {
+                typeChecker.validateAsScalar("test", "a", 'boolean');
+            }).toThrow();
+        });
+
+        it("does not throw an error if type checking a boolean and you pass a boolean", () => {
+            expect(() => {
+                typeChecker.validateAsScalar("test", true, 'boolean');
+            }).not.toThrow();
+        });
+    });
 
     //region String
     it("throws an error if type checking a string and you don't pass a string", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateAsStringOrUndefined("test", 1)
         }).toThrow();
     });
 
     it("does not throw an error if type checking a string and you pass a string", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateAsStringOrUndefined("test", "a")
         }).not.toThrow();
     });
 
     it("does not throw an error if type checking a string and you pass undefined", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateAsStringOrUndefined("test", undefined)
         }).not.toThrow();
@@ -61,21 +103,18 @@ describe("TypeChecker", () => {
 
     //region Number
     it("throws an error if type checking a number and you don't pass a number", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateAsNumberOrUndefined("test", "a")
         }).toThrow();
     });
 
     it("does not throw an error if type checking a number and you pass a number", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateAsNumberOrUndefined("test", 1)
         }).not.toThrow();
     });
 
     it("does not throw an error if type checking a number and you pass a number", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateAsNumberOrUndefined("test", undefined)
         }).not.toThrow();
@@ -84,21 +123,18 @@ describe("TypeChecker", () => {
 
     //region Boolean
     it("throws an error if type checking a boolean and you don't pass a boolean", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateAsBooleanOrUndefined("test", "a")
         }).toThrow();
     });
 
     it("does not throw an error if type checking a boolean and you pass a boolean", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateAsBooleanOrUndefined("test", true)
         }).not.toThrow();
     });
 
     it("does not throw an error if type checking a boolean and you pass a boolean", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateAsBooleanOrUndefined("test", undefined)
         }).not.toThrow();
@@ -107,7 +143,6 @@ describe("TypeChecker", () => {
 
     //region Object
     it("throws an error if type checking an object and you don't pass an object", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateAsObjectOrUndefined("test", "a", "testObject", Function);
         }).toThrow();
@@ -117,7 +152,6 @@ describe("TypeChecker", () => {
         class TestClass {
         }
 
-        let typeChecker = new TypeChecker();
         let testClass = new TestClass();
 
         expect(() => {
@@ -129,7 +163,6 @@ describe("TypeChecker", () => {
         class TestClass {
         }
 
-        let typeChecker = new TypeChecker();
         let testClass = new TestClass();
 
         expect(() => {
@@ -138,7 +171,6 @@ describe("TypeChecker", () => {
     });
 
     it("does not throw an error if type checking an object and you do pass undefined", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateAsObjectOrUndefined("test", undefined, "testObject", TypeChecker);
         }).not.toThrow();
@@ -147,56 +179,48 @@ describe("TypeChecker", () => {
 
     //region Value comparison
     it("throws an error if comparing values and expected and actual don't match (string vs string)", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateScalarValue("test", "expected", "actual")
         }).toThrow();
     });
 
     it("throws an error if comparing values and expected and actual don't match (string vs number)", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateScalarValue("test", "expected", 1)
         }).toThrow();
     });
 
     it("throws an error if comparing values and expected and actual don't match (boolean vs number)", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateScalarValue("test", true, 1)
         }).toThrow();
     });
 
     it("throws an error if comparing values and expected and actual don't match (undefined vs number)", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateScalarValue("test", undefined, 1)
         }).toThrow();
     });
 
     it("does not throw an error if comparing values and expected and actual do match (string)", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateScalarValue("test", "expected", "expected")
         }).not.toThrow();
     });
 
     it("does not throw an error if comparing values and expected and actual do match (number)", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateScalarValue("test", 12, 12)
         }).not.toThrow();
     });
 
     it("does not throw an error if comparing values and expected and actual do match (boolean)", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateScalarValue("test", true, true);
         }).not.toThrow();
     });
 
     it("does not throw an error if comparing values and expected and actual do match (undefined)", () => {
-        let typeChecker = new TypeChecker();
         expect(() => {
             typeChecker.validateScalarValue("test", undefined, undefined);
         }).not.toThrow();
@@ -206,28 +230,24 @@ describe("TypeChecker", () => {
     //region Plain object
     describe("method validateAsObjectAndNotArray", () => {
         it("throws an error if you don't pass an object", () => {
-            let typeChecker = new TypeChecker();
             expect(() => {
                 typeChecker.validateAsObjectAndNotArray("test", "a");
             }).toThrow();
         });
 
         it("throws an error if you pass an array", () => {
-            let typeChecker = new TypeChecker();
             expect(() => {
                 typeChecker.validateAsObjectAndNotArray("test", ["a"]);
             }).toThrow();
         });
 
         it("does not throw an error if you pass an object", () => {
-            let typeChecker = new TypeChecker();
             expect(() => {
                 typeChecker.validateAsObjectAndNotArray("test", {a: "a"});
             }).not.toThrow();
         });
 
         it("does not throw an error if you pass undefined", () => {
-            let typeChecker = new TypeChecker();
             expect(() => {
                 typeChecker.validateAsObjectAndNotArray("test", undefined);
             }).not.toThrow();
@@ -237,7 +257,6 @@ describe("TypeChecker", () => {
 
     describe("method isArrayOf", () => {
         it("does not throw an error if you pass an array of the required type", () => {
-            let typeChecker = new TypeChecker();
 
             expect(() => {
                 typeChecker.isArrayOf("field", ["a", "b", "c"], "string");
@@ -245,7 +264,6 @@ describe("TypeChecker", () => {
         });
 
         it("throws an error if you pass an array with an item of the wrong type", () => {
-            let typeChecker = new TypeChecker();
 
             expect(() => {
                 typeChecker.isArrayOf("field", ["a", "b", 1], "string");
@@ -253,7 +271,6 @@ describe("TypeChecker", () => {
         });
 
         it("throws an error if you pass something other than an array", () => {
-            let typeChecker = new TypeChecker();
 
             expect(() => {
                 typeChecker.isArrayOf("field", "a", "string");
@@ -261,7 +278,6 @@ describe("TypeChecker", () => {
         });
 
         it("throws an error if you pass undefined", () => {
-            let typeChecker = new TypeChecker();
 
             expect(() => {
                 typeChecker.isArrayOf("field", undefined, "string");
@@ -271,7 +287,6 @@ describe("TypeChecker", () => {
 
     describe("method isUndefinedOrArrayOf", () => {
         it("will not throw and error if undefined is passed", () => {
-            let typeChecker = new TypeChecker();
 
             expect(() => {
                 typeChecker.isUndefinedOrArrayOf("field", undefined, "string");
@@ -279,7 +294,6 @@ describe("TypeChecker", () => {
         });
 
         it("will defer to isArrayOf if something other than undefined is passed", () => {
-            let typeChecker = new TypeChecker();
             spyOn(typeChecker, 'isArrayOf').and.returnValue(undefined);
 
             typeChecker.isUndefinedOrArrayOf("field", ["a", "b", "c"], "string");
@@ -289,7 +303,6 @@ describe("TypeChecker", () => {
 
     describe("method isTimePatternString", () => {
         it("will not throw an error if passed a time pattern string", () => {
-            let typeChecker = new TypeChecker();
 
             expect(() => {
                 typeChecker.isTimePatternString("field", "12:12");
@@ -297,7 +310,6 @@ describe("TypeChecker", () => {
         });
 
         it("will throw an error if passed a non time pattern string", () => {
-            let typeChecker = new TypeChecker();
 
             expect(() => {
                 typeChecker.isTimePatternString("field", "abc");
@@ -305,11 +317,33 @@ describe("TypeChecker", () => {
         });
 
         it("will throw an error if passed something other than a string", () => {
-            let typeChecker = new TypeChecker();
 
             expect(() => {
                 typeChecker.isTimePatternString("field", 123);
             }).toThrow();
+        });
+
+    });
+
+    describe('method isUndefinedOrMatchesRegex', () => {
+        it('will throw an error if passed something other than a string as the value', () => {
+            expect(() => {typeChecker.isUndefinedOrMatchesRegex("field", 123, '//')}).toThrowError(TypeError);
+        });
+
+        it('will throw an error if passed something other than a string as the regex', () => {
+            expect(() => {typeChecker.isUndefinedOrMatchesRegex("field", '', 123)}).toThrowError(TypeError);
+        });
+
+        it('will not throw an error if passed a undefined value', () => {
+            expect(() => {typeChecker.isUndefinedOrMatchesRegex("field", undefined, '//')}).not.toThrowError(TypeError);
+        });
+
+        it('will not throw an error if passed a matching string', () => {
+            expect(() => {typeChecker.isUndefinedOrMatchesRegex("field", 'abc-123', '^[a-z0-9-]+$')}).not.toThrowError(TypeError);
+        });
+
+        it('will throw an error if passed a string which does not match', () => {
+            expect(() => {typeChecker.isUndefinedOrMatchesRegex("field", 'ABC$%^', '^[a-z0-9-]+$')}).toThrowError(TypeError);
         });
 
     });
