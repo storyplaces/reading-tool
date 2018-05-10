@@ -116,6 +116,6 @@ export class TimeRangeCondition extends BaseCondition {
 
     private textualTimeToMoment(time: string) {
         let raw = time.split(":"); // split the HH:MM format into an array to pass it to moment
-        return moment().hour(parseInt(raw[0])).minutes(parseInt(raw[1]));
+        return moment().hour(parseInt(raw[0])).minutes(parseInt(raw[1])).seconds(0);
     }
 }
