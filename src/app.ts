@@ -33,7 +33,7 @@
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import {Router, RouterConfiguration} from "aurelia-router";
-import {autoinject,computedFrom} from "aurelia-framework";
+import {autoinject, computedFrom} from "aurelia-framework";
 import {Authenticator} from "./resources/auth/Authenticator";
 import {UserConfig} from "./resources/store/UserConfig";
 
@@ -44,17 +44,17 @@ export class App {
     constructor(private authenticator: Authenticator, private userConfig: UserConfig) {
     }
 
-    attached() {
-        this.authenticator.login();
-    }
-
     @computedFrom('router.currentInstruction.config.name')
-    get readingAStory():boolean {
+    get readingAStory(): boolean {
         if (!this.router.currentInstruction) {
             return false;
         }
 
         return this.router.currentInstruction.config.name == 'story-reading' || this.router.currentInstruction.config.name == 'page-read';
+    }
+
+    attached() {
+        this.authenticator.login();
     }
 
     configureRouter(config: RouterConfiguration, router: Router) {
@@ -69,7 +69,10 @@ export class App {
             {route: '/story/:storyId', moduleId: 'pages/story-detail-page', title: 'Story', name: 'story-detail'},
             {route: '/story-finish/:storyId', name: 'story-finish', moduleId: 'pages/story-finish-page', title: 'Story Finish'},
             {route: '/story/:storyId/:readingId', moduleId: 'pages/story-reading-page', title: 'Reading', name: 'story-reading'},
-            {route: '/story/:storyId/:readingId/:pageId', moduleId: 'pages/page-read-page', title: 'Page', name: 'page-read'}
+            {route: '/story/:storyId/:readingId/:pageId', moduleId: 'pages/page-read-page', title: 'Page', name: 'page-read'},
+            {route: '/collection/', name: 'collection-list', moduleId: 'pages/collection-list-page', title: 'Collection List'},
+            {route: '/collection/:slug', name: 'collection-detail', moduleId: 'pages/collection-detail-page', title: 'Stories in Collection'},
+            {route: '/collection/:slug/tag/:tag', name: 'collection-detail-with-tag', moduleId: 'pages/collection-detail-page', title: 'Stories in Collection'},
         ]);
 
         config.fallbackRoute('/');

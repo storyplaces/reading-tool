@@ -35,7 +35,15 @@
 
 export class TypeChecker {
     protected validateAsScalarOrUndefined(fieldName: string, value: any, scalarType: string) {
-        if (value !== undefined && typeof value !== scalarType) {
+        if (value === undefined ) {
+            return;
+        }
+
+        this.validateAsScalar(fieldName, value,scalarType);
+    }
+
+    validateAsScalar(fieldName: string, value: any, scalarType: string) {
+        if (typeof value !== scalarType) {
             throw TypeError(fieldName + " must be a " + scalarType + ", a " + typeof value + " was passed.");
         }
     }
@@ -100,6 +108,21 @@ export class TypeChecker {
         let reg = new RegExp('^[0-9]{1,2}:[0-9]{2}$');
         if (!reg.test(value)) {
             throw TypeError("The contents of " + fieldName + " must be in the format HH:MM");
+        }
+    }
+
+    isUndefinedOrMatchesRegex(fieldName: string, value:string, regex: string){
+        if (value === undefined) {
+            return;
+        }
+
+        this.validateAsStringOrUndefined(fieldName, value);
+        this.validateAsScalar(fieldName + ' regex', regex, 'string');
+
+        let regularExpression = new RegExp(regex);
+
+        if (!regularExpression.test(value)) {
+            throw new TypeError(fieldName + " value doe not match require regex")
         }
     }
 }

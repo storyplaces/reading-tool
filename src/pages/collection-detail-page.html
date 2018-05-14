@@ -33,13 +33,11 @@
   -->
 
 <template>
-    <a route-href="route: story-detail; params.bind: { storyId: story.id}" class="list-group-item">
-        <h4 class="list-group-item-heading">${story.name}<small><br>${story.author}</small></h4>
-        <div class="list-group-item-text">
-            <span if.bind="story.audience == 'family'" class="label label-success">Family Friendly</span>
-            <span if.bind="story.audience == 'general'" class="label label-info">General Audience</span>
-            <span if.bind="story.audience == 'advisory'" class="label label-danger">Advisory Content</span>
-            <span repeat.for="tag of story.tags"><span class="label label-default" if.bind="tag !== 'Untagged'">${tag}</span> </span>
-        </div>
-    </a>
+    <require from="components/story/story-overview-filter"></require>
+
+    <div class="container">
+        <div><h2 class="text-center">${collection.name}</h2></div>
+        <div innerHtml.bind="collection.description | sanitizeHTML" class="description-field"></div>
+        <story-overview-filter refresh.call="refresh()" stories.bind="stories" tag.bind="tag" loading.bind="loading"></story-overview-filter>
+    </div>
 </template>

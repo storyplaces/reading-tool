@@ -1,0 +1,29 @@
+<template>
+    <require from="components/collection/collection-summary"></require>
+
+    <div class="container">
+        <div class="center-block logo-wrapper"><img class="logo" src="images/logo/StoryPlaces_full_600.png"></div>
+        <div class="row">
+            <div class="col-xs-7">
+                <h4>All Collections:</h4>
+            </div>
+            <div class="col-xs-5 text-right">
+                <div class="btn-group">
+                    <button class="btn btn-default" click.delegate="refresh()"><span class="glyphicon glyphicon-refresh"></span></button>
+                </div>
+            </div>
+        </div>
+        <div if.bind="!loading">
+            <div class="list-group">
+                <collection-summary repeat.for="collection of collections" collection.bind="collection"></collection-summary>
+            </div>
+
+            <div class="" show.bind="collections.length == 0">
+                <h4>There are no collections available,<br>please <a href="" click.delegate="refreshList()">refresh</a> the list</h4>
+            </div>
+        </div>
+        <div if.bind="loading">
+            <h4 class="text-center">Loading Collections...</h4>
+        </div>
+    </div>
+</template>

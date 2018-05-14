@@ -74,7 +74,7 @@ describe("StoryConnector", () => {
 
         let storyConnector = new StoryConnector(storyCollection, storyPlacesAPI);
         storyConnector.fetchAll().then(result => {
-            expect(result).toBeUndefined();
+            expect(result).toEqual([]);
             expect(storyPlacesAPI.getAll).toHaveBeenCalledTimes(1);
             expect(storyPlacesAPI.getAll).toHaveBeenCalledWith();
             expect(storyCollection.saveMany).toHaveBeenCalledTimes(1);
@@ -94,7 +94,7 @@ describe("StoryConnector", () => {
 
         let storyConnector = new StoryConnector(storyCollection, storyPlacesAPI);
         storyConnector.fetchById('123').then(result => {
-            expect(result).toBeUndefined();
+            expect(result).toEqual({"id": "123"});
             expect(storyPlacesAPI.getOne).toHaveBeenCalledTimes(1);
             expect(storyPlacesAPI.getOne).toHaveBeenCalledWith('123');
             expect(storyCollection.save).toHaveBeenCalledTimes(1);
@@ -116,7 +116,7 @@ describe("StoryConnector", () => {
 
         let storyConnector = new StoryConnector(storyCollection, storyPlacesAPI);
         storyConnector.save(story).then(result => {
-            expect(result).toBeUndefined();
+            expect(result).toEqual({"id": "123"});
             expect(storyPlacesAPI.save).toHaveBeenCalledTimes(1);
             expect(storyPlacesAPI.save).toHaveBeenCalledWith(story);
             expect(storyCollection.save).toHaveBeenCalledTimes(1);
