@@ -41,7 +41,9 @@ import {LocationCollection} from "../collections/LocationCollection";
 import {ConditionCollection} from "../collections/ConditionCollection";
 import {FunctionCollection} from "../collections/FunctionCollection";
 
-@inject(TypeChecker)
+import {HTMLSanitiser} from "../utilities/HTMLSanitiser";
+
+@inject(TypeChecker, HTMLSanitiser)
 export class Page extends BaseModel {
     private _name: string;
     private _conditions: Array<string>;
@@ -54,7 +56,7 @@ export class Page extends BaseModel {
     private _isViewable: boolean;
     private _isReadable: boolean;
 
-    constructor(typeChecker: TypeChecker, data?: any) {
+    constructor(typeChecker: TypeChecker, private sanitiser: HTMLSanitiser, data?: any) {
         super(typeChecker);
         this.fromObject(data);
     }
@@ -162,7 +164,7 @@ export class Page extends BaseModel {
 
     set content(value: string) {
         this.typeChecker.validateAsStringOrUndefined("Content", value);
-        this._content = value;
+        this._content = this.sanitiser.sanitisePageContent(value);
     }
 
     get isReadable(): boolean {

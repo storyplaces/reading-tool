@@ -154,6 +154,11 @@
             "path": "../node_modules/leaflet/dist",
             "main": "leaflet-src.js",
             "exports": "L"
+          },
+          {
+            "name":"sanitize-html",
+            "path": "../node_modules/sanitize-html/dist",
+            "main": "sanitize-html.min.js"
           }
         ]
       }

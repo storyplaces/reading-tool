@@ -35,16 +35,17 @@
 import {BaseModel} from "./BaseModel";
 import {TypeChecker} from "../utilities/TypeChecker";
 import {inject} from "aurelia-framework";
+import {HTMLSanitiser} from "../utilities/HTMLSanitiser";
 
 
-@inject(TypeChecker)
+@inject(TypeChecker, HTMLSanitiser)
 export class Collection extends BaseModel {
     private _name: string;
     private _description: string;
     private _slug: string;
     private _storyIds: Array<string>;
 
-    constructor(typeChecker: TypeChecker, data?: any) {
+    constructor(typeChecker: TypeChecker, private sanitiser: HTMLSanitiser, data?: any) {
         super(typeChecker);
         this.fromObject(data);
     }
@@ -73,7 +74,7 @@ export class Collection extends BaseModel {
 
     set description(value: string) {
         this.typeChecker.validateAsStringOrUndefined("Description", value);
-        this._description = value;
+        this._description = this.sanitiser.sanitiseCollectionDescription(value);
     }
 
     get name(): string {

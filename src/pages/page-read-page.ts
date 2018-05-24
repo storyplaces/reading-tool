@@ -8,17 +8,21 @@ import {Router} from "aurelia-router";
 import {LoggingHelper} from "../resources/logging/LoggingHelper";
 import {CachedMediaConnector} from "../resources/store/CachedMediaConnector";
 import {StoryCollection} from "../resources/collections/StoryCollection";
+import {Config} from "../config/Config";
 
 @autoinject()
 export class PageReadPage {
+    contentElement: HTMLElement;
     private storyId: string;
     private readingId: string;
     private pageId: string;
 
-    contentElement: HTMLElement;
+    private allowedScriptTypes: Array<string>;
 
     constructor(private readingManager: ReadingManager, private router: Router, private loggingHelper: LoggingHelper, private cachedMediaConnector: CachedMediaConnector,
-                private storyCollection: StoryCollection) {
+                private storyCollection: StoryCollection, private config: Config) {
+
+        this.allowedScriptTypes = ['application/javascript', ''];
     }
 
     @computedFrom('pageId', 'storyId')
@@ -49,11 +53,10 @@ export class PageReadPage {
         this.storyId = params.storyId;
         this.readingId = params.readingId;
         this.pageId = params.pageId;
-        return this.readingManager.attach(this.storyId, this.readingId, false).then(() => {
-            this.loggingHelper.logPageRead(this.storyCollection.get(this.storyId), this.readingId, this.pageId, this.page.name);
-        });
-
-
+        return this.readingManager.attach(this.storyId, this.readingId, false)
+            .then(() => {
+                this.loggingHelper.logPageRead(this.storyCollection.get(this.storyId), this.readingId, this.pageId, this.page.name);
+            });
     }
 
     deactivate() {
@@ -63,6 +66,42 @@ export class PageReadPage {
     attached() {
         this.parseImageCachedMedia();
         this.parseAudioCachedMedia();
+        this.parseScriptTags();
+    }
+
+    private parseScriptTags() {
+        if (this.config.read('scriptTagsAllowed') !== true) {
+            return;
+        }
+
+        let scriptElements = this.contentElement.querySelectorAll("script");
+
+        for (let index = 0; index < scriptElements.length; index++) {
+            let nodeFromInnerHTML = scriptElements[index];
+            let typeAttribute = nodeFromInnerHTML.attributes.getNamedItem('type');
+            let deferAttribute = nodeFromInnerHTML.attributes.getNamedItem('defer');
+            let asyncAttribute = nodeFromInnerHTML.attributes.getNamedItem('async');
+
+            let newNode = document.createElement('script');
+            newNode.text = nodeFromInnerHTML.innerHTML;
+
+            if (typeAttribute) {
+                if (this.allowedScriptTypes.indexOf(typeAttribute.value) == -1) {
+                    throw new Error("Invalid script type");
+                }
+                newNode.setAttribute('type', typeAttribute.value);
+            }
+
+            if (asyncAttribute) {
+                newNode.setAttribute('async', asyncAttribute.value);
+            }
+
+            if (deferAttribute) {
+                newNode.setAttribute('defer', deferAttribute.value);
+            }
+
+            nodeFromInnerHTML.parentNode.insertBefore(newNode, nodeFromInnerHTML);
+        }
     }
 
     private parseImageCachedMedia() {

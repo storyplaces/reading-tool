@@ -39,7 +39,8 @@
                 ${page.name}
             </div>
             <div class="panel-body">
-                <p innerHtml.bind="page.content | sanitizeHTML" ref="contentElement" class="page-content"></p>
+                <!--<p innerHtml.bind="page.content | sanitizeHTML" ref="contentElement" class="page-content"></p>-->
+                <p innerHtml.bind="page.content" ref="contentElement" class="page-content"></p>
             </div>
             <div class="panel-footer text-right">
                 <button if.bind="finishPage" type="text" click.trigger="callPageFunctions()" class="btn btn-primary">

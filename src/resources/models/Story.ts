@@ -41,6 +41,7 @@ import {TypeChecker} from "../utilities/TypeChecker";
 import {LocationCollection} from "../collections/LocationCollection";
 import {FunctionCollection} from "../collections/FunctionCollection";
 import {ConditionCollection} from "../collections/ConditionCollection";
+import {HTMLSanitiser} from "../utilities/HTMLSanitiser";
 
 @inject(
     Factory.of(PageCollection),
@@ -49,6 +50,7 @@ import {ConditionCollection} from "../collections/ConditionCollection";
     Factory.of(FunctionCollection),
     Factory.of(ConditionCollection),
     Factory.of(StoryOptions),
+    HTMLSanitiser,
     TypeChecker
 )
 export class Story extends BaseModel {
@@ -73,6 +75,7 @@ export class Story extends BaseModel {
                 private functionCollectionFactory: (any?) => FunctionCollection,
                 private conditionCollectionFactory: (any?) => ConditionCollection,
                 private storyOptionsFactory: (any?) => StoryOptions,
+                private sanitiser: HTMLSanitiser,
                 typeChecker: TypeChecker,
                 data?: any) {
         super(typeChecker);
@@ -173,7 +176,7 @@ export class Story extends BaseModel {
 
     set description(description: string) {
         this.typeChecker.validateAsStringOrUndefined('Description', description);
-        this._description = description;
+        this._description = this.sanitiser.sanitiseStoryDescription(description);
     }
 
     get pagesMapViewSettings(): PagesMapViewSettings {

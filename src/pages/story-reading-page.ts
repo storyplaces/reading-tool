@@ -27,12 +27,17 @@ export class StoryReadingPage {
     activate(params) {
         this.storyId = params.storyId;
         this.readingId = params.readingId;
-        this.loggingHelper.logViewReading(this.storyCollection.get(this.storyId), this.readingId);
-        return this.readingManager.attach(this.storyId, this.readingId);
+        return this.readingManager
+            .attach(this.storyId, this.readingId)
+            .then(() => {
+                this.loggingHelper.logViewReading(this.storyCollection.get(this.storyId), this.readingId);
+            });
     }
 
     attached() {
-        this.pageList.onscroll = (event) => { this.calculateArrows();}
+        this.pageList.onscroll = (event) => {
+            this.calculateArrows();
+        }
         this.calculateArrows();
     }
 

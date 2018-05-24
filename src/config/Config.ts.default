@@ -37,7 +37,8 @@ export class Config {
 
     private _config = {
         server: "/storyplaces",
-        storyFinish: storyFinish,
+        storyFinish: storyFinish,,
+        scriptTagsAllowed: false,
     };
 
     read(key: string) {
