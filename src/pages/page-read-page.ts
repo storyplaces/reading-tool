@@ -22,7 +22,7 @@ export class PageReadPage {
     constructor(private readingManager: ReadingManager, private router: Router, private loggingHelper: LoggingHelper, private cachedMediaConnector: CachedMediaConnector,
                 private storyCollection: StoryCollection, private config: Config) {
 
-        this.allowedScriptTypes = ['application/javascript', ''];
+        this.allowedScriptTypes = ['application/javascript'];
     }
 
     @computedFrom('pageId', 'storyId')
