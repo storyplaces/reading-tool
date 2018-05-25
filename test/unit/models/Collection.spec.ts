@@ -34,16 +34,23 @@
  */
 import {TypeChecker} from "../../../src/resources/utilities/TypeChecker";
 import {Collection} from "../../../src/resources/models/Collection";
+import {HTMLSanitiser} from "../../../src/resources/utilities/HTMLSanitiser";
 
 describe("Collection model", () => {
     let typeChecker: TypeChecker;
+    let htmlSanitiser: HTMLSanitiser;
 
     beforeEach(() => {
         typeChecker = new TypeChecker();
+        htmlSanitiser = new HTMLSanitiser({
+            read: function() {
+                return true
+            },
+        } as any);
     });
 
     it("can be instantiated with no data", () => {
-        let collection = new Collection(typeChecker);
+        let collection = new Collection(typeChecker, htmlSanitiser);
 
         expect(collection instanceof Collection).toEqual(true);
 
@@ -56,7 +63,7 @@ describe("Collection model", () => {
     it("can be instantiated with data", () => {
         let data = {'id': '123', 'name': 'A collection of stories', 'description': 'A description', 'slug': 'this-is-a-slug', 'storyIds': ['456', '789']};
 
-        let collection = new Collection(typeChecker, data);
+        let collection = new Collection(typeChecker, htmlSanitiser, data);
 
         expect(collection.id).toEqual('123');
         expect(collection.name).toEqual('A collection of stories');
@@ -70,7 +77,7 @@ describe("Collection model", () => {
     it("can have data passed into fromObject", () => {
         let data = {'id': '123', 'name': 'A collection of stories', 'description': 'A description', 'slug': 'this-is-a-slug', 'storyIds': ['456', '789']};
 
-        let collection = new Collection(typeChecker);
+        let collection = new Collection(typeChecker, htmlSanitiser);
         collection.fromObject(data);
 
         expect(collection.id).toEqual('123');
@@ -83,49 +90,49 @@ describe("Collection model", () => {
     });
 
     it("will throw an exception if the id is not a string", () => {
-        let collection = new Collection(typeChecker);
+        let collection = new Collection(typeChecker, htmlSanitiser);
         expect(() => {
             collection.id = 1 as any;
         }).toThrowError(TypeError);
     });
 
     it("will throw an exception if the name is not a string", () => {
-        let collection = new Collection(typeChecker);
+        let collection = new Collection(typeChecker, htmlSanitiser);
         expect(() => {
             collection.name = 1234 as any;
         }).toThrowError(TypeError);
     });
 
     it("will throw an exception if the description is not a string", () => {
-        let collection = new Collection(typeChecker);
+        let collection = new Collection(typeChecker, htmlSanitiser);
         expect(() => {
             collection.description = 1234 as any;
         }).toThrowError(TypeError);
     });
 
     it("will throw an exception if storyIds is not an array", () => {
-        let collection = new Collection(typeChecker);
+        let collection = new Collection(typeChecker, htmlSanitiser);
         expect(() => {
             collection.storyIds = 1234 as any;
         }).toThrowError(TypeError);
     });
 
     it("will throw an exception if storyIds is an array but has something other than a string as a member", () => {
-        let collection = new Collection(typeChecker);
+        let collection = new Collection(typeChecker, htmlSanitiser);
         expect(() => {
             collection.storyIds = ['123', 456] as any;
         }).toThrowError(TypeError);
     });
 
     it("will throw an exception if the slug is not a string", () => {
-        let collection = new Collection(typeChecker);
+        let collection = new Collection(typeChecker, htmlSanitiser);
         expect(() => {
             collection.slug = 1234 as any;
         }).toThrowError(TypeError);
     });
 
     it("will throw an exception if the slug is not a properly formatted string", () => {
-        let collection = new Collection(typeChecker);
+        let collection = new Collection(typeChecker, htmlSanitiser);
         expect(() => {
             collection.slug = 'ABC123' as any;
         }).toThrowError(TypeError);
@@ -134,7 +141,7 @@ describe("Collection model", () => {
     it("will output JSON when passed to JSON.stringify", () => {
         let data = {'id': '123', 'name': 'A collection of stories', 'description': 'A description', 'storyIds': ['456', '789'], 'slug': 'this-is-a-slug'};
 
-        let collection = new Collection(typeChecker, data);
+        let collection = new Collection(typeChecker, htmlSanitiser, data);
 
         let result = JSON.stringify(collection);
 

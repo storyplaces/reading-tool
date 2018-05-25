@@ -42,10 +42,12 @@ import {LocationInformation} from "../../../src/resources/gps/LocationInformatio
 import {TrueCondition} from "../../../src/resources/models/conditions/boolean/TrueCondition";
 import {LocationCondition} from "../../../src/resources/models/conditions/LocationCondition";
 import {FalseCondition} from "../../../src/resources/models/conditions/boolean/FalseCondition";
+import {HTMLSanitiser} from "../../../src/resources/utilities/HTMLSanitiser";
 
 describe("Page model", () => {
     let factoryCalledWith;
     let typeChecker: TypeChecker;
+    let htmlSanitiser: HTMLSanitiser;
     let conditionCollectionFactoryCalledWith;
 
     // let factory = (data) => {
@@ -67,6 +69,11 @@ describe("Page model", () => {
     beforeEach(() => {
         factoryCalledWith = "set to something random";
         typeChecker = new TypeChecker;
+        htmlSanitiser = new HTMLSanitiser({
+            read: function() {
+                return true
+            },
+        } as any);
     });
 
     afterEach(() => {
@@ -74,7 +81,7 @@ describe("Page model", () => {
     });
 
     it("can be instantiated with no data", () => {
-        let model = new Page(typeChecker);
+        let model = new Page(typeChecker, htmlSanitiser);
 
         expect(model.id).toBeUndefined();
         expect(model.name).toBeUndefined();
@@ -82,7 +89,7 @@ describe("Page model", () => {
     });
 
     it("can be instantiated with data", () => {
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: ["condition2"]});
+        let model = new Page(typeChecker, htmlSanitiser, {id: "1", name: "name", conditions: ["condition2"]});
 
         expect(model.id).toEqual("1");
         expect(model.name).toEqual("name");
@@ -90,7 +97,7 @@ describe("Page model", () => {
     });
 
     it("can have an anonymous object passed to it", () => {
-        let model = new Page(typeChecker);
+        let model = new Page(typeChecker, htmlSanitiser);
 
         model.fromObject({id: "1", name: "name", conditions: ["condition2"]});
 
@@ -100,7 +107,7 @@ describe("Page model", () => {
     });
 
     it("will throw an error if something other than an object is passed to fromObject", () => {
-        let model = new Page(typeChecker);
+        let model = new Page(typeChecker, htmlSanitiser);
 
         expect(() => {
             model.fromObject([] as any)
@@ -112,7 +119,7 @@ describe("Page model", () => {
     });
 
     it("will throw an exception when name is set to something other than a string or undefined", () => {
-        let model = new Page(typeChecker);
+        let model = new Page(typeChecker, htmlSanitiser);
 
         expect(() => {
             model.name = 1 as any
@@ -120,7 +127,7 @@ describe("Page model", () => {
     });
 
     it("can be cast to JSON", () => {
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: ["condition1"]});
+        let model = new Page(typeChecker, htmlSanitiser, {id: "1", name: "name", conditions: ["condition1"]});
 
         let result = JSON.stringify(model);
 
@@ -128,28 +135,28 @@ describe("Page model", () => {
     });
 
     it("can have isReadable set and retrieved", () => {
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: ["condition1"]});
+        let model = new Page(typeChecker, htmlSanitiser, {id: "1", name: "name", conditions: ["condition1"]});
 
         model.isReadable = true;
         expect(model.isReadable).toEqual(true);
     });
 
     it("can have isViewable set and retrieved", () => {
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: ["condition1"]});
+        let model = new Page(typeChecker, htmlSanitiser, {id: "1", name: "name", conditions: ["condition1"]});
 
         model.isViewable = true;
         expect(model.isViewable).toEqual(true);
     });
 
     it("can have isViewable set and retrieved", () => {
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: ["condition1"]});
+        let model = new Page(typeChecker, htmlSanitiser, {id: "1", name: "name", conditions: ["condition1"]});
 
         model.isViewable = true;
         expect(model.isViewable).toEqual(true);
     });
 
     it("sets isViewable to true when no conditions", () => {
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: []});
+        let model = new Page(typeChecker, htmlSanitiser, {id: "1", name: "name", conditions: []});
 
         let variables = resolve(VariableCollection, []);
         let conditions = resolve(ConditionCollection, []);
@@ -165,7 +172,7 @@ describe("Page model", () => {
             resolve(TrueCondition, {id: "true3"}),
         ]);
         let conditionsForPage = ["true1", "true2", "true3"];
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditionsForPage});
+        let model = new Page(typeChecker, htmlSanitiser, {id: "1", name: "name", conditions: conditionsForPage});
 
         let variables = resolve(VariableCollection, []);
 
@@ -176,7 +183,7 @@ describe("Page model", () => {
 
     it("sets isReadable to true when no conditions", () => {
 
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: []});
+        let model = new Page(typeChecker, htmlSanitiser, {id: "1", name: "name", conditions: []});
         let variables = resolve(VariableCollection, []);
 
         model.updateStatus(variables, {} as ConditionCollection, {} as LocationCollection, {} as LocationInformation);
@@ -190,7 +197,7 @@ describe("Page model", () => {
             resolve(TrueCondition, {id: "true3"}),
         ]);
         let conditionsForPage = ["true1", "true2", "true3"];
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditionsForPage});
+        let model = new Page(typeChecker, htmlSanitiser, {id: "1", name: "name", conditions: conditionsForPage});
 
         let variables = resolve(VariableCollection, []);
 
@@ -219,7 +226,7 @@ describe("Page model", () => {
             radius: 6
         }]]);
         let conditionsForPage = ["true1", "true2", "true3", "locationCondition"];
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditionsForPage});
+        let model = new Page(typeChecker, htmlSanitiser, {id: "1", name: "name", conditions: conditionsForPage});
 
         let variables = resolve(VariableCollection, []);
 
@@ -254,7 +261,7 @@ describe("Page model", () => {
             locationCondition
         ]);
         let conditionsForPage = ["true1", "true2", "true3", "locationCondition"];
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditionsForPage});
+        let model = new Page(typeChecker, htmlSanitiser, {id: "1", name: "name", conditions: conditionsForPage});
 
         let variables = resolve(VariableCollection, []);
 
@@ -276,7 +283,7 @@ describe("Page model", () => {
             resolve(FalseCondition, {id: "false1"})
         ]);
         let conditionsForPage = ["true1", "true2", "true3", "false1"];
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditionsForPage});
+        let model = new Page(typeChecker, htmlSanitiser, {id: "1", name: "name", conditions: conditionsForPage});
 
         let variables = resolve(VariableCollection, []);
 
@@ -293,7 +300,7 @@ describe("Page model", () => {
         ]);
         let conditionsForPage = ["true1", "true2", "true3", "false1"];
 
-        let model = new Page(typeChecker, {id: "1", name: "name", conditions: conditionsForPage});
+        let model = new Page(typeChecker, htmlSanitiser, {id: "1", name: "name", conditions: conditionsForPage});
 
         let variables = resolve(VariableCollection, []);
 

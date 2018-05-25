@@ -15,6 +15,10 @@ export class HTMLSanitiser {
     }
 
     public sanitisePageContent(body: string): string {
+        if (body === undefined) {
+            return;
+        }
+
         let allowedPageTags = Array.from(this.allowedTags).concat(['img', 'audio']);
         let allowedPageAttributes = Object.assign({}, this.allowedAttributes);
         allowedPageAttributes.img = ['data-media-id'];
@@ -35,6 +39,10 @@ export class HTMLSanitiser {
     }
 
     public sanitiseStoryDescription(description: string): string {
+        if (description === undefined) {
+            return;
+        }
+
         return sanitizeHtml(
             description,
             {
@@ -44,6 +52,10 @@ export class HTMLSanitiser {
     }
 
     public sanitiseCollectionDescription(description: string): string {
+        if (description === undefined) {
+            return;
+        }
+
         return sanitizeHtml(
             description,
             {
