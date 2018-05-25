@@ -66,7 +66,7 @@ export class PageReadPage {
     attached() {
         this.parseImageCachedMedia();
         this.parseAudioCachedMedia();
-        this.parseScriptTags();
+        window.setTimeout(() => this.parseScriptTags(),1);
     }
 
     private parseScriptTags() {
@@ -79,8 +79,6 @@ export class PageReadPage {
         for (let index = 0; index < scriptElements.length; index++) {
             let nodeFromInnerHTML = scriptElements[index];
             let typeAttribute = nodeFromInnerHTML.attributes.getNamedItem('type');
-            let deferAttribute = nodeFromInnerHTML.attributes.getNamedItem('defer');
-            let asyncAttribute = nodeFromInnerHTML.attributes.getNamedItem('async');
 
             let newNode = document.createElement('script');
             newNode.text = nodeFromInnerHTML.innerHTML;
@@ -90,14 +88,6 @@ export class PageReadPage {
                     throw new Error("Invalid script type");
                 }
                 newNode.setAttribute('type', typeAttribute.value);
-            }
-
-            if (asyncAttribute) {
-                newNode.setAttribute('async', asyncAttribute.value);
-            }
-
-            if (deferAttribute) {
-                newNode.setAttribute('defer', deferAttribute.value);
             }
 
             nodeFromInnerHTML.parentNode.insertBefore(newNode, nodeFromInnerHTML);

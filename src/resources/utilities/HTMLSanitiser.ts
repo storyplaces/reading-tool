@@ -22,7 +22,7 @@ export class HTMLSanitiser {
 
         if (this.config.read('scriptTagsAllowed') === true) {
             allowedPageTags = allowedPageTags.concat(['script']);
-            allowedPageAttributes.script = ['type', 'async', 'defer'];
+            allowedPageAttributes.script = ['type'];
         }
 
         return sanitizeHtml(
