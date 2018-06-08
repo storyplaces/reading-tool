@@ -114,6 +114,7 @@ export class PageReadPage {
             let element = audioElements.item(index);
             this.setSrcOnMediaItem(element);
             element.setAttribute("controls", "");
+            element.setAttribute("controlsList", "nodownload");
             element.className = "page-audio";
 
             let width = element.clientWidth;
