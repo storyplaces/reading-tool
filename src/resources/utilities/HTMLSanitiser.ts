@@ -11,7 +11,10 @@ export class HTMLSanitiser {
 
     constructor(private config: Config) {
         this.allowedTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol', 'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre'];
-        this.allowedAttributes = {'a': ['href', 'target']};
+        this.allowedAttributes = {
+            'a': ['href', 'target'],
+            'div': ['class']
+        };
     }
 
     public sanitisePageContent(body: string): string {
@@ -19,8 +22,8 @@ export class HTMLSanitiser {
             return;
         }
 
-        let allowedPageTags = Array.from(this.allowedTags).concat(['img', 'audio']);
-        let allowedPageAttributes = Object.assign({}, this.allowedAttributes);
+        let allowedPageTags = Array.from(this.allowedTags).concat(['iframe', 'img', 'audio']);
+        let allowedPageAttributes = Object.assign({'iframe': ['src', 'frameborder', 'allowfullscreen', 'allow']}, this.allowedAttributes);
         allowedPageAttributes.img = ['data-media-id'];
         allowedPageAttributes.audio = ['data-media-id'];
 
@@ -34,6 +37,7 @@ export class HTMLSanitiser {
             {
                 allowedTags: allowedPageTags,
                 allowedAttributes: allowedPageAttributes,
+                allowedIframeHostnames: ['www.youtube.com']
             }
         );
     }

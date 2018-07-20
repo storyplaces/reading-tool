@@ -38,10 +38,10 @@
         ${page.name}<br>
         <small>${page.hintDirection}</small>
     </a>
-    <li class="list-group-item list-group-item-danger" if.bind="!page.isReadable" click.delegate="locatePage()">
+    <button class="list-group-item list-group-item-danger" class.bind="demoMode?'cursor-pointer':'cursor-arrow'" if.bind="!page.isReadable" click.delegate="locatePage()">
         <div class="page-summary-text">
            ${page.name}  <i class="glyphicon glyphicon-screenshot" if.bind="demoMode"></i><br>
             <small>${page.hintDirection}</small>
         </div>
-    </li>
+    </button>
 </template>
